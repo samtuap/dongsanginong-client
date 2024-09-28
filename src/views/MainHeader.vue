@@ -1,7 +1,7 @@
 <template>
     <v-app-bar app dark dense height="70">
         <v-container class="bar" fluid>
-            <v-row>
+            <v-row no-gutters  class="flex-nowrap justify-space-between">
                 <!-- 콜 전체를 왼쪽정 렬되게 해줌 -->
                 <v-col class="d-flex justify-start"> 
                     <v-btn style="text-transform: none;">Farm</v-btn>
