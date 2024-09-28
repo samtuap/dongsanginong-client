@@ -5,16 +5,24 @@
       <v-btn color="light_green">light_green</v-btn>
       <v-btn color="yellow">yellow</v-btn>
       <v-btn color="light_orange">light_orange</v-btn>
-      <v-btn color="deep_green">deep_green</v-btn>
+      <v-btn color="deep_orange">deep_orange</v-btn>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
-  name: 'HelloWorld',
-
+  async created() {
+    console.log("created");
+    try {
+      const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/healthcheck`);
+      console.log(res);
+    } catch(e) {
+      console.log(e);
+    }
+  },
   data: () => ({
     ecosystem: [
       {
