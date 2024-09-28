@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar app dark dense>
+    <v-app-bar app dark dense height="70">
         <v-container class="bar" fluid>
             <v-row>
                 <!-- 콜 전체를 왼쪽정 렬되게 해줌 -->
@@ -11,7 +11,7 @@
                 </v-col>
                 <v-col class="text-center">
                     <v-btn :to="{path:'/'}">
-                        <img src="/inongLogo.png" width=160 alt="Logo" class="main-logo-image" /> 
+                        <img src="/inongLogo.png" width=175 alt="Logo" class="main-logo-image" /> 
                     </v-btn>
                 </v-col>
                 <!-- 콜 전체를 오른쪽 정렬되게 해줌 -->
@@ -57,7 +57,7 @@ export default {
     font-weight: 400;
 }
 .main-logo-image {
-    transform: translateY(-17px); 
+    transform: translateY(-21px); 
 }
 .reduce-spacing {
   padding-right: 0px;
