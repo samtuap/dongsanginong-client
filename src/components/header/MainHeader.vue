@@ -10,14 +10,14 @@
                     <v-btn style="text-transform: none;" v-if="isSeller">MyFarm</v-btn>
                 </v-col>
                 <v-col class="text-center">
-                    <v-btn color="white">
-                        <img :to="{path:'/'}" src="/inongLogo.png" width=175 alt="Logo" class="main-logo-image" /> 
+                    <v-btn :to="{path:'/'}" color="white">
+                        <img src="/inongLogo.png" width=175 alt="Logo" class="main-logo-image" /> 
                     </v-btn>
                 </v-col>
                 <!-- 콜 전체를 오른쪽 정렬되게 해줌 -->
                 <v-col class="d-flex justify-end">
-                <v-btn color="white" style="text-transform: none;" v-if="!isLogin" class="reduce-spacing">Login</v-btn>
-                <v-btn color="white" style="text-transform: none;" v-if="isLogin" class="reduce-spacing">Logout</v-btn>
+                <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing">Login</v-btn>
+                <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing">Logout</v-btn>
                 <v-btn color="white" class="reduce-spacing">
                     <img src="/notifications.png" width=30 alt="Logo" /> 
                 </v-btn>
