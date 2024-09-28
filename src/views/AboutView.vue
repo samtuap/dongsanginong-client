@@ -1,8 +1,5 @@
 <template>
   <v-app>
-    <!-- 헤더 적용 -->
-    <MainHeader /> 
-    
     <v-main>
       <div class="about">
       <br><br>
@@ -13,11 +10,8 @@
 </template>
 
 <script>
-import MainHeader from './MainHeader.vue';
 
 export default {
-  components: {
-    MainHeader, 
-  },
+
 };
 </script>
