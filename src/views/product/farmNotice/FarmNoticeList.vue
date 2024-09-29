@@ -26,11 +26,17 @@
                     <v-row>
                         <v-btn color="white" style="box-shadow: none; border: none; margin-bottom: 10px; font-size: 12px;">
                             <img src="/comment.png" width=25 alt="Logo" /> 
-                            10
+                            {{ notice.commentCnt }}
                         </v-btn>
                         <v-btn class="btn-no-background">자세히 보기</v-btn>
                     </v-row>
+
                 </v-card>
+                <!-- 페이징 처리 -->
+                <v-pagination
+                        v-model="currentPage"
+                        :length="pageCount"
+                    ></v-pagination>
             </v-col>
         </v-row>
     </v-container>
@@ -42,22 +48,41 @@ export default {
     data() {
         return {
             noticeList: [],
+            currentPage: 1, // 페이지 1번부터 시작 
+            pageSize: 15, // 한 페이지에 15개씩 출력 
+            totalItems: 0,   
+        }
+    },
+    computed: {
+        pageCount() {
+            return Math.ceil(this.totalItems / this.pageSize);
+        }
+    },
+    watch: {
+        currentPage(newPage) {
+            this.farmNoticeList(newPage);
         }
     },
     created() {
-        this.farmNoticeList()
+        this.farmNoticeList(this.currentPage)
     },
     methods: {
-        async farmNoticeList() {
+        async farmNoticeList(page) {
             try {
                 const id = this.$route.params.id;
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/${id}/notice/list`);
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/${id}/notice/list`, {
+                    params: {
+                        page: page - 1, 
+                        size: this.pageSize  
+                    }
+                });
                 this.noticeList = response.data.content;
+                this.totalItems = response.data.totalElements;
                 console.log(response.data);
             } catch(e) {
                 console.log(e);
             }
-        }
+        },
     }
 
 };
