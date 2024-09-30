@@ -2,7 +2,6 @@
 import FarmNoticeList from "@/views/product/farmNotice/FarmNoticeList.vue";
 import FarmNoticeCreate from "@/views/product/farmNotice/FarmNoticeCreate.vue";
 import FarmNoticeUpdate from "@/views/product/farmNotice/FarmNoticeUpdate.vue";
-import FarmNoticeList from "@/views/product/farmNotice/FarmNoticeList.vue";
 import NoticeDetailWithComment from "@/views/product/farmNotice/NoticeDetailWithComment.vue";
 
 export const farmNoticeRouter = [
