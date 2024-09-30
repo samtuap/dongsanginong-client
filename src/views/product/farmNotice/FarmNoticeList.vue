@@ -10,15 +10,14 @@
 
                     <v-carousel
                         v-if="notice.noticeImages && notice.noticeImages.length > 0"
-                        cycle
                         hide-delimiters
-                        height="200"
+                        height="300"
                         class="mt-3"
                     >
                         <v-carousel-item
                             v-for="image in notice.noticeImages"
                             :key="image.id">
-                        <v-img :src="image" alt="Notice image" height="300"></v-img>
+                        <v-img v-bind:src="image" alt="Notice image" height="300"></v-img>
                         </v-carousel-item>
                     </v-carousel>
 
@@ -70,7 +69,7 @@ export default {
         async farmNoticeList(page) {
             try {
                 const id = this.$route.params.id;
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/${id}/notice/list`, {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${id}/notice/list`, {
                     params: {
                         page: page - 1, 
                         size: this.pageSize  
