@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import { sellerRouter } from '@/router/sellerRouter'
+import { sellerRouter } from '@/router/sellerRouter';
+import { farmNoticeRouter } from "./FarmNoticeRouter";
+
 
 const routes = [
   {
@@ -18,6 +20,7 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
   ...sellerRouter,
+  ...farmNoticeRouter,
 ];
 
 const router = createRouter({
