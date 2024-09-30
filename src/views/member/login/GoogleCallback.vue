@@ -46,6 +46,17 @@ export default {
                 );
 
                 const { access_token } = tokenResponse.data;
+
+                // 동상이농 회원이 아닐 경우 해당 소셜 이메일로 가입하기 위해 이메일만 요청 후 localStorage 에 저장
+                const userResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`
+                    }
+                });
+                const email = userResponse.data.email;
+                localStorage.setItem("email", email);
+                localStorage.setItem("socialType", "GOOGLE")
+
                 const apiUrl = `${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-in`;
                 const signInResponse = await axios.post(
                     apiUrl,
@@ -56,14 +67,20 @@ export default {
                         }
                     }
                 );
-
+                
+                localStorage.clear(); // 회원가입을 위해서 저장했던 데이터 지워주기
                 localStorage.setItem("accessToken", signInResponse.data.accessToken);
                 localStorage.setItem("refreshToken", signInResponse.data.refreshToken);
                 localStorage.setItem("role", signInResponse.data.role);
 
                 window.location.href = process.env.VUE_APP_MY_URL;
             } catch (error) {
-                console.error(error);
+                if (error.response.data.name === 'NEED_TO_REGISTER') {
+                    alert('동상이농 회원이 아닙니다. 회원가입 페이지로 이동합니다.');
+                    window.location.href = '/sign-up';
+                } else {
+                    console.error(error);
+                }
             }
         }
     }

@@ -36,8 +36,18 @@ export default {
                         }
                     }
                 );
-
                 const { access_token } = tokenResponse.data;
+                
+                // 동상이농 회원이 아닐 경우 해당 소셜 이메일로 가입하기 위해 이메일만 요청 후 localStorage 에 저장
+                const emailResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`
+                    }
+                });
+                const email = emailResponse.data.kakao_account.email;
+                localStorage.setItem("email", email);
+                localStorage.setItem("socialType", "KAKAO")
+
                 const apiUrl = `${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-in`;
                 // 서버에 로그인 요청
                 const signInResponse = await axios.post(
@@ -51,6 +61,7 @@ export default {
                 );
 
                 // 로컬 스토리지 토큰 저장
+                localStorage.clear(); // 회원가입을 위해서 저장했던 데이터 지워주기
                 localStorage.setItem("accessToken", signInResponse.data.accessToken);
                 localStorage.setItem("refreshToken", signInResponse.data.refreshToken);
                 localStorage.setItem("role", signInResponse.data.role);
@@ -58,7 +69,12 @@ export default {
                 // 홈으로 리다이렉트
                 window.location.href = process.env.VUE_APP_MY_URL;
             } catch (error) {
-                console.error(error);
+                if (error.response.data.name === 'NEED_TO_REGISTER') {
+                    alert('동상이농 회원이 아닙니다. 회원가입 페이지로 이동합니다.');
+                    window.location.href = '/sign-up';
+                } else {
+                    console.error(error);
+                }
             }
         }
     }
