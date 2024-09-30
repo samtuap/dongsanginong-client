@@ -1,6 +1,7 @@
 <template>
     <div class="member-signup">
         <h2>회원 정보 입력</h2>
+        <hr />
         <form @submit.prevent="onSubmit">
             <div class="form-group">
                 <label for="name">이름</label>
@@ -14,14 +15,17 @@
 
             <div class="form-group">
                 <label for="email">이메일</label>
-                <span>{{ email }}</span>
+                <span style="text-align: left;">{{ email }}</span>
             </div>
 
             <div class="form-group">
-                <label for="postal-code">우편번호</label>
-                <input type="text" id="postal-code" v-model="postalCode" placeholder="우편번호를 입력하세요 (ex. 12345)" required />
-                <input type="button" style="background-color: #FFE2A6;" class="find-postal" @click="execDaumPostcode" value="우편번호 찾기" />
+                <label for="zipcode">우편번호</label>
+                <input type="text" id="zipcode" v-model="zipcode" placeholder="우편번호를 입력하세요 (ex. 12345)" required />
             </div>
+            <div class="form-group">
+                <input type="button" class="find-postal" @click="execDaumPostcode" value="우편번호 찾기" />
+            </div>
+            
 
             <div class="form-group">
                 <label for="address">주소</label>
@@ -46,7 +50,7 @@ export default {
         return {
             name: '',
             phone: '',
-            postalCode: '',
+            zipcode: '',
             address: '',
             addressDetail: '',
             email: localStorage.getItem("email"),
@@ -58,7 +62,7 @@ export default {
             const memberData = {
                 name: this.name,
                 phone: this.phone,
-                postalCode: this.postalCode,
+                zipcode: this.zipcode,
                 address: this.address,
                 addressDetail: this.addressDetail,
                 email: this.email,
@@ -66,17 +70,19 @@ export default {
             };
             
             try {
-                const token = localStorage.getItem("accessToken"); // 저장된 액세스 토큰 가져오기
+                const token = localStorage.getItem("token"); // 저장된 액세스 토큰 가져오기
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-up`, memberData, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                
+                localStorage.clear();
+                localStorage.setItem("accessToken", response.data.accessToken);
+                localStorage.setItem("refreshToken", response.data.refreshToken);
+                localStorage.setItem("role", response.data.role);
                 console.log("회원가입 성공:", response.data);
-                // 회원가입 성공 후 처리 (예: 로그인 페이지로 리다이렉트)
                 alert('회원가입이 완료되었습니다.');
-                window.location.href = '/login'; // 로그인 페이지로 이동
+                window.location.href = '/'; // 로그인 페이지로 이동
             } catch (error) {
                 console.error("회원가입 실패:", error);
                 alert('회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
@@ -86,7 +92,7 @@ export default {
             if (this.daum) {
                 new this.daum.Postcode({
                     oncomplete: (data) => {
-                        this.postalCode = data.zonecode;
+                        this.zipcode = data.zonecode;
                         this.address = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
                         this.$nextTick(() => {
                             this.$refs.addressDetail.focus();
@@ -111,40 +117,67 @@ export default {
 
 <style scoped>
 .member-signup {
-    max-width: 400px;
+    max-width: 600px;
     margin: 0 auto;
+    padding-top: 6%;
+    text-align: center;
 }
 
+h2 {
+    margin-bottom: 10px;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #eaeaea;
+    margin-bottom: 30px;
+}
+
+/* form-group 안의 요소들을 좌우로 배치 */
 .form-group {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 20px;
+    align-items: center; /* 라벨과 입력필드를 세로 가운데 정렬 */
 }
 
+/* 라벨을 왼쪽에 배치하고 넓이를 지정 */
 label {
-    display: block;
-    margin-bottom: 5px;
+    width: 30%;
+    text-align: left; /* 왼쪽 정렬 */
+    margin-right: 10px;
 }
 
-span {
-    display: block;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-}
-
-input {
-    width: 100%;
+/* 입력 필드를 오른쪽에 배치하고 넓이를 지정 */
+input, span {
+    width: 65%; /* 입력 필드의 넓이를 조절 */
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
 
+/* 우편번호 찾기 버튼의 스타일 */
+input[type="button"].find-postal {
+    width: 100%; /* 필요한 만큼의 넓이만 차지하도록 설정 */
+    margin-left: 10px; /* 우편번호 입력 필드와 간격을 줌 */
+    padding: 10px;
+    background-color: #FFE2A6;
+    font-size: 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input.find-postal:hover {
+    background-color: #FFD68B;
+}
+
+/* 회원 가입 버튼 스타일 */
 button.submit-btn {
     width: 100%;
     padding: 10px;
-    background-color: #DBE098;
+    background-color: #BCC07B;
     font-size: 18px;
     border: none;
     border-radius: 4px;
@@ -152,6 +185,7 @@ button.submit-btn {
 }
 
 button.submit-btn:hover {
-    background-color: #DBE098;
+    background-color: #a3a66a;
 }
 </style>
+

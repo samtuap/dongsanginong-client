@@ -26,7 +26,6 @@ export default {
                 const client_secret = process.env.VUE_APP_GOOGLE_CLIENT_SECRET;
                 const redirect_uri = process.env.VUE_APP_GOOGLE_REDIRECT_URI;
 
-
                 const data = {
                     grant_type: 'authorization_code',
                     client_id: client_id,
@@ -56,6 +55,7 @@ export default {
                 const email = userResponse.data.email;
                 localStorage.setItem("email", email);
                 localStorage.setItem("socialType", "GOOGLE")
+                localStorage.setItem("token", access_token)
 
                 const apiUrl = `${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-in`;
                 const signInResponse = await axios.post(

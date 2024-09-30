@@ -47,6 +47,7 @@ export default {
                 const email = emailResponse.data.kakao_account.email;
                 localStorage.setItem("email", email);
                 localStorage.setItem("socialType", "KAKAO")
+                localStorage.setItem("token", access_token)
 
                 const apiUrl = `${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-in`;
                 // 서버에 로그인 요청
