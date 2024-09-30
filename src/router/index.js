@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import MemberLoginPage from "@/views/login/MemberLoginPage.vue";
 import KakaoCallback from "@/views/login/KakaoCallback.vue";
+import GoogleCallback from "@/views/login/GoogleCallback.vue";
 
 const routes = [
   {
@@ -27,6 +28,11 @@ const routes = [
     path: "/oauth/redirect/kakao",
     name: "KakaoCallback",
     component: KakaoCallback,
+  },
+  {
+    path: "/oauth/redirect/google",
+    name: "GoogleCallback",
+    component: GoogleCallback,
   },
 ];
 

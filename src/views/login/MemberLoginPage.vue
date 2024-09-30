@@ -6,7 +6,7 @@
             <!-- 카카오 로그인 버튼 -->
             <img :src="require('@/assets/kakao_login.png')" class="sign-in" @click="kakaoLogin" />
             <!-- 구글 로그인 버튼 -->
-            <img :src="require('@/assets/google_login.png')" class="sign-in" />
+            <img :src="require('@/assets/google_login.png')" class="sign-in" @click="googleLogin" />
             <!-- 판매자로 로그인하기 링크 -->
             <a class="seller-login">판매자로 로그인하기</a>
         </div>
@@ -22,6 +22,13 @@ export default {
             const redirect_uri = process.env.VUE_APP_KAKAO_REDIRECT_URI;
             const client_id = process.env.VUE_APP_KAKAO_CLIENT_ID;
             const auth_url = `https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`;
+            window.location.href = auth_url;
+        },
+
+        googleLogin() {
+            const redirect_uri = process.env.VUE_APP_GOOGLE_REDIRECT_URI;
+            const client_id = process.env.VUE_APP_GOOGLE_CLIENT_ID;
+            const auth_url = `https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email&service=lso&o2v=1&ddm=0&flowName=GeneralOAuthFlow`;
             window.location.href = auth_url;
         }
     }
