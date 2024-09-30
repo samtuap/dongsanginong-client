@@ -1,8 +1,33 @@
 <template>
     <!-- 사이드바 자리 -->
-     <SellerSidebar />
+    <SellerSidebar />
 
     <v-container fluid>
+        <h2>매출 내역 조회</h2>
+        <!-- 첫 구독만 표시와 날짜 선택 -->
+        <v-row style="height: 100px;" align="center">
+            <v-col cols="5" style="align-items: center; justify-content: center">
+                <v-checkbox :value="this.checked" label="첫 구독만 표시" />
+            </v-col>
+            <v-col cols="2.5">
+                <v-text-field density="comportable" label="시작일" v-model="this.formattedStartDate" readonly @click.stop="startDialog = true"
+                    append-icon="mdi-calendar" style="height: 30px; line-height: 30px;" />
+                <v-dialog v-model="this.startDialog" max-width="290">
+                    <v-date-picker v-model="this.startTime" @change="updateStartDate"></v-date-picker>
+                </v-dialog>
+            </v-col>
+            <v-col cols="1" class="text-center">~</v-col>
+            <v-col cols="2.5">
+                <v-text-field density="comportable" label="종료일" v-model="this.formattedEndDate" readonly @click.stop="endDialog = true"
+                    append-icon="mdi-calendar" style="height: 30px; line-height: 30px;" />
+                <v-dialog v-model="this.endDialog" max-width="290">
+                    <v-date-picker v-model="this.endTime" @change="updateEndDate"></v-date-picker>
+                </v-dialog>
+            </v-col>
+            <v-col cols="1">
+                <v-btn style="border-radius: 50px;" color="deep_green" @click="loadData">적용</v-btn>
+            </v-col>
+        </v-row>
         <!-- 상단 그래프 영역 -->
         <v-row>
             <v-col cols="12" sm="6">
@@ -32,26 +57,7 @@
                         건수: 15, 총 매출액: 60,000
                     </v-card-subtitle>
 
-                    <!-- 첫 구독만 표시와 날짜 선택 -->
-                    <v-row align="center">
-                        <v-col cols="6">
-                            <v-checkbox label="첫 구독만 표시" />
-                        </v-col>
-                        <v-col cols="2">
-                            <v-text-field
-                            dense
-                            label="시작일"/>
-                        </v-col>
-                        <v-col cols="1" class="text-center">
-                            ~
-                        </v-col>
-                        <v-col cols="2">
-                            <v-text-field label="종료일" value="2024.09.11" />
-                        </v-col>
-                        <v-col cols="1">
-                            <v-btn style="border-radius: 50px;" color="deep_green">검색</v-btn>
-                        </v-col>
-                    </v-row>
+
 
                     <!-- 매출 내역 테이블 -->
                     <v-data-table :search="search" :items-per-page="20">
@@ -80,6 +86,23 @@
             </v-col>
         </v-row>
     </v-container>
+
+<v-dialog v-model="this.dateCheckDialog" style="width: 500px;">
+    <v-card>
+        <v-card-text>
+            ⚠️ 시작 날짜가 종료 날짜보다 나중일 수 없습니다.
+        </v-card-text>
+        <div style="text-align: right; padding: 20px;">
+            <v-btn
+                color="deep_green"
+                style="width:10%; border-radius: 50px"
+                @click="this.dateCheckDialog=false"
+            >
+                닫기
+            </v-btn>
+        </div>
+    </v-card>
+</v-dialog>
 </template>
 
 <script>
@@ -91,12 +114,28 @@ export default {
     components: {
         SellerSidebar
     },
+    computed: {
+        // 계산된 getter
+        formattedStartDate: function () {
+        // `this` 는 vm 인스턴스를 가리킵니다.
+        return this.extractYearAndMonthAndDay(this.startTime);
+        },
+        formattedEndDate: function() {
+            return this.extractYearAndMonthAndDay(this.endTime);
+        }
+    },
     data() {
         return {
-            startTime: "2024-08-25T08:33:46.821Z",
-            endTime: "2024-09-30T08:33:46.821Z",
+            startDialog: false,
+            endDialog: false,
+            startTime: new Date("2024-08-25T08:33:46.821Z"),
+            endTime: new Date("2024-09-30T08:33:46.821Z"),
+            checked: false,
             salesList: [],
             salesData: "",
+            lineChart: null,
+            barChart: null,
+            dateCheckDialog: false,
             monthData: {
                 labels: [],
                 datasets: [{
@@ -160,7 +199,7 @@ export default {
 
         try {
             const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
-            const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 }});
+            const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 } });
 
             this.salesData = resData.data;
             this.salesList = resList.data.content;
@@ -168,7 +207,7 @@ export default {
             // 월별 데이터 생성
             this.createDataForBarChart();
             this.createDataForLineChart();
-            
+
             // 차트 그리기
             this.createLineChart();
             this.createBarChart();
@@ -179,14 +218,22 @@ export default {
     },
     methods: {
         createLineChart() {
-            new Chart(this.$refs.LineChart, {
+            if (this.lineChart) {
+                this.lineChart.destroy(); // 기존 차트 인스턴스 파괴
+            }
+
+            this.lineChart = new Chart(this.$refs.LineChart, {
                 type: 'line',
                 data: this.dayData,
                 options: this.options
             });
         },
         createBarChart() {
-            new Chart(this.$refs.BarChart, {
+            if (this.barChart) {
+                this.barChart.destroy(); // 기존 차트 인스턴스 파괴
+            }
+
+            this.barChart = new Chart(this.$refs.BarChart, {
                 type: 'bar',
                 data: this.monthData,
                 options: this.options
@@ -212,8 +259,6 @@ export default {
             // 1. 월 label 생성
             this.dayData.labels = this.getDaysBetween(this.startTime, this.endTime);
 
-            console.log(this.dayData.labels);
-
             // 인덱스 맵 만들기
             const labelMap = this.createLabelIndexMap(this.dayData.labels);
 
@@ -230,22 +275,22 @@ export default {
             const date = new Date(dateString);
             const year = date.getFullYear();      // 연도 추출
             const month = date.getMonth() + 1;    // 월 추출 (0부터 시작하므로 1을 더해줌)
-            
+
             return year + "." + month;
         },
         extractYearAndMonthAndDay(dateString) { // 년.월.일을 추출
             const date = new Date(dateString);
-            const year = date.getFullYear();      
+            const year = date.getFullYear();
             const month = date.getMonth() + 1;
             const day = date.getDate();
-            
+
             return year + "." + month + "." + day;
         },
         getMonthsBetween(startTime, endTime) {
             const startDate = new Date(startTime);
             const endDate = new Date(endTime);
             const monthsArray = [];
-            
+
             // startDate가 endDate보다 이전일 때까지 반복
             while (startDate <= endDate) {
                 // 년, 월 데이터를 배열에 추가
@@ -254,34 +299,72 @@ export default {
                 // 다음 달로 이동
                 startDate.setMonth(startDate.getMonth() + 1);
             }
-            
+
             return monthsArray;
         },
         getDaysBetween(startTime, endTime) {
             const startDate = new Date(startTime);
             const endDate = new Date(endTime);
             const monthsArray = [];
-            
+
             // startDate가 endDate보다 이전일 때까지 반복
             while (startDate <= endDate) {
                 // 년, 월 데이터를 배열에 추가
                 monthsArray.push(this.extractYearAndMonthAndDay(startDate.toISOString()));
-
                 // 다음 날로 이동
-                console.log(startDate.getDate());
                 startDate.setDate(startDate.getDate() + 1);
             }
-            
+
             return monthsArray;
         },
         createLabelIndexMap(labels) {
             const map = new Map();
-            
+
             // 배열을 순회하며 각 값을 키로, 인덱스를 값으로 저장
             labels.forEach((label, index) => {
                 map.set(label, index);
             });
             return map;
+        },
+        updateStartDate() {
+            console.log(this.startTime);
+            this.formattedStartDate = this.startTime ? this.startTime.toISOString().slice(0, 10) : '';
+            this.startDialog = false;
+        },
+        updateEndDate() {
+            this.formattedEndDate = this.endTime ? this.endTime.toISOString().slice(0, 10) : '';
+            this.endDialog = false;
+        },
+        async loadData() {
+            const body = {
+                "onlyFirstSubscription": this.checked,
+                "startTime": this.startTime,
+                "endTime": this.endTime
+            }
+
+            if(this.startTime > this.endTime) {
+                this.dateCheckDialog = true;
+                return;
+            }
+
+            try {
+                const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
+                const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 } });
+
+
+                this.salesData = resData.data;
+                this.salesList = resList.data.content;
+
+                // 월별 데이터 생성
+                await this.createDataForBarChart();
+                await this.createDataForLineChart();
+
+                this.createLineChart();
+                this.createBarChart();
+            } catch(e) {
+                console.log(e);
+            }
+
         }
     }
 };
@@ -292,14 +375,18 @@ export default {
     border: 1px solid #ccc;
     padding: 16px;
     text-align: center;
-    width: 100%; /* 부모 컨테이너 너비 */
+    width: 100%;
+    /* 부모 컨테이너 너비 */
     height: 280px;
-    overflow-x: scroll; /* 가로 스크롤 활성화 */
-    overflow-y: hidden; /* 세로 스크롤 비활성화 */
+    overflow-x: scroll;
+    /* 가로 스크롤 활성화 */
+    overflow-y: hidden;
+    /* 세로 스크롤 비활성화 */
 }
 
 .chart-container canvas {
-    width: 1000px; /* 캔버스 너비 (컨테이너 너비를 초과하도록 설정) */
+    width: 1000px;
+    /* 캔버스 너비 (컨테이너 너비를 초과하도록 설정) */
     height: 280px;
 }
 </style>
