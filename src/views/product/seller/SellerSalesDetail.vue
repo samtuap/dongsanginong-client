@@ -10,7 +10,7 @@
                 <v-checkbox v-model="this.checked" label="첫 구독만 표시" />
             </v-col>
             <v-col cols="2.5">
-                <v-text-field density="comportable" label="시작일" v-model="this.formattedStartDate" readonly
+                <v-text-field density="compact" label="시작일" v-model="this.formattedStartDate" readonly
                     @click.stop="startDialog = true" append-icon="mdi-calendar"
                     style="height: 30px; line-height: 30px;" />
                 <v-dialog v-model="this.startDialog" max-width="290">
@@ -19,7 +19,7 @@
             </v-col>
             <v-col cols="1" class="text-center">~</v-col>
             <v-col cols="2.5">
-                <v-text-field density="comportable" label="종료일" v-model="this.formattedEndDate" readonly
+                <v-text-field density="compact" label="종료일" v-model="this.formattedEndDate" readonly
                     @click.stop="endDialog = true" append-icon="mdi-calendar"
                     style="height: 30px; line-height: 30px;" />
                 <v-dialog v-model="this.endDialog" max-width="290">
