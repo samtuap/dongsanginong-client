@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>공지사항 수정</h1>
-    <v-btn @click="openEditDialog(20)">공지 수정</v-btn> <!-- 수정할 공지의 ID를 20으로 고정 ✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨ -->
+    <v-btn @click="openEditDialog(21)">공지 수정</v-btn> <!-- 수정할 공지의 ID를 21로 고정 -->
 
     <!-- 모달 -->
     <v-dialog v-model="dialog" max-width="600" class="custom-dialog">
@@ -73,22 +73,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- 결과 모달 -->
-    <v-dialog v-model="resultDialog" max-width="290">
-      <v-card>
-        <v-card-title>
-          <span class="headline">커뮤니티</span>
-        </v-card-title>
-        <v-card-text>
-          <p>{{ message }}</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" text @click="resultDialog = false">확인</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -104,8 +88,6 @@ export default {
         imageUrls: [] // 서버에서 받아온 noticeImages를 여기에 할당
       },
       dialog: false, // 공지사항 수정 모달 상태
-      resultDialog: false, // 결과 모달 상태
-      message: '', // 결과 메시지
       selectedFiles: [], // 선택된 파일을 저장하기 위한 배열
       filePreviews: [] // 파일 미리보기 URL을 저장하기 위한 배열
     };
@@ -116,7 +98,7 @@ export default {
       this.dialog = true; // 모달 열기
       try {
         const token = localStorage.getItem('Bearer Token');
-        const farmId = 7; // 수정할 공지의 농장ID(추후 변경 예정)✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨
+        const farmId = 7; // 수정할 공지의 농장ID
 
         // 공지사항 데이터를 가져오는 API 호출
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farmId}/notice/${noticeId}`, {
@@ -214,7 +196,7 @@ export default {
       };
 
       const token = localStorage.getItem('Bearer Token');
-      const noticeId = 20; // 수정할 공지의 ID(추후 변경 예정)✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨
+      const noticeId = 21; // 수정할 공지의 ID
 
       try {
         const response = await axios.put(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/${noticeId}/update`, requestData, {
@@ -223,19 +205,17 @@ export default {
           }
         });
         console.log('Notice updated:', response.data);
-        this.message = '공지사항이 성공적으로 수정되었습니다.'; // 성공 메시지 설정
+        alert('공지사항이 성공적으로 수정되었습니다.'); // 성공 메시지 alert로 표시
       } catch (error) {
         console.error('Error updating notice:', error.response ? error.response.data : error.message);
-        this.message = '공지사항 수정에 실패했습니다.'; // 실패 메시지 설정
+        alert('공지사항 수정에 실패했습니다.'); // 실패 메시지 alert로 표시
       } finally {
         this.dialog = false; // 공지사항 수정 모달 닫기
-        this.resultDialog = true; // 결과 모달 열기
       }
     },
   },
 };
 </script>
-
 
 <style scoped>
 /* form 스타일 */

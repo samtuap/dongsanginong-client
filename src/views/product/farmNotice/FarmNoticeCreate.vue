@@ -73,22 +73,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- 결과 모달 -->
-    <v-dialog v-model="resultDialog" max-width="290">
-      <v-card>
-        <v-card-title>
-          <span class="headline">커뮤니티</span>
-        </v-card-title>
-        <v-card-text>
-          <p>{{ message }}</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" text @click="resultDialog = false">확인</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -104,8 +88,6 @@ export default {
         imageUrls: [] // 여러 이미지 URL을 담기 위한 배열
       },
       dialog: false, // 공지사항 생성 모달 상태
-      resultDialog: false, // 결과 모달 상태
-      message: '', // 결과 메시지
       selectedFiles: [], // 선택된 파일을 저장하기 위한 배열
       filePreviews: [] // 파일 미리보기 URL을 저장하기 위한 배열
     };
@@ -174,7 +156,13 @@ export default {
 
     // 공지사항 생성 메서드
     async createNotice() {
-      // 우선 파일 업로드를 진행한 후 공지사항을 생성합니다.
+      // 값 검증: title과 content가 비어 있는지 확인
+      if (!this.notice.title || !this.notice.content) {
+        alert('제목과 내용을 입력하세요.');
+        return;
+      }
+
+      // 파일 업로드 진행
       await this.uploadFiles();
 
       const requestData = {
@@ -192,13 +180,12 @@ export default {
           }
         });
         console.log('Notice created:', response.data);
-        this.message = '공지사항이 성공적으로 생성되었습니다.'; // 성공 메시지 설정
+        alert('공지사항이 성공적으로 생성되었습니다.'); // 성공 메시지 alert로 표시
       } catch (error) {
         console.error('Error creating notice:', error.response ? error.response.data : error.message);
-        this.message = '공지사항 생성에 실패했습니다.'; // 실패 메시지 설정
+        alert('공지사항 생성에 실패했습니다.'); // 실패 메시지 alert로 표시
       } finally {
         this.dialog = false; // 공지사항 생성 모달 닫기
-        this.resultDialog = true; // 결과 모달 열기
       }
     },
   },
