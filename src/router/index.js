@@ -22,7 +22,7 @@ const routes = [
   },
 
   ...farmNoticeRouter,
-  ...couponRouter
+  ...couponRouter,
   ...sellerRouter,
 ];
 
