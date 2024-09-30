@@ -357,7 +357,7 @@ export default {
     width: 100%;
     /* 부모 컨테이너 너비 */
     height: 280px;
-    overflow-x: scroll;
+    overflow-x: hidden;
     /* 가로 스크롤 활성화 */
     overflow-y: hidden;
     /* 세로 스크롤 비활성화 */
