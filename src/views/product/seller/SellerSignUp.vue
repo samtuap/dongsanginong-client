@@ -101,7 +101,7 @@
           addressDetail: ''
         },
         isVerified: false, // 이메일 인증 상태
-        isModalOpen: true // 모달 창 열기 상태
+        isModalOpen: false // 모달 창 열기 상태
       };
     },
     mounted() {
