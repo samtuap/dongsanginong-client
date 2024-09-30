@@ -3,7 +3,7 @@
     <SellerSidebar />
 
     <v-container fluid>
-        <h2>매출 내역 조회</h2>
+        <h3>매출 내역 조회</h3>
         <!-- 첫 구독만 표시와 날짜 선택 -->
         <v-row style="height: 100px;" align="center">
             <v-col cols="5" style="align-items: center; justify-content: center">
@@ -27,11 +27,8 @@
                 </v-dialog>
             </v-col>
             <v-col cols="1">
-                <v-btn
-                style="border-radius: 50px;"
-                :disabled="btnDisable"
-                color="deep_green"
-                @click="loadData">적용</v-btn>
+                <v-btn style="border-radius: 50px;" :disabled="btnDisable" color="deep_green"
+                    @click="loadData">적용</v-btn>
             </v-col>
         </v-row>
         <!-- 상단 그래프 영역 -->
@@ -152,10 +149,10 @@ export default {
                     label: 'number of sales',
                     data: [],
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(219, 224, 152, 0.4)',
                     ],
                     borderColor: [
-                        'rgba(255, 99, 132, 1)',
+                        'rgba(219, 224, 152, 1)',
                     ],
                     borderWidth: 1
                 }]
@@ -166,10 +163,10 @@ export default {
                     label: 'number of sales',
                     data: [],
                     backgroundColor: [
-                        'rgba(255, 159, 64, 0.2)'
+                        'rgba(255, 175, 110, 0.3)'
                     ],
                     borderColor: [
-                        'rgba(255, 159, 64, 1)'
+                        'rgba(255, 175, 110, 1)'
                     ],
                     borderWidth: 1
                 }]
@@ -346,7 +343,7 @@ export default {
             }
             setTimeout(() => {
                 this.btnDisable = false;
-            }, "1100");   
+            }, "1100");
         }
     }
 };
