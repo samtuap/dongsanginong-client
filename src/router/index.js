@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-
 import { farmNoticeRouter } from "./farmNoticeRouter";
 import { couponRouter } from "./couponRouter";
 import { sellerRouter } from '@/router/sellerRouter';
