@@ -93,7 +93,7 @@ export default {
     },
     data() {
         return {
-            startTime: "2024-08-03T08:33:46.821Z",
+            startTime: "2024-08-25T08:33:46.821Z",
             endTime: "2024-09-30T08:33:46.821Z",
             salesList: [],
             salesData: "",
@@ -127,20 +127,20 @@ export default {
                     label: 'number of sales',
                     data: [],
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
+                        // 'rgba(255, 99, 132, 0.2)',
                         // 'rgba(54, 162, 235, 0.2)',
                         // 'rgba(255, 206, 86, 0.2)',
                         // 'rgba(75, 192, 192, 0.2)',
                         // 'rgba(153, 102, 255, 0.2)',
-                        // 'rgba(255, 159, 64, 0.2)'
+                        'rgba(255, 159, 64, 0.2)'
                     ],
                     borderColor: [
-                        'rgba(255, 99, 132, 1)',
+                        // 'rgba(255, 99, 132, 1)',
                         // 'rgba(54, 162, 235, 1)',
                         // 'rgba(255, 206, 86, 1)',
                         // 'rgba(75, 192, 192, 1)',
                         // 'rgba(153, 102, 255, 1)',
-                        // 'rgba(255, 159, 64, 1)'
+                        'rgba(255, 159, 64, 1)'
                     ],
                     borderWidth: 1
                 }]
@@ -158,19 +158,12 @@ export default {
             "onlyFirstSubscription": false
         };
 
-        const headers = {
-            "Authorization": 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3Mjc1OTkyNjQsImV4cCI6MTcyNzYzNTI2NCwic3ViIjoiMiIsInJvbGUiOiJTRUxMRVIifQ.d99XJuLOfLA9NS2Rr5U1Y8dnNylExAHtxzvU9DKV_pIo2045Q66yxTFtFKoHmmLzy615jlFeBaZeNCfpYKpZPQ'
-        };
-
         try {
-            const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body, headers);
-            const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 }, headers });
+            const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
+            const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 }});
 
             this.salesData = resData.data;
             this.salesList = resList.data.content;
-
-            console.log(this.salesData);
-            console.log(this.salesList);
 
             // 월별 데이터 생성
             this.createDataForBarChart();
@@ -190,14 +183,14 @@ export default {
                 type: 'line',
                 data: this.dayData,
                 options: this.options
-            })
+            });
         },
         createBarChart() {
             new Chart(this.$refs.BarChart, {
                 type: 'bar',
                 data: this.monthData,
                 options: this.options
-            })
+            });
         },
         createDataForBarChart() { // 차트를 그리기 위한 데이터를 만들기
             // 1. 월 label 생성
@@ -211,14 +204,15 @@ export default {
 
             this.salesList.forEach(element => {
                 const yearMonth = this.extractYearAndMonth(element.paidAt);
-                console.log(yearMonth);
                 const idx = labelMap.get(yearMonth);
                 this.monthData.datasets[0].data[idx] += 1;
             });
         },
         createDataForLineChart() { // 차트를 그리기 위한 데이터를 만들기
             // 1. 월 label 생성
-            this.dayData.labels = this.getMonthsBetween(this.startTime, this.endTime);
+            this.dayData.labels = this.getDaysBetween(this.startTime, this.endTime);
+
+            console.log(this.dayData.labels);
 
             // 인덱스 맵 만들기
             const labelMap = this.createLabelIndexMap(this.dayData.labels);
@@ -227,9 +221,8 @@ export default {
             this.dayData.datasets[0].data = new Array(this.dayData.labels.length).fill(Number(0));
 
             this.salesList.forEach(element => {
-                const yearMonth = this.extractYearAndMonth(element.paidAt);
-                console.log(yearMonth);
-                const idx = labelMap.get(yearMonth);
+                const yearMonthDay = this.extractYearAndMonthAndDay(element.paidAt);
+                const idx = labelMap.get(yearMonthDay);
                 this.dayData.datasets[0].data[idx] += 1;
             });
         },
@@ -239,6 +232,14 @@ export default {
             const month = date.getMonth() + 1;    // 월 추출 (0부터 시작하므로 1을 더해줌)
             
             return year + "." + month;
+        },
+        extractYearAndMonthAndDay(dateString) { // 년.월.일을 추출
+            const date = new Date(dateString);
+            const year = date.getFullYear();      
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            return year + "." + month + "." + day;
         },
         getMonthsBetween(startTime, endTime) {
             const startDate = new Date(startTime);
@@ -252,7 +253,23 @@ export default {
 
                 // 다음 달로 이동
                 startDate.setMonth(startDate.getMonth() + 1);
+            }
+            
+            return monthsArray;
+        },
+        getDaysBetween(startTime, endTime) {
+            const startDate = new Date(startTime);
+            const endDate = new Date(endTime);
+            const monthsArray = [];
+            
+            // startDate가 endDate보다 이전일 때까지 반복
+            while (startDate <= endDate) {
+                // 년, 월 데이터를 배열에 추가
+                monthsArray.push(this.extractYearAndMonthAndDay(startDate.toISOString()));
 
+                // 다음 날로 이동
+                console.log(startDate.getDate());
+                startDate.setDate(startDate.getDate() + 1);
             }
             
             return monthsArray;
@@ -275,5 +292,14 @@ export default {
     border: 1px solid #ccc;
     padding: 16px;
     text-align: center;
+    width: 100%; /* 부모 컨테이너 너비 */
+    height: 280px;
+    overflow-x: scroll; /* 가로 스크롤 활성화 */
+    overflow-y: hidden; /* 세로 스크롤 비활성화 */
+}
+
+.chart-container canvas {
+    width: 1000px; /* 캔버스 너비 (컨테이너 너비를 초과하도록 설정) */
+    height: 280px;
 }
 </style>
