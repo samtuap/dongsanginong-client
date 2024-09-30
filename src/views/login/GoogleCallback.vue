@@ -44,9 +44,9 @@ export default {
                 );
 
                 const { access_token } = tokenResponse.data;
-
+                const apiUrl = `${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-in`;
                 const signInResponse = await axios.post(
-                    "http://localhost:8080/member-service/member/sign-in",
+                    apiUrl,
                     { socialType: 'GOOGLE' },
                     {
                         headers: {
@@ -59,7 +59,7 @@ export default {
                 localStorage.setItem("refreshToken", signInResponse.data.refreshToken);
                 localStorage.setItem("role", signInResponse.data.role);
 
-                window.location.href = "http://localhost:8081/";
+                window.location.href = process.env.VUE_APP_MY_URL;
             } catch (error) {
                 console.error(error);
             }

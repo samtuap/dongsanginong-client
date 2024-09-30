@@ -36,10 +36,10 @@ export default {
                 );
 
                 const { access_token } = tokenResponse.data;
-
+                const apiUrl = `${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-in`;
                 // 서버에 로그인 요청
                 const signInResponse = await axios.post(
-                    "http://localhost:8080/member-service/member/sign-in",
+                    apiUrl,
                     { socialType: 'KAKAO' },
                     {
                         headers: {
@@ -54,7 +54,7 @@ export default {
                 localStorage.setItem("role", signInResponse.data.role);
 
                 // 홈으로 리다이렉트
-                window.location.href = "http://localhost:8081/";
+                window.location.href = process.env.VUE_APP_MY_URL;
             } catch (error) {
                 console.error(error);
             }
