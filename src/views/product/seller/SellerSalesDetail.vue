@@ -27,7 +27,11 @@
                 </v-dialog>
             </v-col>
             <v-col cols="1">
-                <v-btn style="border-radius: 50px;" color="deep_green" @click="loadData">적용</v-btn>
+                <v-btn
+                style="border-radius: 50px;"
+                :disabled="btnDisable"
+                color="deep_green"
+                @click="loadData">적용</v-btn>
             </v-col>
         </v-row>
         <!-- 상단 그래프 영역 -->
@@ -59,10 +63,8 @@
                         건수: {{ this.salesData.totalCount }}, 총 매출액: {{ this.salesData.totalAmount }}
                     </v-card-subtitle>
 
-
-
                     <!-- 매출 내역 테이블 -->
-                    <v-data-table :search="search" :items-per-page="20">
+                    <v-data-table :search="search">
                         <thead>
                             <tr>
                                 <th>결제 아이디</th>
@@ -76,7 +78,7 @@
                         <tbody>
                             <tr v-for="salesDetail in this.salesList" :key="salesDetail.orderId">
                                 <td>{{ salesDetail.orderId }}</td>
-                                <td>{{ salesDetail.paidAt }}</td>
+                                <td>{{ extractYearAndMonthAndDay(salesDetail.paidAt) }}</td>
                                 <td>{{ salesDetail.packageName }}</td>
                                 <td>{{ salesDetail.customerName }}</td>
                                 <td>-</td>
@@ -124,12 +126,22 @@ export default {
     },
     data() {
         return {
+            btnDisable: false,
+            currentPage: 0,
+            pageCount: 0,
             startDialog: false,
             endDialog: false,
             startTime: new Date(),
             endTime: new Date(),
             checked: false,
             salesList: [],
+            headers: [
+                { text: '결제 아이디', align: 'center', sortable: false, value: 'orderId' },
+                { text: '결제일', align: 'center', sortable: false, value: 'paidAt' },
+                { text: '상품명', align: 'center', sortable: false, value: 'packageName' },
+                { text: '구매자 명', align: 'center', sortable: false, value: 'customerName' },
+                { text: '금액', align: 'center', sortable: false, value: 'paidAmount' },
+            ],
             salesData: "",
             lineChart: null,
             barChart: null,
@@ -141,19 +153,9 @@ export default {
                     data: [],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
-                        // 'rgba(54, 162, 235, 0.2)',
-                        // 'rgba(255, 206, 86, 0.2)',
-                        // 'rgba(75, 192, 192, 0.2)',
-                        // 'rgba(153, 102, 255, 0.2)',
-                        // 'rgba(255, 159, 64, 0.2)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
-                        // 'rgba(54, 162, 235, 1)',
-                        // 'rgba(255, 206, 86, 1)',
-                        // 'rgba(75, 192, 192, 1)',
-                        // 'rgba(153, 102, 255, 1)',
-                        // 'rgba(255, 159, 64, 1)'
                     ],
                     borderWidth: 1
                 }]
@@ -164,19 +166,9 @@ export default {
                     label: 'number of sales',
                     data: [],
                     backgroundColor: [
-                        // 'rgba(255, 99, 132, 0.2)',
-                        // 'rgba(54, 162, 235, 0.2)',
-                        // 'rgba(255, 206, 86, 0.2)',
-                        // 'rgba(75, 192, 192, 0.2)',
-                        // 'rgba(153, 102, 255, 0.2)',
                         'rgba(255, 159, 64, 0.2)'
                     ],
                     borderColor: [
-                        // 'rgba(255, 99, 132, 1)',
-                        // 'rgba(54, 162, 235, 1)',
-                        // 'rgba(255, 206, 86, 1)',
-                        // 'rgba(75, 192, 192, 1)',
-                        // 'rgba(153, 102, 255, 1)',
                         'rgba(255, 159, 64, 1)'
                     ],
                     borderWidth: 1
@@ -187,41 +179,30 @@ export default {
     async created() {
         this.endTime = new Date();
         this.startTime.setMonth(this.endTime.getMonth() - 1);
-
-        // const body = {
-        //     "startTime": this.startTime,
-        //     "endTime": this.endTime,
-        //     "onlyFirstSubscription": this.checked
-        // };
-
-        // try {
-        //     const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
-        //     const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 } });
-
-        //     this.salesData = resData.data;
-        //     this.salesList = resList.data.content;
-        // } catch (e) {
-        //     console.log(e);
-        // }
-        this.loadData();
+        await this.loadData();
+    },
+    watch: {
+        currentPage(newPage) {
+            this.farmNoticeDetail(newPage);
+        }
     },
     methods: {
-        createLineChart() {
+        async createLineChart() {
             if (this.lineChart) {
                 this.lineChart.destroy();
             }
 
-            this.lineChart = new Chart(this.$refs.LineChart, {
+            this.lineChart = await new Chart(this.$refs.LineChart, {
                 type: 'line',
                 data: this.dayData
             });
         },
-        createBarChart() {
+        async createBarChart() {
             if (this.barChart) {
                 this.barChart.destroy();
             }
 
-            this.barChart = new Chart(this.$refs.BarChart, {
+            this.barChart = await new Chart(this.$refs.BarChart, {
                 type: 'bar',
                 data: this.monthData
             });
@@ -322,6 +303,8 @@ export default {
             this.endDialog = false;
         },
         async loadData() {
+            this.btnDisable = true;
+
             try {
                 const body = {
                     "onlyFirstSubscription": this.checked,
@@ -339,7 +322,7 @@ export default {
 
 
                 this.salesData = resData.data;
-                this.salesList = resList.data.content;
+                this.salesList = resList.data;
 
                 console.log(this.salesData);
                 console.log(this.salesList);
@@ -347,7 +330,11 @@ export default {
                 // 월별 데이터 생성
                 this.createDataForBarChart();
                 this.createDataForLineChart();
+            } catch (e) {
+                console.log(e);
+            }
 
+            try {
                 // 차트 그리기
                 this.$nextTick(() => {
                     this.createLineChart();
@@ -355,8 +342,11 @@ export default {
                 });
             } catch (e) {
                 console.log(e);
-            }
 
+            }
+            setTimeout(() => {
+                this.btnDisable = false;
+            }, "1100");   
         }
     }
 };
