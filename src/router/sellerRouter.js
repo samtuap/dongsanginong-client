@@ -1,3 +1,4 @@
+import DeliveryManageList from "@/views/order/delivery/DeliveryManageList.vue"
 import SellerSalesDetail from "@/views/product/seller/SellerSalesDetail.vue"
 export const sellerRouter = [
 
@@ -6,4 +7,9 @@ export const sellerRouter = [
         name: 'sellerSalesDetail',
         component: SellerSalesDetail
     },
+    {
+        path: '/seller/delivery-management',
+        name: 'DeliveryManageList',
+        component: DeliveryManageList
+    }
 ]
