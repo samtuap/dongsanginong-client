@@ -3,6 +3,9 @@ import HomeView from "../views/HomeView.vue";
 import MemberLoginPage from "@/views/login/MemberLoginPage.vue";
 import KakaoCallback from "@/views/login/KakaoCallback.vue";
 import GoogleCallback from "@/views/login/GoogleCallback.vue";
+import { farmNoticeRouter } from "./farmNoticeRouter";
+import { couponRouter } from "./couponRouter";
+import { sellerRouter } from '@/router/sellerRouter';
 
 const routes = [
   {
@@ -34,6 +37,10 @@ const routes = [
     name: "GoogleCallback",
     component: GoogleCallback,
   },
+
+  ...farmNoticeRouter,
+  ...couponRouter,
+  ...sellerRouter,
 ];
 
 const router = createRouter({
