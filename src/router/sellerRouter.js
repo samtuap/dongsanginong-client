@@ -12,7 +12,7 @@ export const sellerRouter = [
         path: '/seller/delivery-management',
         name: 'DeliveryManageList',
         component: DeliveryManageList
-    }
+    },
         path: '/seller/sign-up',
         name: 'sellerSignUp',
         component: SellerSignUp
