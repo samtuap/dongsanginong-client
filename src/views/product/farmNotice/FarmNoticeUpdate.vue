@@ -103,7 +103,7 @@
         };
   
         const token = localStorage.getItem('Bearer Token');
-        const noticeId = 6; // 수정할 공지의 ID(추후 공지 디테일목록이 나오면 그떄 변경 예정)
+        const noticeId = 9; // 수정할 공지의 ID(추후 공지 디테일목록이 나오면 그떄 변경 예정)
   
         try {
           const response = await axios.put(`http://localhost:8080/product-service/farm/notice/${noticeId}/update`, requestData, {

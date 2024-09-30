@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import { farmNoticeRouter } from "./farmNoticeRouter";
-import { couponRouter } from "./couponRouter";
+import { FarmNoticeRouter } from "./FarmNoticeRouter";
+import { CouponRouter } from "./CouponRouter";
 
 const routes = [
   {
@@ -19,8 +19,8 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
 
-  ...farmNoticeRouter,
-  ...couponRouter
+  ...FarmNoticeRouter,
+  ...CouponRouter
 ];
 
 const router = createRouter({

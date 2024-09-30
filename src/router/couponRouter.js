@@ -1,6 +1,6 @@
-import CouponCreate from "@/views/coupon/CouponCreate.vue";
+import CouponCreate from "@/views/order/coupon/CouponCreate.vue";
 
-export const couponRouter = [
+export const CouponRouter = [
     {
         path: '/coupons/create',
         name: 'CouponCreate',
