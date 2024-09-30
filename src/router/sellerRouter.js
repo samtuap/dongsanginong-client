@@ -1,4 +1,4 @@
-import SellerSalesDetail from "@/views/seller/SellerSalesDetail.vue"
+import SellerSalesDetail from "@/views/product/seller/SellerSalesDetail.vue"
 export const sellerRouter = [
 
     {

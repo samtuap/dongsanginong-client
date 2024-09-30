@@ -1,18 +1,6 @@
 <template>
-    <v-navigation-drawer app permanent>
-        <v-list dense>
-            <v-list-item-group>
-                <v-list-item>
-                    <v-list-item-title>동상이몽 사장님 서비스</v-list-item-title>
-                </v-list-item>
-                <v-divider></v-divider>
-                <v-list-item v-for="(item, index) in menuItems" :key="index">
-                    <v-list-item-title>{{ item }}</v-list-item-title>
-                </v-list-item>
-            </v-list-item-group>
-        </v-list>
-    </v-navigation-drawer>
-
+    <!-- 사이드바 자리 -->
+     <SellerSidebar />
 
     <v-container fluid>
         <!-- 상단 그래프 영역 -->
@@ -46,20 +34,22 @@
 
                     <!-- 첫 구독만 표시와 날짜 선택 -->
                     <v-row align="center">
-                        <v-col cols="4">
+                        <v-col cols="6">
                             <v-checkbox label="첫 구독만 표시" />
                         </v-col>
-                        <v-col cols="3">
-                            <v-text-field label="시작일" value="2024.09.01" />
+                        <v-col cols="2">
+                            <v-text-field
+                            dense
+                            label="시작일"/>
                         </v-col>
                         <v-col cols="1" class="text-center">
                             ~
                         </v-col>
-                        <v-col cols="3">
+                        <v-col cols="2">
                             <v-text-field label="종료일" value="2024.09.11" />
                         </v-col>
                         <v-col cols="1">
-                            <v-btn color="primary">검색</v-btn>
+                            <v-btn style="border-radius: 50px;" color="deep_green">검색</v-btn>
                         </v-col>
                     </v-row>
 
@@ -95,8 +85,12 @@
 <script>
 import axios from 'axios';
 import { Chart, registerables } from 'chart.js'
+import SellerSidebar from '@/components/sidebar/SellerSidebar.vue';
 Chart.register(...registerables)
 export default {
+    components: {
+        SellerSidebar
+    },
     data() {
         return {
             startTime: "2024-09-03T08:33:46.821Z",
@@ -153,10 +147,11 @@ export default {
 
             console.log(this.salesData);
             console.log(this.salesList);
-
+            
             // 차트 그리기
             this.createLineChart();
             this.createBarChart();
+
         } catch (e) {
             console.log(e);
         }
@@ -176,9 +171,16 @@ export default {
                 options: this.options
             })
         },
-        createDataForChart() { // 차트를 그리기 위한 데이터를 만들자..
-            
+        createDataForBarChart() { // 차트를 그리기 위한 데이터를 만들기
+            // 1. 월별 데이터 생성하기
 
+        },
+        extractYearAndMonth(dateString) { // 년, 월을 추출
+            const date = new Date(dateString);
+            const year = date.getFullYear();      // 연도 추출
+            const month = date.getMonth() + 1;    // 월 추출 (0부터 시작하므로 1을 더해줌)
+            
+            return year + "." + month;
         }
     }
 };
