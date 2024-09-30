@@ -13,7 +13,7 @@ const app = createApp(App);
 
 axios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
       if(token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }
@@ -25,13 +25,14 @@ axios.interceptors.request.use(
   }
 );
 
+// refreshToken 으로 accessToken 재발급하는 코드 작성해주기 !!
 axios.interceptors.response.use(
   response => response,
   async error => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     if(error.response && error.response.status === 401 && token != null) {
       try {
-        localStorage.removeItem("token");
+        localStorage.removeItem("accessToken");
         localStorage.removeItem("memberId");
         alert("토큰이 만료되었습니다. 재로그인 해주세요!");
         window.location.href = "/login";
