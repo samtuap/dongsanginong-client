@@ -77,7 +77,7 @@ export default {
             } catch (error) {
                 if (error.response.data.name === 'NEED_TO_REGISTER') {
                     alert('동상이농 회원이 아닙니다. 회원가입 페이지로 이동합니다.');
-                    window.location.href = '/sign-up';
+                    window.location.href = '/member/sign-up';
                 } else {
                     console.error(error);
                 }
