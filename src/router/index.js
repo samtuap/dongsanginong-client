@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import MemberLoginPage from "@/views/login/MemberLoginPage.vue";
+import KakaoCallback from "@/views/login/KakaoCallback.vue";
 
 const routes = [
   {
@@ -15,6 +17,16 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+  },
+  {
+    path: "/sign-in",
+    name: "MemberLoginPage",
+    component: MemberLoginPage,
+  },
+  {
+    path: "/oauth/redirect/kakao",
+    name: "KakaoCallback",
+    component: KakaoCallback,
   },
 ];
 
