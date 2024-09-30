@@ -1,7 +1,7 @@
 import FarmNoticeCreate from "@/views/product/farmNotice/FarmNoticeCreate.vue";
 import FarmNoticeUpdate from "@/views/product/farmNotice/FarmNoticeUpdate.vue";
 
-export const FarmNoticeRouter = [
+export const farmNoticeRouter = [
     {
         path: '/farm/notice/create',
         name: 'FarmNoticeCreate',
