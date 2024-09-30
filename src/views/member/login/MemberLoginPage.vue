@@ -2,7 +2,8 @@
     <div class="login-page">
         <div class="login-container">
             <!-- 로그인 제목 -->
-            <h2 class="login-title">동상이농 로그인</h2>
+            <img src="/inongLogo.png" width=250px/>
+            <h2 class="login-title">로그인</h2>
             <!-- 카카오 로그인 버튼 -->
             <img :src="require('@/assets/kakao_login.png')" class="sign-in" @click="kakaoLogin" />
             <!-- 구글 로그인 버튼 -->
@@ -53,13 +54,13 @@ export default {
 /* 로그인 버튼 컨테이너 스타일 */
 .login-container {
     display: flex;
-    padding-top: 120px;
+    padding-top: 70px;
     flex-direction: column;
     align-items: center;
     background-color: #f9f9f9;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 900px;
+    width: 500px;
     height: 600px;
 }
 
