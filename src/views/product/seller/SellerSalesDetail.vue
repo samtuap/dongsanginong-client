@@ -7,19 +7,21 @@
         <!-- 첫 구독만 표시와 날짜 선택 -->
         <v-row style="height: 100px;" align="center">
             <v-col cols="5" style="align-items: center; justify-content: center">
-                <v-checkbox :value="this.checked" label="첫 구독만 표시" />
+                <v-checkbox v-model="this.checked" label="첫 구독만 표시" />
             </v-col>
             <v-col cols="2.5">
-                <v-text-field density="comportable" label="시작일" v-model="this.formattedStartDate" readonly @click.stop="startDialog = true"
-                    append-icon="mdi-calendar" style="height: 30px; line-height: 30px;" />
+                <v-text-field density="comportable" label="시작일" v-model="this.formattedStartDate" readonly
+                    @click.stop="startDialog = true" append-icon="mdi-calendar"
+                    style="height: 30px; line-height: 30px;" />
                 <v-dialog v-model="this.startDialog" max-width="290">
                     <v-date-picker v-model="this.startTime" @change="updateStartDate"></v-date-picker>
                 </v-dialog>
             </v-col>
             <v-col cols="1" class="text-center">~</v-col>
             <v-col cols="2.5">
-                <v-text-field density="comportable" label="종료일" v-model="this.formattedEndDate" readonly @click.stop="endDialog = true"
-                    append-icon="mdi-calendar" style="height: 30px; line-height: 30px;" />
+                <v-text-field density="comportable" label="종료일" v-model="this.formattedEndDate" readonly
+                    @click.stop="endDialog = true" append-icon="mdi-calendar"
+                    style="height: 30px; line-height: 30px;" />
                 <v-dialog v-model="this.endDialog" max-width="290">
                     <v-date-picker v-model="this.endTime" @change="updateEndDate"></v-date-picker>
                 </v-dialog>
@@ -54,7 +56,7 @@
                         매출 내역 확인
                     </v-card-title>
                     <v-card-subtitle>
-                        건수: 15, 총 매출액: 60,000
+                        건수: {{ this.salesData.totalCount }}, 총 매출액: {{ this.salesData.totalAmount }}
                     </v-card-subtitle>
 
 
@@ -87,22 +89,18 @@
         </v-row>
     </v-container>
 
-<v-dialog v-model="this.dateCheckDialog" style="width: 500px;">
-    <v-card>
-        <v-card-text>
-            ⚠️ 시작 날짜가 종료 날짜보다 나중일 수 없습니다.
-        </v-card-text>
-        <div style="text-align: right; padding: 20px;">
-            <v-btn
-                color="deep_green"
-                style="width:10%; border-radius: 50px"
-                @click="this.dateCheckDialog=false"
-            >
-                닫기
-            </v-btn>
-        </div>
-    </v-card>
-</v-dialog>
+    <v-dialog v-model="this.dateCheckDialog" style="width: 500px;">
+        <v-card>
+            <v-card-text>
+                ⚠️ 시작 날짜가 종료 날짜보다 나중일 수 없습니다.
+            </v-card-text>
+            <div style="text-align: right; padding: 20px;">
+                <v-btn color="deep_green" style="width:10%; border-radius: 50px" @click="this.dateCheckDialog = false">
+                    닫기
+                </v-btn>
+            </div>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
@@ -117,10 +115,10 @@ export default {
     computed: {
         // 계산된 getter
         formattedStartDate: function () {
-        // `this` 는 vm 인스턴스를 가리킵니다.
-        return this.extractYearAndMonthAndDay(this.startTime);
+            // `this` 는 vm 인스턴스를 가리킵니다.
+            return this.extractYearAndMonthAndDay(this.startTime);
         },
-        formattedEndDate: function() {
+        formattedEndDate: function () {
             return this.extractYearAndMonthAndDay(this.endTime);
         }
     },
@@ -128,8 +126,8 @@ export default {
         return {
             startDialog: false,
             endDialog: false,
-            startTime: new Date("2024-08-25T08:33:46.821Z"),
-            endTime: new Date("2024-09-30T08:33:46.821Z"),
+            startTime: new Date(),
+            endTime: new Date(),
             checked: false,
             salesList: [],
             salesData: "",
@@ -187,56 +185,45 @@ export default {
         }
     },
     async created() {
-        // 매출 정보 가져오기
+        this.endTime = new Date();
+        this.startTime.setMonth(this.endTime.getMonth() - 1);
 
-        // 매출 내역 가져오기
+        // const body = {
+        //     "startTime": this.startTime,
+        //     "endTime": this.endTime,
+        //     "onlyFirstSubscription": this.checked
+        // };
 
-        const body = {
-            "startTime": this.startTime,
-            "endTime": this.endTime,
-            "onlyFirstSubscription": false
-        };
+        // try {
+        //     const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
+        //     const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 } });
 
-        try {
-            const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
-            const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 } });
-
-            this.salesData = resData.data;
-            this.salesList = resList.data.content;
-
-            // 월별 데이터 생성
-            this.createDataForBarChart();
-            this.createDataForLineChart();
-
-            // 차트 그리기
-            this.createLineChart();
-            this.createBarChart();
-
-        } catch (e) {
-            console.log(e);
-        }
+        //     this.salesData = resData.data;
+        //     this.salesList = resList.data.content;
+        // } catch (e) {
+        //     console.log(e);
+        // }
+        this.loadData();
     },
     methods: {
         createLineChart() {
             if (this.lineChart) {
-                this.lineChart.destroy(); // 기존 차트 인스턴스 파괴
+                this.lineChart.destroy();
             }
 
             this.lineChart = new Chart(this.$refs.LineChart, {
                 type: 'line',
-                data: this.dayData,
-                options: this.options
+                data: this.dayData
             });
         },
         createBarChart() {
             if (this.barChart) {
-                this.barChart.destroy(); // 기존 차트 인스턴스 파괴
+                this.barChart.destroy();
             }
 
             this.barChart = new Chart(this.$refs.BarChart, {
                 type: 'bar',
-                data: this.monthData,
-                options: this.options
+                data: this.monthData
             });
         },
         createDataForBarChart() { // 차트를 그리기 위한 데이터를 만들기
@@ -327,7 +314,6 @@ export default {
             return map;
         },
         updateStartDate() {
-            console.log(this.startTime);
             this.formattedStartDate = this.startTime ? this.startTime.toISOString().slice(0, 10) : '';
             this.startDialog = false;
         },
@@ -336,18 +322,18 @@ export default {
             this.endDialog = false;
         },
         async loadData() {
-            const body = {
-                "onlyFirstSubscription": this.checked,
-                "startTime": this.startTime,
-                "endTime": this.endTime
-            }
-
-            if(this.startTime > this.endTime) {
-                this.dateCheckDialog = true;
-                return;
-            }
-
             try {
+                const body = {
+                    "onlyFirstSubscription": this.checked,
+                    "startTime": this.startTime,
+                    "endTime": this.endTime
+                }
+
+                if (this.startTime > this.endTime) {
+                    this.dateCheckDialog = true;
+                    return;
+                }
+
                 const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
                 const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 } });
 
@@ -355,13 +341,19 @@ export default {
                 this.salesData = resData.data;
                 this.salesList = resList.data.content;
 
-                // 월별 데이터 생성
-                await this.createDataForBarChart();
-                await this.createDataForLineChart();
+                console.log(this.salesData);
+                console.log(this.salesList);
 
-                this.createLineChart();
-                this.createBarChart();
-            } catch(e) {
+                // 월별 데이터 생성
+                this.createDataForBarChart();
+                this.createDataForLineChart();
+
+                // 차트 그리기
+                this.$nextTick(() => {
+                    this.createLineChart();
+                    this.createBarChart();
+                });
+            } catch (e) {
                 console.log(e);
             }
 
