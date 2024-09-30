@@ -93,30 +93,54 @@ export default {
     },
     data() {
         return {
-            startTime: "2024-09-03T08:33:46.821Z",
+            startTime: "2024-08-03T08:33:46.821Z",
             endTime: "2024-09-30T08:33:46.821Z",
             salesList: [],
             salesData: "",
-            testData: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            monthData: {
+                labels: [],
                 datasets: [{
                     label: 'number of sales',
-                    data: [12, 19, 3, 5, 2, 3],
+                    data: [],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
+                        // 'rgba(54, 162, 235, 0.2)',
+                        // 'rgba(255, 206, 86, 0.2)',
+                        // 'rgba(75, 192, 192, 0.2)',
+                        // 'rgba(153, 102, 255, 0.2)',
+                        // 'rgba(255, 159, 64, 0.2)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
+                        // 'rgba(54, 162, 235, 1)',
+                        // 'rgba(255, 206, 86, 1)',
+                        // 'rgba(75, 192, 192, 1)',
+                        // 'rgba(153, 102, 255, 1)',
+                        // 'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            dayData: {
+                labels: [],
+                datasets: [{
+                    label: 'number of sales',
+                    data: [],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        // 'rgba(54, 162, 235, 0.2)',
+                        // 'rgba(255, 206, 86, 0.2)',
+                        // 'rgba(75, 192, 192, 0.2)',
+                        // 'rgba(153, 102, 255, 0.2)',
+                        // 'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        // 'rgba(54, 162, 235, 1)',
+                        // 'rgba(255, 206, 86, 1)',
+                        // 'rgba(75, 192, 192, 1)',
+                        // 'rgba(153, 102, 255, 1)',
+                        // 'rgba(255, 159, 64, 1)'
                     ],
                     borderWidth: 1
                 }]
@@ -147,6 +171,10 @@ export default {
 
             console.log(this.salesData);
             console.log(this.salesList);
+
+            // 월별 데이터 생성
+            this.createDataForBarChart();
+            this.createDataForLineChart();
             
             // 차트 그리기
             this.createLineChart();
@@ -160,20 +188,50 @@ export default {
         createLineChart() {
             new Chart(this.$refs.LineChart, {
                 type: 'line',
-                data: this.testData,
+                data: this.dayData,
                 options: this.options
             })
         },
         createBarChart() {
             new Chart(this.$refs.BarChart, {
                 type: 'bar',
-                data: this.testData,
+                data: this.monthData,
                 options: this.options
             })
         },
         createDataForBarChart() { // 차트를 그리기 위한 데이터를 만들기
-            // 1. 월별 데이터 생성하기
+            // 1. 월 label 생성
+            this.monthData.labels = this.getMonthsBetween(this.startTime, this.endTime);
 
+            // 인덱스 맵 만들기
+            const labelMap = this.createLabelIndexMap(this.monthData.labels);
+
+            // 2. 숫자 넣기
+            this.monthData.datasets[0].data = new Array(this.monthData.labels.length).fill(Number(0));
+
+            this.salesList.forEach(element => {
+                const yearMonth = this.extractYearAndMonth(element.paidAt);
+                console.log(yearMonth);
+                const idx = labelMap.get(yearMonth);
+                this.monthData.datasets[0].data[idx] += 1;
+            });
+        },
+        createDataForLineChart() { // 차트를 그리기 위한 데이터를 만들기
+            // 1. 월 label 생성
+            this.dayData.labels = this.getMonthsBetween(this.startTime, this.endTime);
+
+            // 인덱스 맵 만들기
+            const labelMap = this.createLabelIndexMap(this.dayData.labels);
+
+            // 2. 숫자 넣기
+            this.dayData.datasets[0].data = new Array(this.dayData.labels.length).fill(Number(0));
+
+            this.salesList.forEach(element => {
+                const yearMonth = this.extractYearAndMonth(element.paidAt);
+                console.log(yearMonth);
+                const idx = labelMap.get(yearMonth);
+                this.dayData.datasets[0].data[idx] += 1;
+            });
         },
         extractYearAndMonth(dateString) { // 년, 월을 추출
             const date = new Date(dateString);
@@ -181,6 +239,32 @@ export default {
             const month = date.getMonth() + 1;    // 월 추출 (0부터 시작하므로 1을 더해줌)
             
             return year + "." + month;
+        },
+        getMonthsBetween(startTime, endTime) {
+            const startDate = new Date(startTime);
+            const endDate = new Date(endTime);
+            const monthsArray = [];
+            
+            // startDate가 endDate보다 이전일 때까지 반복
+            while (startDate <= endDate) {
+                // 년, 월 데이터를 배열에 추가
+                monthsArray.push(this.extractYearAndMonth(startDate.toISOString()));
+
+                // 다음 달로 이동
+                startDate.setMonth(startDate.getMonth() + 1);
+
+            }
+            
+            return monthsArray;
+        },
+        createLabelIndexMap(labels) {
+            const map = new Map();
+            
+            // 배열을 순회하며 각 값을 키로, 인덱스를 값으로 저장
+            labels.forEach((label, index) => {
+                map.set(label, index);
+            });
+            return map;
         }
     }
 };
