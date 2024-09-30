@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import { sellerRouter } from '@/router/sellerRouter';
-import { farmNoticeRouter } from "./FarmNoticeRouter";
+import { farmNoticeRouter } from "@/router/farmNoticeRouter";
 
 
 const routes = [
