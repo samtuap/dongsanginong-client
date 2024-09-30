@@ -8,7 +8,6 @@
 
                     <v-carousel
                         v-if="images && images.length > 0"
-                        cycle
                         hide-delimiters
                         height="300"
                         class="mt-3"
@@ -22,7 +21,7 @@
                 </v-card>
                 <br>
                 <!-- 여기부터 댓글 작성은 아직 동작하지 않음 -->
-                <h3 style="padding-left: 15px;">댓글 3개</h3>
+                <h3 style="padding-left: 15px;">댓글 {{ commentCnt }}개</h3>
                 <br>
                 <!-- 댓글 작성 -->
                 <v-row>
@@ -52,6 +51,11 @@
                     <hr class="hr-style">
                     <br>
                 </v-card>
+                <!-- 페이징 처리 -->
+                <v-pagination
+                    v-model="currentPage"
+                    :length="pageCount"
+                ></v-pagination>
                 
             </v-col>
         </v-row>
@@ -66,27 +70,49 @@ export default {
             title: "",
             content: "",
             images: [],
+            commentCnt: 0,
             commentList: [],
             comment: "",
+
+            currentPage: 1, // 페이지 1번부터 시작 
+            pageSize: 15, // 한 페이지에 15개씩 출력 
+            totalItems: 0,   
+        }
+    },
+    computed: {
+        pageCount() {
+            return Math.ceil(this.totalItems / this.pageSize);
+        }
+    },
+    watch: {
+        currentPage(newPage) {
+            this.farmNoticeDetail(newPage);
         }
     },
     created() {
-        this.farmNoticeDetail();
+        this.farmNoticeDetail(this.currentPage);
     },
     methods: {
-        async farmNoticeDetail() {
+        async farmNoticeDetail(page) {
             try {
                 const farm_id = this.$route.params.farm_id;
                 const notice_id = this.$route.params.notice_id;
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/${farm_id}/notice/${notice_id}`);
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farm_id}/notice/${notice_id}`);
                 console.log(response.data);
 
                 this.title = response.data.title;
                 this.content = response.data.content;
+                this.commentCnt = response.data.commentCnt;
                 this.images = response.data.noticeImages;
 
-                const response2 = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/${farm_id}/notice/${notice_id}/comment`);
+                const response2 = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farm_id}/notice/${notice_id}/comment`, {
+                    params: {
+                        page: page - 1, 
+                        size: this.pageSize  
+                    }
+                });
                 this.commentList = response2.data.content;
+                this.totalItems = response2.data.totalElements;
                 
                 this.commentList = response2.data.content.map(comment => {
                     const [date, time] = comment.createdAt.split('T');
