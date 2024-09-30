@@ -1,5 +1,7 @@
 <template>
-    <h1>로 그 인 하 는 중 ⭐️</h1>
+    <div class="loader-container">
+        <img src="/loading.gif" width="50px" />
+    </div>
 </template>
 
 <script>
@@ -67,3 +69,11 @@ export default {
     }
 }
 </script>
+
+<style>
+.loader-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 100px;
+}
+</style>
