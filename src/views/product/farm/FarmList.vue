@@ -1,5 +1,26 @@
 <template>
     <v-container class="custom-container">
+        <v-row>
+            <v-col cols="6"></v-col>
+            <v-col cols="2">
+                <v-select
+                v-model="sortOption"
+                :items="sortOptions"
+                solo
+                density="compact"
+                variant="solo"
+                label="정렬 기준"
+                class="sort-select">
+                </v-select>
+            </v-col>
+            <v-col cols="4">
+                <v-text-field :loading="loading" v-model="searchQuery" label="검색어를 입력하세요." class="search-bar"
+                @click:append="onSearch" append-inner-icon="mdi-magnify" density="compact" variant="solo"
+                single-line @click:append-inner="onClick">
+                </v-text-field>
+            </v-col>
+
+        </v-row>
         <!-- top 10 시작 -->
         <h3>Best 10</h3>
         <p style="color: gray;">가장 많이 스크랩된 농장입니다.</p>
@@ -65,6 +86,11 @@ export default {
             farmList: [],
             currentPage: 0,
             pageSize: 20,
+            searchQuery: "",
+            sortOptions: [
+                "최신순", "즐겨찾기 많은 순", "판매량 순"
+            ],
+            sortOption: "최신순"
         }
 
     },
@@ -116,5 +142,14 @@ export default {
     /* 중앙 정렬 */
     width: 100% !important;
     /* 컨테이너의 폭을 100%로 설정 */
+}
+
+.search-bar {
+    width: 100%;
+}
+
+.sort-select {
+    width: 100%;
+    margin-right: 2px;
 }
 </style>
