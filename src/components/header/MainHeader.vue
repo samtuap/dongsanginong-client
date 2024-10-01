@@ -50,7 +50,22 @@ export default {
     },
     created() {
         const token = localStorage.getItem('accessToken');
-        this.isLogin = !!token; // Simplified to check if token exists
+        this.isLogin = !!token;
+
+        const role = localStorage.getItem('role');
+
+        if (token) {
+            this.isLogin = true;
+        } else {
+            this.isLogin = false;
+        }
+
+        if(role == "SELLER") {
+            this.isSeller = true;
+        } else {
+            this.isSeller = false;
+        }
+
     },
     methods: {
         handleLogout() {
