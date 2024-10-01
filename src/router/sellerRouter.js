@@ -1,5 +1,7 @@
+import DeliveryManageList from "@/views/order/delivery/DeliveryManageList.vue"
 import SellerSalesDetail from "@/views/product/seller/SellerSalesDetail.vue"
 import CouponCreate from "@/views/order/coupon/CouponCreateList.vue"
+import SellerSignUp from "@/views/product/seller/SellerSignUp.vue"
 
 export const sellerRouter = [
 
@@ -12,5 +14,15 @@ export const sellerRouter = [
         path: '/coupons/create',
         name: 'CouponCreate',
         component: CouponCreate
-    }
+    },
+    {
+        path: '/seller/delivery-management',
+        name: 'DeliveryManageList',
+        component: DeliveryManageList
+    },
+    {
+        path: '/seller/sign-up',
+        name: 'sellerSignUp',
+        component: SellerSignUp
+    },
 ]

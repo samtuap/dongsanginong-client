@@ -17,7 +17,7 @@
                 <!-- 콜 전체를 오른쪽 정렬되게 해줌 -->
                 <v-col class="d-flex justify-end">
                     <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing"
-                        :to="{ path: '/sign-in' }">Login</v-btn>
+                        :to="{ path: '/member/sign-in' }">Login</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
                         @click="logout">Logout</v-btn>
                     <v-btn color="white" class="reduce-spacing">

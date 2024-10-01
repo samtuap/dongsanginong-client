@@ -1,11 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
-import MemberLoginPage from "@/views/member/login/MemberLoginPage.vue";
-import KakaoCallback from "@/views/member/login/KakaoCallback.vue";
-import GoogleCallback from "@/views/member/login/GoogleCallback.vue";
 import { farmNoticeRouter } from "./farmNoticeRouter";
 import { sellerRouter } from '@/router/sellerRouter';
+import { memberRouter } from "./memberRouter";
 
 
 const routes = [
@@ -23,24 +21,10 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
-  {
-    path: "/sign-in",
-    name: "MemberLoginPage",
-    component: MemberLoginPage,
-  },
-  {
-    path: "/oauth/redirect/kakao",
-    name: "KakaoCallback",
-    component: KakaoCallback,
-  },
-  {
-    path: "/oauth/redirect/google",
-    name: "GoogleCallback",
-    component: GoogleCallback,
-  },
 
   ...farmNoticeRouter,
   ...sellerRouter,
+  ...memberRouter
 ];
 
 const router = createRouter({

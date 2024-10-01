@@ -9,15 +9,30 @@
             <!-- 구글 로그인 버튼 -->
             <img :src="require('@/assets/google_login.png')" class="sign-in" @click="googleLogin" />
             <!-- 판매자로 로그인하기 링크 -->
-            <a class="seller-login">판매자로 로그인하기</a>
+            <a class="seller-login" @click="openModal">판매자로 로그인하기</a>
         </div>
+
+        <SellerSignIn
+            :isModalOpen="isModalOpen"
+            :title="'판매자 로그인'"
+            @close="closeModal"
+            @login="sellerLogin"/>
     </div>
 </template>
 
 <script>
+import SellerSignIn from '@/views/product/seller/SellerSignIn.vue';
+
 export default {
     name: "KakaoLogin",
-    
+    components: {
+        SellerSignIn
+    },
+    data() {
+        return {
+            isModalOpen: false,
+        };
+    },
     methods: {
         kakaoLogin() {
             const redirect_uri = process.env.VUE_APP_KAKAO_REDIRECT_URI;
@@ -31,6 +46,18 @@ export default {
             const client_id = process.env.VUE_APP_GOOGLE_CLIENT_ID;
             const auth_url = `https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email&service=lso&o2v=1&ddm=0&flowName=GeneralOAuthFlow`;
             window.location.href = auth_url;
+        },
+
+        openModal() {
+            this.isModalOpen = true;
+        },
+
+        closeModal() {
+            this.isModalOpen = false;
+        },
+
+        sellerLogin(formData) {
+            console.log("판매자 로그인 성공: ", JSON.stringify(formData));
         }
     }
 }
