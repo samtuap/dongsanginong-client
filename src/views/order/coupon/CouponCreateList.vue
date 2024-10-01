@@ -250,13 +250,13 @@ export default {
 .submit-btn {
   background-color: #b4cf97;
   color: black;
-  border-radius: 50px;
+  border-radius: 30px;
   padding: 10px 40px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold; /* 글씨체를 할인율과 동일하게 설정 */
   align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
   line-height: 1.5; /* 등록 텍스트를 올리기 위한 기본 설정 */
-  width: 80%; /* 버튼 크기를 80%로 줄임 */
+  width: 30%; /* 버튼 크기를 80%로 줄임 */
 }
 
 .submit-btn .v-btn__content {
