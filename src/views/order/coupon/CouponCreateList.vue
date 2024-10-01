@@ -54,7 +54,7 @@
           </div>
 
           <!-- 등록 버튼 -->
-          <v-btn class="submit-btn" @click="createCoupon">등록</v-btn>
+          <v-btn class="submit-btn" @click="validateAndCreateCoupon">등록</v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -138,6 +138,26 @@ export default {
         this.datePickerDialog = false;
         this.timePickerDialog = false;
       }
+    },
+    validateAndCreateCoupon() {
+      // 필수 필드 확인
+      if (!this.coupon.couponName) {
+        alert('쿠폰 이름을 입력하세요.');
+        return;
+      }
+
+      if (this.coupon.discountPercentage <= 0) {
+        alert('할인율은 1% 이상이어야 합니다.');
+        return;
+      }
+
+      if (!this.coupon.expirationDate || !this.coupon.expirationTime) {
+        alert('쿠폰 소멸 일자를 선택하세요.');
+        return;
+      }
+
+      // 유효성 검사 통과 시 쿠폰 생성 요청
+      this.createCoupon();
     },
     async createCoupon() {
       const requestData = {
