@@ -1,15 +1,16 @@
 <template>
-    <v-dialog v-model="alertModal" max-width="260px">
-        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-            <v-card-text>회원가입이 완료되었습니다.</v-card-text>
-            <v-btn @click="handleCloseModal(true)" class="submit-btn">close</v-btn>
+    <v-dialog v-model="alertModal" max-width="300px">
+        <v-card class="modal" style="align-items: center; text-align: center; height: 130px; padding-bottom: 20px; 
+        overflow-y: hidden;">
+            <v-card-text style="margin-bottom:5px">회원가입이 완료되었습니다.</v-card-text>
+            <v-btn @click="handleCloseModal(true)" class="submit-btn" style="border-radius: 50px; width: 100px">close</v-btn>
         </v-card>
     </v-dialog>
 
-    <v-dialog v-model="errorModal" max-width="260px">
-        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+    <v-dialog v-model="errorModal" max-width="300px">
+        <v-card class="modal" style="align-items: center; text-align: center;">
             <v-card-text>회원가입 중 오류가 발생했습니다. <br /> 다시 시도해주세요.</v-card-text>
-            <v-btn @click="handleCloseModal(false)" class="submit-btn">close</v-btn>
+            <v-btn @click="handleCloseModal(false)" class="submit-btn" width="100px">close</v-btn>
         </v-card>
     </v-dialog>
 
@@ -150,7 +151,7 @@ export default {
 .member-signup {
     max-width: 600px;
     margin: 0 auto;
-    padding-top: 6%;
+    padding-top: 3%;
     text-align: center;
 }
 
