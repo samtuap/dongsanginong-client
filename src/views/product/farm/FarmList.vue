@@ -130,7 +130,7 @@ export default {
             "size": 10,
             "sort": "favoriteCount,desc"
         }
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/list`, { params });
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/no-auth/farm/list`, { params });
         this.topFarmList = response.data.content;
 
 
@@ -139,7 +139,7 @@ export default {
             "size": this.pageSize,
             "sort": "id,desc"
         }
-        const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/list`, { 'params': listParams });
+        const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/no-auth/farm/list`, { 'params': listParams });
         this.farmList = farmListResponse.data.content;
 
 
@@ -184,7 +184,7 @@ export default {
                 farmName: this.searchQuery
             }
 
-            const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/search`, { params });
+            const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/no-auth/farm/search`, { params });
             this.farmList = farmListResponse.data.content;
         },
         async loadFarm() {
