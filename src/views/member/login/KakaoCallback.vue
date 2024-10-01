@@ -4,10 +4,11 @@
     </div>
 
     <v-dialog v-model="alertModal" max-width="300px">
-        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-            <v-card-text>동상이농 회원이 아닙니다. <br /> 회원가입 페이지로 이동합니다.</v-card-text>
-            <v-btn @click="handleCloseModal" class="submit-btn">close</v-btn>
-        </v-card>
+        <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; 
+    overflow-y: hidden;">
+        <v-card-text style="margin-bottom:5px">동상이농 회원이 아닙니다. <br /> 회원가입 페이지로 이동합니다.</v-card-text>
+        <v-btn @click="handleCloseModal(true)" class="submit-btn" style="border-radius: 50px; width: 100px">close</v-btn>
+    </v-card>
     </v-dialog>
 </template>
 
