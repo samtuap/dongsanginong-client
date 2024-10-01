@@ -146,6 +146,7 @@
           });
           alert("인증이 완료되었습니다.");
           this.closeModal(); // 모달 닫기
+          window.location.href = '/member/sign-in';
         } catch (error) {
           alert(error.response?.data?.message || "인증번호가 올바르지 않습니다.");
         }

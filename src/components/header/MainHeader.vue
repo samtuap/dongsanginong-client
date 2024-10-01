@@ -43,10 +43,18 @@ export default {
     created() {
         // localStorage.setItem('token', 'temporary-token'); // 테스트용
         const token = localStorage.getItem('accessToken');
+        const sellerId = localStorage.getItem('sellerId');
+
         if (token) {
             this.isLogin = true;
         } else {
             this.isLogin = false;
+        }
+
+        if(sellerId) {
+            this.isSeller = true;
+        } else {
+            this.isSeller = false;
         }
     },
     methods: {

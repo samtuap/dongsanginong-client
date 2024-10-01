@@ -1,6 +1,7 @@
 import DeliveryManageList from "@/views/order/delivery/DeliveryManageList.vue"
 import SellerSalesDetail from "@/views/product/seller/SellerSalesDetail.vue"
 import SellerSignUp from "@/views/product/seller/SellerSignUp.vue"
+import SellerWithDraw from "@/views/product/seller/SellerWithDraw.vue"
 export const sellerRouter = [
 
     {
@@ -17,5 +18,10 @@ export const sellerRouter = [
         path: '/seller/sign-up',
         name: 'sellerSignUp',
         component: SellerSignUp
+    },
+    {
+        path: '/seller/withdraw',
+        name: 'SellerWithdraw',
+        component: SellerWithDraw
     },
 ]
