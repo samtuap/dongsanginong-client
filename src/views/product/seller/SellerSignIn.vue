@@ -41,6 +41,8 @@ export default {
               const token = response.data.accessToken;
               
               localStorage.setItem('accessToken', token);
+              localStorage.setItem('sellerId', response.data.sellerId)
+              localStorage.setItem('role', response.data.role)
   
               this.$emit("login", this.formData);   
               this.closeModal();

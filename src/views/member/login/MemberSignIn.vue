@@ -10,6 +10,7 @@
             <img :src="require('@/assets/google_login.png')" class="sign-in" @click="googleLogin" />
             <!-- 판매자로 로그인하기 링크 -->
             <a class="seller-login" @click="openModal">판매자로 로그인하기</a>
+            <a class="seller-signup" @click="goToSellerSignUp">판매자로 회원가입</a>
         </div>
 
         <SellerSignIn
@@ -58,6 +59,10 @@ export default {
 
         sellerLogin(formData) {
             console.log("판매자 로그인 성공: ", JSON.stringify(formData));
+        },
+
+        goToSellerSignUp() {
+            this.$router.push({ path: '/seller/sign-up' });
         }
     }
 }
@@ -111,6 +116,18 @@ export default {
 }
 
 .seller-login:hover {
+    text-decoration: underline;
+}
+
+.seller-signup {
+    margin-top: 20px;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.seller-signup:hover {
     text-decoration: underline;
 }
 </style>
