@@ -80,7 +80,7 @@ export default {
                 localStorage.setItem("accessToken", response.data.accessToken);
                 localStorage.setItem("refreshToken", response.data.refreshToken);
                 localStorage.setItem("role", response.data.role);
-                console.log("회원가입 성공:", response.data);
+                localStorage.setItem("memberId", response.data.memberId);
                 alert('회원가입이 완료되었습니다.');
                 window.location.href = '/'; // 로그인 페이지로 이동
             } catch (error) {
