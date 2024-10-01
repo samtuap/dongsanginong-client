@@ -72,6 +72,7 @@ export default {
                 localStorage.setItem("accessToken", signInResponse.data.accessToken);
                 localStorage.setItem("refreshToken", signInResponse.data.refreshToken);
                 localStorage.setItem("role", signInResponse.data.role);
+                localStorage.setItem("memberId", signInResponse.data.memberId);
 
                 window.location.href = process.env.VUE_APP_MY_URL;
             } catch (error) {

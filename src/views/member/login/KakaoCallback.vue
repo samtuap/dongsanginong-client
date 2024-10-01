@@ -66,6 +66,7 @@ export default {
                 localStorage.setItem("accessToken", signInResponse.data.accessToken);
                 localStorage.setItem("refreshToken", signInResponse.data.refreshToken);
                 localStorage.setItem("role", signInResponse.data.role);
+                localStorage.setItem("memberId", signInResponse.data.memberId)
 
                 // 홈으로 리다이렉트
                 window.location.href = process.env.VUE_APP_MY_URL;
