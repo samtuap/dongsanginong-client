@@ -1,26 +1,5 @@
 <template>
     <v-container class="custom-container">
-        <v-row>
-            <v-col cols="6"></v-col>
-            <v-col cols="2">
-                <v-select
-                v-model="sortOption"
-                :items="sortOptions"
-                solo
-                density="compact"
-                variant="solo"
-                label="정렬 기준"
-                class="sort-select">
-                </v-select>
-            </v-col>
-            <v-col cols="4">
-                <v-text-field :loading="loading" v-model="searchQuery" label="검색어를 입력하세요." class="search-bar"
-                @click:append="onSearch" append-inner-icon="mdi-magnify" density="compact" variant="solo"
-                single-line @click:append-inner="onClick">
-                </v-text-field>
-            </v-col>
-
-        </v-row>
         <!-- top 10 시작 -->
         <h3>Best 10</h3>
         <p style="color: gray;">가장 많이 스크랩된 농장입니다.</p>
@@ -29,12 +8,22 @@
                 <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
                 <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n">
                     <v-row class="d-flex justify-center">
-                        <v-col v-for="(farm, index) in paginatedFarms(n)" :key="index" cols="12" md="2"
-                            class="d-flex justify-center">
+                        <v-col v-for="(farm, index) in paginatedFarms(n)" :key="index" cols="12" md="2" class="d-flex justify-center">
                             <v-card variant="text" style="width:190px; height:230px;">
-                                <v-img class="justify-space-between" width="190px" height="180px" :src="farm.imageUrl"
-                                    alt="Farm 썸네일" cover />
-                                <v-card-text>{{ farm.farmName }}, {{ farm.favoriteCount }}</v-card-text>
+                                <v-img class="farm-image" width="190px" height="180px" :src="farm.imageUrl"
+                                    alt="Farm 썸네일" cover
+                                    @click="this.$router.push(`/farm/${farm.id}`)"
+                                    />
+                                    <v-card-text>
+                                        <span v-if="farm.farmName.length > 10"> {{ farm.farmName.substring(0, 9) }}... </span>
+                                        <span v-else> {{farm.farmName}}</span>
+                                        <v-chip
+                                        size="small"
+                                        color="deep_orange"
+                                        >
+                                        💛 {{ farm.favoriteCount }}
+                                        </v-chip>
+                                    </v-card-text>
                             </v-card>
                         </v-col>
                     </v-row>
@@ -56,15 +45,52 @@
         <!-- 농장 리스트 -->
         <v-container style="width: 100%; border-top: 1px solid #D4D4D4; text-align: center;">
             <h3>농장 둘러보기</h3>
-            <v-container class="d-flex justify-center ">
+
+            <v-row style="margin-top: 20px;">
+                <v-col cols="6"></v-col>
+                <v-col cols="2">
+                    <v-select
+                    v-model="sortOption"
+                    :items="sortOptions"
+                    solo
+                    density="compact"
+                    variant="solo"
+                    label="정렬 기준"
+                    class="sort-select">
+                    </v-select>
+                </v-col>
+                <v-col cols="4">
+                    <v-text-field :loading="loading" v-model="searchQuery" label="검색어를 입력하세요." class="search-bar"
+                    append-inner-icon="mdi-magnify"
+                    append-inner-icon-class="search-icon"
+                    density="compact"
+                    variant="solo"
+                    single-line @click:append-inner="onSearch">
+                    </v-text-field>
+                </v-col>
+    
+            </v-row>
+            <v-container class="d-flex custom-card-container">
                 <v-row>
-                    <v-col v-for="(farm, index) in farmList" :key="index">
-                        <v-card class="farm-card" variant="text" style="width:190px; height:230px;">
-                            <v-img class="justify-space-between" width="190px" height="180px" :src="farm.imageUrl"
-                                alt="Farm 썸네일" cover />
-                            <v-card-text>{{ farm.farmName }}, {{ farm.favoriteCount }}</v-card-text>
-                        </v-card>
-                    </v-col>
+                    <v-card v-for="(farm, index) in farmList" :key="index" class="farm-card" variant="text" style="width:190px; height:230px; margin: 10px; margin-bottom: 15px;">
+                        <v-img
+                        @click="this.$router.push(`/farm/${farm.id}`)"
+                        class="farm-image"
+                        width="190px"
+                        height="180px"
+                        :src="farm.imageUrl"
+                            alt="Farm 썸네일" cover />
+                        <v-card-text>
+                            <span v-if="farm.farmName.length > 10"> {{ farm.farmName.substring(0, 9) }}... </span>
+                            <span v-else> {{farm.farmName}}</span>
+                            <v-chip
+                            size="small"
+                            color="deep_orange"
+                            >
+                            💛 {{ farm.favoriteCount }}
+                            </v-chip>
+                        </v-card-text>
+                    </v-card>
                 </v-row>
 
             </v-container>
@@ -85,12 +111,15 @@ export default {
             windowCount: 2,
             farmList: [],
             currentPage: 0,
-            pageSize: 20,
+            pageSize: 10,
             searchQuery: "",
             sortOptions: [
                 "최신순", "즐겨찾기 많은 순", "판매량 순"
             ],
-            sortOption: "최신순"
+            sortOption: "최신순",
+            sortOptionMap: new Map(),
+            isLoading: false,
+            isLastPage: false,
         }
 
     },
@@ -112,6 +141,19 @@ export default {
         const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/list`, { 'params': listParams });
         this.farmList = farmListResponse.data.content;
 
+
+        // sortOptionMap 만들기
+        this.sortOptionMap.set("최신순", "id,desc");
+        this.sortOptionMap.set("즐겨찾기 많은 순", "favoriteCount,desc");
+        this.sortOptionMap.set("판매량 순", "orderCount,desc");
+
+        // 페이지네이션을 위한 이벤트 리스너 추가
+        window.addEventListener('scroll', this.scrollPagination); // 스크롤을 움직였을 때
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                    this.onSearch();
+                }
+            }); // 엔터를 눌렀을 때
     },
     methods: {
         next() {
@@ -130,7 +172,57 @@ export default {
             console.log(this.topFarmList.slice(start, end));
             return this.topFarmList.slice(start, end);
         },
+        async onSearch() {
+            this.currentPage = 0;
+            this.pageSize = 10;
 
+            const params = {
+                page: this.currentPage,
+                size: this.pageSize,
+                sort: this.sortOptionMap.get(this.sortOption),
+                farmName: this.searchQuery
+            }
+
+            const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/search`, { params });
+            this.farmList = farmListResponse.data.content;
+        },
+        async loadFarm() {
+            try {
+                
+                if(this.isLoading || this.isLastPage) return;
+
+                this.isLoading = true;
+                this.currentPage++;
+                let params = {
+                    page: this.currentPage,
+                    size: this.pageSize,
+                    sort: this.sortOptionMap.get(this.sortOption),
+                    farmName: this.searchQuery
+                }
+
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/search`, { params });
+                // 서버에서 주지 않은 데이터를 추가한 것이다.
+                const additionalData = response.data.content;
+                this.farmList = [...this.farmList, ...additionalData]; // 0번 페이지 + 1번 페이지 + ...
+                this.isLastPage = response.data.last; // 라스트 여부
+                if(this.isLastPage) {
+                    this.isLastPage = true;
+                }
+            
+                this.isLoading = false; // 로딩 끝!
+            } catch(e) {
+                console.log(e);
+            }
+
+            console.log(this.currentPage);
+        },
+        scrollPagination() {
+            const isBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+
+            if(isBottom && !this.isLastPage && !this.isLoading) {
+                this.loadFarm();
+            }
+        },
     }
 }
 </script>
@@ -152,4 +244,31 @@ export default {
     width: 100%;
     margin-right: 2px;
 }
+
+/* Target the appended icon specifically */
+.search-icon {
+    transition: color 0.3s ease;
+}
+  
+/* Apply hover effect */
+.search-icon:hover {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.farm-image {
+    transition: color 0.7s ease;
+}
+
+.farm-image:hover {
+    opacity: 0.85;
+    cursor: pointer;
+    transition: 0.7s ease;
+}
+
+.custom-card-container {
+    display: flex;
+    justify-content: left;
+}
+
 </style>

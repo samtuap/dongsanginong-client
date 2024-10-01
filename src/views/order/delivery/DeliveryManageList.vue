@@ -261,4 +261,13 @@ export default {
     margin: 0 auto;
     padding-bottom: 10px;
 }
+
+.search-bar {
+    max-width: 600px;
+  }
+  
+  .sort-select {
+    width: 120px;
+    margin-right: 8px;
+  }
 </style>
