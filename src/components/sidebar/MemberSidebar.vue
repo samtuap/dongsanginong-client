@@ -1,0 +1,41 @@
+<template>
+    <v-navigation-drawer app permanent>
+        <v-list dense>
+            <v-list-item-group>
+                <v-list-item style="text-align: center;">
+                    <v-list-item-title class="item-title"><strong>내 정보 수정하기</strong></v-list-item-title>
+                </v-list-item>
+                <v-col class="text-center">
+                    <v-btn class="cat_btn">등록된 전화번호 변경</v-btn><br>
+                    <v-btn class="cat_btn">주소지 변경</v-btn><br>
+                    <v-btn class="cat_btn">구독 조회 / 변경</v-btn><br>
+                    <v-btn class="cat_btn">보유한 쿠폰 조회</v-btn><br>
+                    <v-btn class="cat_btn">결제 내역 조회</v-btn><br>
+                    <v-btn class="cat_btn">배송 조회</v-btn><br>
+                </v-col>
+            </v-list-item-group>
+        </v-list>
+    </v-navigation-drawer>
+</template>
+<script>
+export default {
+
+}
+</script>
+<style scoped>
+.item-title {
+    background-color: #BCC07B; 
+    border-radius: 50px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+}
+.cat_btn{
+    border: none;
+    box-shadow: none;
+    justify-content: center;
+    width: 100%;
+}
+</style>
