@@ -33,7 +33,7 @@
             </v-window>
             <v-btn icon="mdi-chevron-right" variant="plain" @click="next"></v-btn>
             </div>
-            <v-card-actions style="marign: auto; justify-content: center;">
+            <v-card-actions style="justify-content: center;">
                 <v-item-group v-model="onboarding" class="text-center" mandatory>
                     <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
                         <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"

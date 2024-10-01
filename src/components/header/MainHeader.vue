@@ -4,7 +4,7 @@
             <v-row no-gutters class="flex-nowrap justify-space-between">
                 <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start">
-                    <v-btn style="text-transform: none;">Farm</v-btn>
+                    <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
                     <v-btn style="text-transform: none;">Live</v-btn>
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;" v-if="!isSeller">Mypage</v-btn>
                     <v-btn style="text-transform: none;" v-if="isSeller">MyFarm</v-btn>
