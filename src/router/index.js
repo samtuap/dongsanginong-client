@@ -5,7 +5,6 @@ import MemberLoginPage from "@/views/member/login/MemberLoginPage.vue";
 import KakaoCallback from "@/views/member/login/KakaoCallback.vue";
 import GoogleCallback from "@/views/member/login/GoogleCallback.vue";
 import { farmNoticeRouter } from "./farmNoticeRouter";
-import { couponRouter } from "./couponRouter";
 import { sellerRouter } from '@/router/sellerRouter';
 
 
@@ -41,7 +40,6 @@ const routes = [
   },
 
   ...farmNoticeRouter,
-  ...couponRouter,
   ...sellerRouter,
 ];
 
