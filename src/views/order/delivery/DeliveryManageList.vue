@@ -141,16 +141,12 @@ export default {
     methods: {
         async upcomingDelivery(page) {
             try {
-                // 다가오는 배송 
-                const headers = {
-                    "Authorization": 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3Mjc2NzQ1OTIsImV4cCI6MTcyNzcxMDU5Miwic3ViIjoiMyIsInJvbGUiOiJTRUxMRVIifQ.OQmquZ2RQh1RiBwX091EnmWox7FO55Rs9Wi-i0OgE-cMpdKMpo2TvfMFRSxo_5pQY0MFaGQu-m6Jx4l01IjjZQ'
-                    };
+
                     const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/delivery/upcoming/list`, {
                             params: {
                                 page: page - 1,
                                 size: this.pageSize  
-                            },
-                            headers
+                            }
                         });
                     this.responseBefore = response.data.content;
                     this.totalItems = response.data.totalElements;
@@ -160,9 +156,6 @@ export default {
         },
         async processedDelivery(page) {
             try {
-                const headers = {
-                    "Authorization": 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3Mjc2NzQ1OTIsImV4cCI6MTcyNzcxMDU5Miwic3ViIjoiMyIsInJvbGUiOiJTRUxMRVIifQ.OQmquZ2RQh1RiBwX091EnmWox7FO55Rs9Wi-i0OgE-cMpdKMpo2TvfMFRSxo_5pQY0MFaGQu-m6Jx4l01IjjZQ'
-                };
 
                 // 처리된 배송 데이터 요청
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/delivery/completed/list`, {
@@ -170,7 +163,6 @@ export default {
                         page: page - 1, // 0-based pagination
                         size: this.processedPageSize
                     },
-                    headers
                 });
 
                 // 처리된 배송의 데이터 및 총 항목 수 업데이트
@@ -197,13 +189,11 @@ export default {
                 return;
             }
             try {
-                const headers = {
-                    "Authorization": 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3Mjc2NzQ1OTIsImV4cCI6MTcyNzcxMDU5Miwic3ViIjoiMyIsInJvbGUiOiJTRUxMRVIifQ.OQmquZ2RQh1RiBwX091EnmWox7FO55Rs9Wi-i0OgE-cMpdKMpo2TvfMFRSxo_5pQY0MFaGQu-m6Jx4l01IjjZQ'
-                };
+
                 const data = {
                     billingNumber: this.billingNumber
                 };
-                await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/order-service/delivery/createBillingNumber/${this.selectedDeliveryId}`, data, {headers});
+                await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/order-service/delivery/createBillingNumber/${this.selectedDeliveryId}`, data);
 
                 this.dialog = false;
                 this.billingNumber = '';
