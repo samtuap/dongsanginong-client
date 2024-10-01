@@ -2,6 +2,13 @@
     <div class="loader-container">
         <img src="/loading.gif" width="50px" />
     </div>
+
+    <v-dialog v-model="alertModal" max-width="300px">
+        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+            <v-card-text>동상이농 회원이 아닙니다. <br /> 회원가입 페이지로 이동합니다.</v-card-text>
+            <v-btn @click="handleCloseModal" class="submit-btn">close</v-btn>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
@@ -10,6 +17,11 @@ import qs from 'qs'; // qs 패키지 추가 > 구글 로그인 시 쿼리 문자
 
 export default {
     name: "GoogleCallback",
+    data() {
+        return {
+            alertModal: false
+        };
+    },
     created() {
         const code = new URL(window.location.href).searchParams.get("code");
 
@@ -36,7 +48,7 @@ export default {
 
                 const tokenResponse = await axios.post(
                     'https://oauth2.googleapis.com/token',
-                    qs.stringify(data), // qs로 쿼리 문자열 형식으로 변환
+                    qs.stringify(data),
                     {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
@@ -54,8 +66,8 @@ export default {
                 });
                 const email = userResponse.data.email;
                 localStorage.setItem("email", email);
-                localStorage.setItem("socialType", "GOOGLE")
-                localStorage.setItem("token", access_token)
+                localStorage.setItem("socialType", "GOOGLE");
+                localStorage.setItem("token", access_token);
 
                 const apiUrl = `${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-in`;
                 const signInResponse = await axios.post(
@@ -67,8 +79,8 @@ export default {
                         }
                     }
                 );
-                
-                localStorage.clear(); // 회원가입을 위해서 저장했던 데이터 지워주기
+
+                localStorage.clear();
                 localStorage.setItem("accessToken", signInResponse.data.accessToken);
                 localStorage.setItem("refreshToken", signInResponse.data.refreshToken);
                 localStorage.setItem("role", signInResponse.data.role);
@@ -77,12 +89,15 @@ export default {
                 window.location.href = process.env.VUE_APP_MY_URL;
             } catch (error) {
                 if (error.response.data.name === 'NEED_TO_REGISTER') {
-                    alert('동상이농 회원이 아닙니다. 회원가입 페이지로 이동합니다.');
-                    window.location.href = '/member/sign-up';
+                    this.alertModal = true;
                 } else {
                     console.error(error);
                 }
             }
+        },
+        handleCloseModal() {
+            this.alertModal = false;
+            window.location.href = '/member/sign-up';
         }
     }
 }
@@ -93,5 +108,19 @@ export default {
     display: flex;
     justify-content: center;
     padding-top: 100px;
+}
+
+.modal {
+    background-color: rgb(255, 255, 255);
+    border: none;
+    box-shadow: none;
+    border-radius: 10px;
+}
+.submit-btn {
+    margin-left: 10px;
+    margin-top: 8px;
+    background-color: #BCC07B;
+    color: black;
+    border-radius: 50px;
 }
 </style>

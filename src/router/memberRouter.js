@@ -2,6 +2,7 @@ import MemberSignIn from "@/views/member/login/MemberSignIn.vue";
 import KakaoCallback from "@/views/member/login/KakaoCallback.vue";
 import GoogleCallback from "@/views/member/login/GoogleCallback.vue";
 import MemberSignUp from "@/views/member/login/MemberSignUp.vue";
+import MemberMyPage from "@/views/member/myPage/MemberMyPage.vue";
 
 export const memberRouter = [
   {
@@ -23,5 +24,10 @@ export const memberRouter = [
     path: "/member/sign-up",
     name: "MemberSignUp",
     component: MemberSignUp,
+  },
+  {
+    path: "/member/my-page",
+    name: "MemberMyPage",
+    component: MemberMyPage,
   },
 ];

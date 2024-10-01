@@ -1,23 +1,35 @@
 <template>
+    <v-dialog v-model="alertModal" max-width="260px">
+        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+            <v-card-text>회원가입이 완료되었습니다.</v-card-text>
+            <v-btn @click="handleCloseModal(true)" class="submit-btn">close</v-btn>
+        </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="errorModal" max-width="260px">
+        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+            <v-card-text>회원가입 중 오류가 발생했습니다. <br /> 다시 시도해주세요.</v-card-text>
+            <v-btn @click="handleCloseModal(false)" class="submit-btn">close</v-btn>
+        </v-card>
+    </v-dialog>
+
     <div class="member-signup">
         <h2>회원 정보 입력</h2>
         <hr />
         <form @submit.prevent="onSubmit">
+            <!-- Form Fields -->
             <div class="form-group">
                 <label for="name">이름</label>
                 <input type="text" id="name" v-model="name" placeholder="이름을 입력하세요" required />
             </div>
-
             <div class="form-group">
                 <label for="phone">전화번호</label>
                 <input type="tel" id="phone" v-model="phone" placeholder="전화번호를 입력하세요" required />
             </div>
-
             <div class="form-group">
                 <label for="email">이메일</label>
                 <span style="text-align: left;">{{ email }}</span>
             </div>
-
             <div class="form-group">
                 <label for="zipcode">우편번호</label>
                 <input type="text" id="zipcode" v-model="zipcode" placeholder="우편번호를 입력하세요 (ex. 12345)" required />
@@ -25,22 +37,19 @@
             <div class="form-group">
                 <input type="button" class="find-postal" @click="execDaumPostcode" value="우편번호 찾기" />
             </div>
-            
-
             <div class="form-group">
                 <label for="address">주소</label>
                 <input type="text" id="address" v-model="address" placeholder="도로명 주소를 입력하세요 (ex. 서울시 노원구)" required />
             </div>
-
             <div class="form-group">
                 <label for="address-detail">상세 주소</label>
                 <input type="text" id="address-detail" v-model="addressDetail" placeholder="상세 주소를 입력하세요 (ex. 101호)" required ref="addressDetail" />
             </div>
-
             <button type="submit" class="submit-btn">회원 가입 하기</button>
         </form>
     </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -54,7 +63,9 @@ export default {
             address: '',
             addressDetail: '',
             email: localStorage.getItem("email"),
-            socialType: localStorage.getItem("socialType") // 소셜 타입을 로컬 스토리지에서 가져오기
+            socialType: localStorage.getItem("socialType"),
+            errorModal: false,
+            alertModal: false
         };
     },
     methods: {
@@ -81,11 +92,17 @@ export default {
                 localStorage.setItem("refreshToken", response.data.refreshToken);
                 localStorage.setItem("role", response.data.role);
                 localStorage.setItem("memberId", response.data.memberId);
-                alert('회원가입이 완료되었습니다.');
-                window.location.href = '/'; // 로그인 페이지로 이동
+                this.alertModal = true;
             } catch (error) {
                 console.error("회원가입 실패:", error);
-                alert('회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
+                this.errorModal = true;
+            }
+        },
+        handleCloseModal(isSuccessful) {
+            if (isSuccessful) {
+                window.location.href = '/'; // 회원가입 성공 시 홈으로 이동
+            } else {
+                this.errorModal = false; // 오류 모달 닫기
             }
         },
         execDaumPostcode() {
@@ -116,6 +133,20 @@ export default {
 </script>
 
 <style scoped>
+.modal {
+    background-color: rgb(255, 255, 255);
+    border: none;
+    box-shadow: none;
+    border-radius: 10px;
+}
+.submit-btn {
+    margin-left: 10px;
+    margin-top: 8px;
+    background-color: #BCC07B;
+    color: black;
+    border-radius: 50px;
+}
+
 .member-signup {
     max-width: 600px;
     margin: 0 auto;
