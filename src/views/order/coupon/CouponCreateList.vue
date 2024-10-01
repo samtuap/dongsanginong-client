@@ -60,13 +60,10 @@
     </v-row>
 
     <!-- 날짜 선택 모달 -->
-    <v-dialog v-model="datePickerDialog" max-width="330px">
+    <v-dialog v-model="datePickerDialog" persistent max-width="330px">
       <v-card>
         <v-card-title class="headline">날짜 선택</v-card-title>
-        <v-date-picker 
-          v-model="selectedDate" 
-          @update:model-value="openTimePicker"
-        />
+        <v-date-picker v-model="selectedDate" @update:model-value="openTimePicker" />
       </v-card>
     </v-dialog>
 
@@ -74,7 +71,7 @@
     <v-dialog v-model="timePickerDialog" max-width="290px">
       <v-card>
         <v-card-title class="headline">시간 선택</v-card-title>
-        
+
         <!-- 시간 선택 input 필드 -->
         <div class="form-group time-input">
           <div class="time-picker-container">
@@ -112,12 +109,12 @@ export default {
       coupon: {
         couponName: '',
         discountPercentage: 0,
-        expirationDate: '',  // YYYY-MM-DD 형식
-        expirationTime: '',  // HH:mm 형식
+        expirationDate: '', // YYYY-MM-DD 형식
+        expirationTime: '', // HH:mm 형식
         farmId: null,
       },
       selectedDate: null, // 선택된 날짜
-      selectedTime: "12:00", // 선택된 시간
+      selectedTime: '12:00', // 선택된 시간
       formattedExpiration: '', // 화면에 표시할 날짜 및 시간 형식
       datePickerDialog: false, // 날짜 선택 모달 상태
       timePickerDialog: false, // 시간 선택 모달 상태
@@ -125,16 +122,20 @@ export default {
   },
   methods: {
     openTimePicker() {
-      this.datePickerDialog = false;
-      this.timePickerDialog = true;
+      if (this.selectedDate) {
+        this.timePickerDialog = true; // 시간 선택 모달 열기
+      }
     },
     setDateTime() {
       if (this.selectedDate && this.selectedTime) {
         this.coupon.expirationDate = this.selectedDate;
         this.coupon.expirationTime = this.selectedTime;
 
+        // 날짜와 시간을 포맷팅하여 화면에 표시
         this.formattedExpiration = `${this.selectedDate} ${this.selectedTime}`;
 
+        // 두 모달 모두 닫기
+        this.datePickerDialog = false;
         this.timePickerDialog = false;
       }
     },
@@ -142,7 +143,7 @@ export default {
       const requestData = {
         couponName: this.coupon.couponName,
         discountPercentage: this.coupon.discountPercentage,
-        expirationDate: this.coupon.expirationDate, 
+        expirationDate: this.coupon.expirationDate,
         expirationTime: this.coupon.expirationTime,
         farmId: this.coupon.farmId,
       };
@@ -163,7 +164,7 @@ export default {
         );
         alert('쿠폰이 성공적으로 생성되었습니다.');
       } catch (error) {
-        console.error('쿠폰 생성 실패:', error.response.data);  
+        console.error('쿠폰 생성 실패:', error.response.data);
         alert('쿠폰 생성에 실패했습니다.');
       }
     },
