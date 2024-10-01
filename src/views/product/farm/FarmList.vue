@@ -201,7 +201,7 @@ export default {
                     farmName: this.searchQuery
                 }
 
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/search`, { params });
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/no-auth/farm/search`, { params });
                 // 서버에서 주지 않은 데이터를 추가한 것이다.
                 const additionalData = response.data.content;
                 this.farmList = [...this.farmList, ...additionalData]; // 0번 페이지 + 1번 페이지 + ...
