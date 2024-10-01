@@ -1,21 +1,23 @@
 <template>
     <v-container class="custom-container">
         <!-- top 10 시작 -->
-        <h3>Best 10</h3>
-        <p style="color: gray;">가장 많이 스크랩된 농장입니다.</p>
         <v-card style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%;" rounded="0" flat>
+            <v-card-title>Best 10</v-card-title>
+            <v-card-text style="color: gray;">가장 많이 스크랩된 농장입니다.</v-card-text>
+            <div style="display: flex; justify-content: center; align-items:center;">
+            <v-btn icon="mdi-chevron-left" variant="plain" @click="prev"></v-btn>
             <v-window v-model="onboarding" style="width: 1080px;">
                 <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
                 <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n">
                     <v-row class="d-flex justify-center">
-                        <v-col v-for="(farm, index) in paginatedFarms(n)" :key="index" cols="12" md="2" class="d-flex justify-center">
+                        <v-col v-for="(farm, index) in paginatedFarms(n)" :key="index" cols="12" md="3" class="d-flex justify-center">
                             <v-card variant="text" style="width:190px; height:230px;">
                                 <v-img class="farm-image" width="190px" height="180px" :src="farm.imageUrl"
                                     alt="Farm 썸네일" cover
                                     @click="this.$router.push(`/farm/${farm.id}`)"
                                     />
                                     <v-card-text>
-                                        <span v-if="farm.farmName.length > 10"> {{ farm.farmName.substring(0, 9) }}... </span>
+                                        <span v-if="farm.farmName.length > 10"> {{ farm.farmName.substring(0, 10) }}... </span>
                                         <span v-else> {{farm.farmName}}</span>
                                         <v-chip
                                         size="small"
@@ -29,15 +31,15 @@
                     </v-row>
                 </v-window-item>
             </v-window>
-            <v-card-actions class="justify-space-between">
-                <v-btn icon="mdi-chevron-left" variant="plain" @click="prev"></v-btn>
+            <v-btn icon="mdi-chevron-right" variant="plain" @click="next"></v-btn>
+            </div>
+            <v-card-actions style="marign: auto; justify-content: center;">
                 <v-item-group v-model="onboarding" class="text-center" mandatory>
                     <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
                         <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
                             @click="toggle"></v-btn>
                     </v-item>
                 </v-item-group>
-                <v-btn icon="mdi-chevron-right" variant="plain" @click="next"></v-btn>
             </v-card-actions>
         </v-card>
         <!-- top 10 끝 -->
@@ -72,9 +74,8 @@
             </v-row>
             <v-container class="d-flex custom-card-container">
                 <v-row>
-                    <v-card v-for="(farm, index) in farmList" :key="index" class="farm-card" variant="text" style="width:190px; height:230px; margin: 10px; margin-bottom: 15px;">
+                    <v-card v-for="(farm, index) in farmList" :key="index" class="farm-card" md="2" variant="text" style="width:190px; height:230px; margin: 10px; margin-bottom: 15px;">
                         <v-img
-                        @click="this.$router.push(`/farm/${farm.id}`)"
                         class="farm-image"
                         width="190px"
                         height="180px"
@@ -108,7 +109,7 @@ export default {
         return {
             topFarmList: [],
             onboarding: 1,
-            windowCount: 2,
+            windowCount: 3,
             farmList: [],
             currentPage: 0,
             pageSize: 10,
@@ -166,7 +167,7 @@ export default {
         },
         paginatedFarms(page) {
             // 페이지에 따라 프로젝트를 반환하도록 수정
-            const farmsPerPage = 5;
+            const farmsPerPage = 4;
             const start = (page - 1) * farmsPerPage;
             const end = start + farmsPerPage;
             console.log(this.topFarmList.slice(start, end));
