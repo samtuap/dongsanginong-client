@@ -21,10 +21,10 @@
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
                         @click="alertModal = true">Logout</v-btn> <!-- Open modal instead of logging out directly -->
                     <v-btn color="white" class="reduce-spacing">
-                        <img src="/notifications.png" width=30 alt="Logo" />
+                        <img src="/notifications.png" width=25 alt="Logo" />
                     </v-btn>
                     <v-btn color="white">
-                        <img src="/searchLogo.png" width=20 alt="Logo" />
+                        <img src="/searchLogo.png" width=17 alt="Logo" />
                     </v-btn>
                 </v-col>
             </v-row>
