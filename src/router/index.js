@@ -5,6 +5,7 @@ import { farmNoticeRouter } from "./farmNoticeRouter";
 import { couponRouter } from "./couponRouter";
 import { sellerRouter } from '@/router/sellerRouter';
 import { memberRouter } from "./memberRouter";
+import { farmRouter } from "./farmRouter";
 
 
 const routes = [
@@ -26,7 +27,8 @@ const routes = [
   ...farmNoticeRouter,
   ...couponRouter,
   ...sellerRouter,
-  ...memberRouter
+  ...memberRouter,
+  ...farmRouter
 ];
 
 const router = createRouter({
