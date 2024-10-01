@@ -4,6 +4,7 @@ import HomeView from "../views/HomeView.vue";
 import { farmNoticeRouter } from "./farmNoticeRouter";
 import { sellerRouter } from '@/router/sellerRouter';
 import { memberRouter } from "./memberRouter";
+import { farmRouter } from "./farmRouter";
 
 
 const routes = [
@@ -24,7 +25,8 @@ const routes = [
 
   ...farmNoticeRouter,
   ...sellerRouter,
-  ...memberRouter
+  ...memberRouter,
+  ...farmRouter
 ];
 
 const router = createRouter({
