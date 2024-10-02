@@ -36,7 +36,7 @@
 
             <div class="info-container">
                 <div class="label">
-                    <label style="font-weight: 900; font-size: large">이름</label>
+                    <label>이름</label>
                     <label>이메일</label>
                     <label>전화번호</label>
                     <label>우편번호</label>
