@@ -46,16 +46,8 @@
     },
     async submitWithdraw() {
       try {
-        const sellerId = localStorage.getItem('sellerId');
-        
-        if (!sellerId) {
-          this.errorMessage = '로그인이 필요합니다.';
-          return;
-        }
-
         // 비밀번호 검증 및 탈퇴 요청 전송
         const response = await axios.delete('http://localhost:8080/product-service/seller/withdraw', {
-          headers: { sellerId }, 
           data: this.password
         });
 
