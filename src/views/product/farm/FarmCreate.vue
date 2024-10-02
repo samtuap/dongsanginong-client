@@ -94,7 +94,7 @@ export default {
     async uploadImage(blob) {
       const accessToken = localStorage.getItem('accessToken');
       const body = {
-        prefix: "test-prefix",
+        prefix: "Farm",
         url: `${blob?.name}`,
       };
       const headers = {
