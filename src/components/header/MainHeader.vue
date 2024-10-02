@@ -2,11 +2,11 @@
     <v-app-bar app dark dense height="70">
         <v-container class="bar" fluid>
             <v-row no-gutters class="flex-nowrap justify-space-between">
-                <!-- 콜 전체를 왼쪽정 렬되게 해줌 -->
+                <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start">
-                    <v-btn style="text-transform: none;">Farm</v-btn>
+                    <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
                     <v-btn style="text-transform: none;">Live</v-btn>
-                    <v-btn style="text-transform: none;" v-if="!isSeller">Mypage</v-btn>
+                    <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;" v-if="!isSeller">Mypage</v-btn>
                     <v-btn style="text-transform: none;" v-if="isSeller">MyFarm</v-btn>
                 </v-col>
                 <v-col class="text-center">
@@ -14,35 +14,45 @@
                         <img src="/inongLogo.png" width=175 alt="Logo" class="main-logo-image" />
                     </v-btn>
                 </v-col>
-                <!-- 콜 전체를 오른쪽 정렬되게 해줌 -->
+                <!-- Right-aligned buttons -->
                 <v-col class="d-flex justify-end">
                     <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing"
                         :to="{ path: '/member/sign-in' }">Login</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
-                        @click="logout">Logout</v-btn>
+                        @click="alertModal = true">Logout</v-btn> <!-- Open modal instead of logging out directly -->
                     <v-btn color="white" class="reduce-spacing">
-                        <img src="/notifications.png" width=30 alt="Logo" />
+                        <img src="/notifications.png" width=25 alt="Logo" />
                     </v-btn>
                     <v-btn color="white">
-                        <img src="/searchLogo.png" width=20 alt="Logo" />
+                        <img src="/searchLogo.png" width=17 alt="Logo" />
                     </v-btn>
                 </v-col>
             </v-row>
-
         </v-container>
     </v-app-bar>
+
+    <v-dialog v-model="alertModal" max-width="300px">
+        <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; 
+        overflow-y: hidden;">
+            <v-card-text>로그아웃 되었습니다.</v-card-text>
+            <v-btn @click="handleLogout" class="submit-btn">close</v-btn>
+        </v-card>
+    </v-dialog>
 </template>
+
 <script>
 export default {
     data() {
         return {
+            alertModal: false, // Initialize alertModal as a reactive data property
             isLogin: false, // 로그인 여부 확인 
             isSeller: false, // seller인지 member인지 여부 확인
-        }
+        };
     },
     created() {
-        // localStorage.setItem('token', 'temporary-token'); // 테스트용
         const token = localStorage.getItem('accessToken');
+        this.isLogin = !!token;
+
         const role = localStorage.getItem('role');
 
         if (token) {
@@ -56,17 +66,19 @@ export default {
         } else {
             this.isSeller = false;
         }
+
     },
     methods: {
-        logout() {
+        handleLogout() {
             localStorage.clear();
             this.isLogin = false;
-            alert('로그아웃 되었습니다.');
-            window.location.href = '/';
+            this.alertModal = false; // Close the modal
+            window.location.href = '/'; // Redirect to home
         },
     },
 };
 </script>
+
 
 <style scoped>
 .bar {
@@ -80,5 +92,19 @@ export default {
 
 .reduce-spacing {
     padding-right: 0px;
+}
+
+.modal {
+    background-color: rgb(255, 255, 255);
+    border: none;
+    box-shadow: none;
+    border-radius: 10px;
+}
+.submit-btn {
+    margin-left: 10px;
+    margin-top: 8px;
+    background-color: #BCC07B;
+    color: black;
+    border-radius: 50px;
 }
 </style>

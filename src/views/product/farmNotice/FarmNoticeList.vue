@@ -23,11 +23,11 @@
 
                     <br>
                     <v-row>
-                        <v-btn color="white" style="box-shadow: none; border: none; margin-bottom: 10px; font-size: 12px;">
+                        <v-btn @click="goToDetail(notice.id)" color="white" style="box-shadow: none; border: none; margin-bottom: 10px; font-size: 12px;">
                             <img src="/comment.png" width=25 alt="Logo" /> 
                             {{ notice.commentCnt }}
                         </v-btn>
-                        <v-btn class="btn-no-background">자세히 보기</v-btn>
+                        <v-btn @click="goToDetail(notice.id)" class="btn-no-background">자세히 보기</v-btn>
                     </v-row>
 
                 </v-card>
@@ -82,6 +82,13 @@ export default {
                 console.log(e);
             }
         },
+        goToDetail(noticeId) {
+            const farm_id = this.$route.params.id;
+            this.$router.push({ 
+                name: 'NoticeDetailWithComment', 
+                params: { farm_id: farm_id, notice_id: noticeId }
+            });
+        }
     }
 
 };
