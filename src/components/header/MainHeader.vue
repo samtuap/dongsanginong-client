@@ -5,7 +5,7 @@
                 <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start">
                     <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
-                    <v-btn style="text-transform: none;">Live</v-btn>
+                    <v-btn :to="{ path: '/live/list'}" style="text-transform: none;">Live</v-btn>
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;" v-if="!isSeller">Mypage</v-btn>
                     <v-btn style="text-transform: none;" v-if="isSeller" @click="checkFarmAndRedirect">MyFarm</v-btn>
                 </v-col>

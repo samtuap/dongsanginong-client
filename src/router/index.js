@@ -5,6 +5,7 @@ import { farmNoticeRouter } from "./farmNoticeRouter";
 import { sellerRouter } from '@/router/sellerRouter';
 import { memberRouter } from "./memberRouter";
 import { farmRouter } from "./farmRouter";
+import { liveRouter } from "./liveRouter";
 
 
 const routes = [
@@ -26,7 +27,8 @@ const routes = [
   ...farmNoticeRouter,
   ...sellerRouter,
   ...memberRouter,
-  ...farmRouter
+  ...farmRouter,
+  ...liveRouter,
 ];
 
 const router = createRouter({
