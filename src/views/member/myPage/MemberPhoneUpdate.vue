@@ -32,8 +32,8 @@
             <hr class="horizontal-divider" />
 
             <div class="footer">
-                <div class="withdraw-container">
-                    <button class="withdraw-button" @click="handleUpdatePhone">전화번호 수정하기</button>
+                <div class="update-container">
+                    <button class="update-button" @click="handleUpdatePhone">전화번호 수정하기</button>
                 </div>
             </div>
         </div>
@@ -113,14 +113,50 @@ export default {
 <style scoped>
 .modal {
     position: fixed;
-    top: 0;
+    top: -100px;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 40px;
+    border-radius: 5px;
+    width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.modal-title+p {
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
 }
 
 .form-input {
@@ -208,13 +244,13 @@ export default {
     margin-top: auto;
 }
 
-.withdraw-container {
+.update-container {
     width: 100%;
     display: flex;
     justify-content: flex-end;
 }
 
-.withdraw-button {
+.update-button {
     background-color: #BCC07B;
     color: black;
     padding: 10px 20px;
@@ -228,5 +264,13 @@ export default {
     width: 1px;
     background-color: #ccc;
     height: 100%;
+}
+
+.submit-btn {
+    margin-left: 10px;
+    margin-top: 8px;
+    background-color: #BCC07B;
+    color: black;
+    border-radius: 50px;
 }
 </style>
