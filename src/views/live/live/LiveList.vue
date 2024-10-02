@@ -55,8 +55,8 @@
                         <!-- <v-card-text style="text-align: center;"><span style="border-bottom: 2px solid #D4D4D4;"><strong>{{ live.farmName }}</strong></span></v-card-text> -->
                         <v-img
                         class="farm-image"
-                        width="200px"
-                        height="300px"
+                        width="180px"
+                        height="280px"
                         :src="live.liveImage"
                             alt="Farm 썸네일" cover />
                         <v-card-text>
