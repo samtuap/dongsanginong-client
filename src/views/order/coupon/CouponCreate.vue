@@ -1,16 +1,11 @@
 <template>
-  <v-container fluid>
-    <v-row>
-      <!-- 사이드바 자리 -->
-      <v-col cols="2">
-        <SellerSidebar />
-      </v-col>
-
-      <!-- 쿠폰 생성 폼 영역 -->
-      <v-col cols="6" class="coupon-form-container">
-        <h2 class="form-title">쿠폰 생성</h2> <!-- 텍스트를 폼 위로 이동 -->
-
-        <v-form class="coupon-form">
+  <v-dialog :model-value="dialog" persistent max-width="600px" @update:model-value="updateDialog">
+    <v-card class="custom-card">
+      <v-card-title class="custom-title">
+        <span class="headline">쿠폰 생성</span>
+      </v-card-title>
+      <v-card-text>
+        <div class="coupon-form no-border">
           <!-- 쿠폰 이름 입력 -->
           <div class="form-group">
             <label for="couponName" class="form-label">쿠폰 이름</label>
@@ -52,12 +47,13 @@
               <v-icon class="calendar-icon" @click="datePickerDialog = true">mdi-calendar</v-icon>
             </div>
           </div>
-
-          <!-- 등록 버튼 -->
-          <v-btn class="submit-btn" @click="validateAndCreateCoupon">등록</v-btn>
-        </v-form>
-      </v-col>
-    </v-row>
+        </div>
+      </v-card-text>
+      <v-card-actions class="action-buttons">
+        <v-btn class="custom-button" @click="validateAndCreateCoupon">등록</v-btn>
+        <v-btn class="custom-cancel-button" @click="updateDialog(false)">닫기</v-btn>
+      </v-card-actions>
+    </v-card>
 
     <!-- 날짜 선택 모달 -->
     <v-dialog v-model="datePickerDialog" persistent max-width="330px">
@@ -68,41 +64,46 @@
     </v-dialog>
 
     <!-- 시간 선택 모달 -->
-    <v-dialog v-model="timePickerDialog" max-width="290px">
+    <v-dialog v-model="timePickerDialog" max-width="350px">
       <v-card>
         <v-card-title class="headline">시간 선택</v-card-title>
-
-        <!-- 시간 선택 input 필드 -->
         <div class="form-group time-input">
           <div class="time-picker-container">
-            <label for="time" class="time-label">시간</label>
             <input
               type="time"
               id="time"
               v-model="selectedTime"
-              class="input-field short-time-input"
+              class="input-field short-time-input centered-input"
             />
           </div>
         </div>
-
         <v-card-actions>
           <v-spacer></v-spacer>
-          <!-- 확인과 취소 위치 변경 -->
           <v-btn text class="custom-button" @click="setDateTime">확인</v-btn>
-          <v-btn text class="custom-button" @click="timePickerDialog = false">취소</v-btn>
+          <v-btn text class="custom-cancel-button" @click="timePickerDialog = false">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
+
+    <!-- 알림 모달 -->
+    <v-dialog v-model="alertDialog" max-width="400px">
+      <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+        <v-card-text>{{ alertMessage }}</v-card-text>
+        <v-btn @click="alertDialog = false;" class="submit-btn">close</v-btn>
+      </v-card>
+    </v-dialog>
+  </v-dialog>
 </template>
 
 <script>
 import axios from 'axios';
-import SellerSidebar from '@/components/sidebar/SellerSidebar.vue';
 
 export default {
-  components: {
-    SellerSidebar,
+  props: {
+    dialog: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
@@ -111,52 +112,75 @@ export default {
         discountPercentage: 0,
         expirationDate: '', // YYYY-MM-DD 형식
         expirationTime: '', // HH:mm 형식
-        farmId: null,
       },
       selectedDate: null, // 선택된 날짜
       selectedTime: '12:00', // 선택된 시간
       formattedExpiration: '', // 화면에 표시할 날짜 및 시간 형식
       datePickerDialog: false, // 날짜 선택 모달 상태
       timePickerDialog: false, // 시간 선택 모달 상태
+      alertDialog: false, // 알림 모달 상태
+      alertMessage: '', // 알림 메시지
     };
   },
   methods: {
+    resetFormData() {
+      this.coupon = {
+        couponName: '',
+        discountPercentage: 0,
+        expirationDate: '',
+        expirationTime: '',
+      };
+      this.selectedDate = null;
+      this.selectedTime = '12:00';
+      this.formattedExpiration = '';
+    },
+    updateDialog(value) {
+      if (!value) {
+        this.resetFormData();
+      }
+      this.$emit('update:dialog', value);
+    },
     openTimePicker() {
       if (this.selectedDate) {
-        this.timePickerDialog = true; // 시간 선택 모달 열기
+        this.timePickerDialog = true;
       }
     },
     setDateTime() {
       if (this.selectedDate && this.selectedTime) {
-        this.coupon.expirationDate = this.selectedDate;
+        const year = this.selectedDate.getFullYear();
+        const month = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(this.selectedDate.getDate()).padStart(2, '0');
+        
+        const formattedDate = `${year}-${month}-${day}`;
+        
+        this.coupon.expirationDate = formattedDate;
         this.coupon.expirationTime = this.selectedTime;
-
-        // 날짜와 시간을 포맷팅하여 화면에 표시
-        this.formattedExpiration = `${this.selectedDate} ${this.selectedTime}`;
-
-        // 두 모달 모두 닫기
+        this.formattedExpiration = `${formattedDate} ${this.selectedTime}`;
+        
         this.datePickerDialog = false;
         this.timePickerDialog = false;
       }
     },
+    showAlert(message) {
+      this.alertMessage = message;
+      this.alertDialog = true;
+    },
     validateAndCreateCoupon() {
-      // 필수 필드 확인
       if (!this.coupon.couponName) {
-        alert('쿠폰 이름을 입력하세요.');
+        this.showAlert('쿠폰 이름을 입력하세요.');
         return;
       }
 
       if (this.coupon.discountPercentage <= 0) {
-        alert('할인율은 1% 이상이어야 합니다.');
+        this.showAlert('할인율은 1% 이상이어야 합니다.');
         return;
       }
 
       if (!this.coupon.expirationDate || !this.coupon.expirationTime) {
-        alert('쿠폰 소멸 일자를 선택하세요.');
+        this.showAlert('쿠폰 소멸 일자를 선택하세요.');
         return;
       }
 
-      // 유효성 검사 통과 시 쿠폰 생성 요청
       this.createCoupon();
     },
     async createCoupon() {
@@ -165,7 +189,6 @@ export default {
         discountPercentage: this.coupon.discountPercentage,
         expirationDate: this.coupon.expirationDate,
         expirationTime: this.coupon.expirationTime,
-        farmId: this.coupon.farmId,
       };
 
       const token = localStorage.getItem('Bearer Token');
@@ -182,10 +205,10 @@ export default {
             },
           }
         );
-        alert('쿠폰이 성공적으로 생성되었습니다.');
+        this.showAlert('쿠폰이 성공적으로 생성되었습니다.');
       } catch (error) {
-        console.error('쿠폰 생성 실패:', error.response.data);
-        alert('쿠폰 생성에 실패했습니다.');
+        console.error('쿠폰 생성 실패:', error.response?.data || error.message);
+        this.showAlert('쿠폰 생성에 실패했습니다.');
       }
     },
   },
@@ -195,26 +218,21 @@ export default {
 <style scoped>
 .coupon-form-container {
   padding: 50px;
-  margin-left: -150px; /* 폼을 왼쪽으로 이동 */
   background-color: white;
-  width: 30%; /* 폼의 가로 크기를 절반으로 줄임 */
 }
 
-.coupon-form {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 40px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: white; /* 폼 안 배경을 흰색으로 */
+.custom-card {
+  border-radius: 30px;
+  padding: 20px;
 }
 
-.form-title {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center; /* 가운데 정렬 */
-  margin-bottom: 20px;
+.custom-title {
+  background-color: #BCC07B;
+  border-radius: 30px;
+  text-align: center;
+  width: calc(97% - 30px);
+  margin: 0 auto;
+  padding: 10px;
 }
 
 .form-group {
@@ -246,6 +264,19 @@ export default {
   width: 80px;
 }
 
+.short-time-input {
+  width: 70%;
+}
+
+.centered-input {
+  margin: 0 auto;
+}
+
+.time-picker-container {
+  display: flex;
+  justify-content: center;
+}
+
 .discount-input {
   display: flex;
   align-items: center;
@@ -268,45 +299,45 @@ export default {
   cursor: pointer;
 }
 
-.submit-btn {
-  background-color: #b4cf97;
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.custom-button {
+  background-color: #BCC07B;
   color: black;
   border-radius: 30px;
   padding: 10px 40px;
   font-size: 15px;
-  font-weight: bold; /* 글씨체를 할인율과 동일하게 설정 */
-  align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
-  line-height: 1.5; /* 등록 텍스트를 올리기 위한 기본 설정 */
-  width: 30%; /* 버튼 크기를 80%로 줄임 */
+  font-weight: bold;
+  line-height: 1.5;
 }
 
-.submit-btn .v-btn__content {
-  transform: translateY(-10px); /* 등록 텍스트를 10px 올림 */
+.custom-cancel-button {
+  background-color: #e0e0e0;
+  color: black;
+  border-radius: 30px;
+  padding: 10px 40px;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
-.submit-btn:hover {
-  background-color: #a3bd87;
+.modal {
+  background-color: rgb(255, 255, 255);
+  border: none;
+  box-shadow: none;
+  border-radius: 10px;
 }
 
-.short-time-input {
-  width: 50%; /* 시간 선택 input의 가로 길이를 50%로 줄임 */
-}
-
-.time-picker-container {
-  display: flex;
-  justify-content: center; /* input과 label을 가운데 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  gap: 30px; /* label과 input 사이의 거리 30px로 설정 */
-  margin-top: 10px; /* label과 input을 10px 아래로 이동 */
-}
-
-.custom-button {
-  color: black !important; /* 텍스트 색상 검정으로 설정 */
-  transition: background-color 0.3s ease; /* 배경색 변경 시 부드럽게 전환 */
-  border-radius: 50px; /* 모서리 둥글기 50px로 설정 */
-}
-
-.custom-button:hover {
-  background-color: #BCC07B; /* 마우스 호버 시 배경색 변경 */
+.submit-btn {
+  margin-left: 100px;
+  margin-top: 20px;
+  background-color: #BCC07B;
+  color: black;
+  border-radius: 50px;
+  width: 50%; /* 가로 크기를 절반으로 줄임 */
 }
 </style>

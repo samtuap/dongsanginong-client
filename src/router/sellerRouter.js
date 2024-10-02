@@ -1,6 +1,7 @@
 import DeliveryManageList from "@/views/order/delivery/DeliveryManageList.vue"
 import SellerSalesDetail from "@/views/product/seller/SellerSalesDetail.vue"
-import CouponCreate from "@/views/order/coupon/CouponCreateList.vue"
+import CouponCreate from "@/views/order/coupon/CouponCreate.vue"
+import CouponList from "@/views/order/coupon/CouponList.vue"
 import SellerSignUp from "@/views/product/seller/SellerSignUp.vue"
 import SellerWithDraw from "@/views/product/seller/SellerWithDraw.vue"
 
@@ -15,6 +16,11 @@ export const sellerRouter = [
         path: '/coupons/create',
         name: 'CouponCreate',
         component: CouponCreate
+    },
+    {
+        path: '/coupons/:farm_id/list',
+        name: 'CouponList',
+        component: CouponList
     },
     {
         path: '/seller/delivery-management',
