@@ -3,6 +3,7 @@ import SellerSalesDetail from "@/views/product/seller/SellerSalesDetail.vue"
 import CouponCreate from "@/views/order/coupon/CouponCreateList.vue"
 import SellerSignUp from "@/views/product/seller/SellerSignUp.vue"
 import SellerWithDraw from "@/views/product/seller/SellerWithDraw.vue"
+import ProductCreate from "@/views/product/package/ProductCreate.vue"
 
 export const sellerRouter = [
 
@@ -30,5 +31,10 @@ export const sellerRouter = [
         path: '/seller/withdraw',
         name: 'SellerWithdraw',
         component: SellerWithDraw
+    },
+    {
+        path: '/seller/create-product',
+        name: 'ProductCreate',
+        component: ProductCreate
     },
 ]
