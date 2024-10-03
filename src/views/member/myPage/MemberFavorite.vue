@@ -12,7 +12,7 @@
                             <v-col v-for="(farm, index) in paginatedFarms(n)" :key="index" cols="12" md="3" class="d-flex justify-center">
                                 <v-card variant="text" style="width:190px; height:230px;">
                                     <v-img class="farm-image" width="190px" height="180px" :src="farm.profileImageUrl" alt="Farm 썸네일" cover @click="this.$router.push(`/farm/${farm.id}`)" />
-                                    <v-card-text>
+                                    <v-card-text style="padding: 0; margin-top: 10px; text-align:center; font-weight: bold;">
                                         <span v-if="farm.farmName.length > 10"> {{ farm.farmName.substring(0, 10) }}...</span>
                                         <span v-else> {{ farm.farmName }}</span>
                                     </v-card-text>
@@ -36,7 +36,7 @@
                             <v-col v-for="(packageProduct, index) in paginatedPackageProducts(n)" :key="index" cols="12" md="3" class="d-flex justify-center">
                                 <v-card variant="text" style="width:190px; height:270px;">
                                     <v-img class="packageProduct-image" width="190px" height="180px" :src="packageProduct.imageUrl" alt="packageProduct 썸네일" cover @click="this.$router.push(`/packageProductProduct/${packageProduct.id}`)" />
-                                    <v-card-text>
+                                    <v-card-text style="padding: 0; margin-top: 10px; font-weight: bold;">
                                         <span v-if="packageProduct.packageName.length > 10"> {{ packageProduct.packageName.substring(0, 10) }}...</span>
                                         <span v-else> {{ packageProduct.packageName }}</span>
                                         <div class="detail-container">
@@ -154,6 +154,7 @@ export default {
 
 .detail-container{
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 10px;
 }
 </style>
