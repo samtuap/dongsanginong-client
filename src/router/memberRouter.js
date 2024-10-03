@@ -6,6 +6,7 @@ import MemberMyPage from "@/views/member/myPage/MemberMyPage.vue";
 import MemberPhoneUpdate from "@/views/member/myPage/MemberPhoneUpdate.vue";
 import MemberAddressUpdate from "@/views/member/myPage/MemberAddressUpdate.vue";
 import MemberFavorite from "@/views/member/myPage/MemberFavorite.vue";
+import MemberPaymentList from "@/views/member/myPage/MemberPaymentList.vue";
 
 export const memberRouter = [
   {
@@ -47,5 +48,10 @@ export const memberRouter = [
     path: "/member/favorite",
     name: "MemberFavorite",
     component: MemberFavorite
+  },
+  {
+    path: "/member/payment/list",
+    name: "MemberPaymentList",
+    component: MemberPaymentList
   },
 ];
