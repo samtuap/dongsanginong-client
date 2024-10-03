@@ -24,8 +24,7 @@
                         <td>{{ payment.paymentMethod }}</td>
                         <td>{{ payment.totalPrice }}원</td>
                         <td class="receipt-icon-cell">
-                            <a :href="'/receipt/' + payment.id" target="_blank" class="receipt-btn">
-                                <!-- 영수증 아이콘을 사용한 버튼 -->
+                            <a :href="'/receipt/' + payment.receiptId" target="_blank" class="receipt-btn">
                                 <img src="https://cdn-icons-png.flaticon.com/512/201/201282.png" alt="영수증 아이콘" class="receipt-icon" />
                             </a>
                         </td>
@@ -58,6 +57,7 @@ export default {
             try {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/order/list`);
                 this.payments = response.data;
+                console.log(this.payments)
             } catch (error) {
                 console.error("결제 리스트를 불러오는 중 오류가 발생했습니다.", error);
             }
