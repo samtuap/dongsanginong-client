@@ -72,8 +72,8 @@
     <!-- 성공 모달 -->
     <v-dialog v-model="successModal" max-width="260px">
       <v-card class="successModal" style="padding: 10px; padding-right: 20px; text-align: center;">
-        <v-card-text style="font-weight: bold;">
-          상품이 성공적으로<br>등록되었습니다. :)
+        <v-card-text>
+          상품이 성공적으로<br>등록되었습니다.
         </v-card-text>
         <v-btn @click="closeSuccessModal" class="submit-btn" style="font-weight: bold;">확인</v-btn>
       </v-card>
@@ -82,7 +82,7 @@
     <!-- 검증 실패 모달 -->
     <v-dialog v-model="validationModal" max-width="260px">
       <v-card class="farmModal" style="padding: 10px; padding-right: 20px; text-align: center;">
-        <v-card-text style="font-weight: bold;">
+        <v-card-text>
           {{ validationMessage }}
         </v-card-text>
         <v-btn @click="closeValidationModal" class="submit-btn">확인</v-btn>
