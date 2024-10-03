@@ -1,7 +1,6 @@
 <template>
     <MemberSidebar />
     <v-container class="custom-container">
-        <!-- 즐겨찾기 농장 슬라이드 시작 -->
         <v-card style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%;" rounded="0" flat>
             <v-card-title>즐겨찾기 농장</v-card-title>
             <v-card-text style="color: gray;">회원님이 즐겨찾기한 농장입니다.</v-card-text>
@@ -25,7 +24,6 @@
                 <v-btn icon="mdi-chevron-right" variant="plain" @click="nextFarm" :disabled="!canGoToNextFarm"></v-btn>
             </div>
         </v-card>
-        <!-- 즐겨찾기 농장 슬라이드 끝 -->
 
         <v-card style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%;" rounded="0" flat>
             <v-card-title>구독한 패키지</v-card-title>
@@ -36,11 +34,15 @@
                     <v-window-item v-for="n in productWindowCount" :key="`product-window-${n}`" :value="n">
                         <v-row class="d-flex justify-center">
                             <v-col v-for="(packageProduct, index) in paginatedPackageProducts(n)" :key="index" cols="12" md="3" class="d-flex justify-center">
-                                <v-card variant="text" style="width:190px; height:230px;">
+                                <v-card variant="text" style="width:190px; height:270px;">
                                     <v-img class="packageProduct-image" width="190px" height="180px" :src="packageProduct.imageUrl" alt="packageProduct 썸네일" cover @click="this.$router.push(`/packageProductProduct/${packageProduct.id}`)" />
                                     <v-card-text>
                                         <span v-if="packageProduct.packageName.length > 10"> {{ packageProduct.packageName.substring(0, 10) }}...</span>
                                         <span v-else> {{ packageProduct.packageName }}</span>
+                                        <div class="detail-container">
+                                            <a class="toDetail" @click="createReview">후기 작성</a>
+                                            <a class="toDetail" @click="receiptInfo">결제 내역 보기</a>
+                                        </div>
                                     </v-card-text>
                                 </v-card>
                             </v-col>
@@ -91,7 +93,7 @@ export default {
     methods: {
         async fetchFavoriteFarms() {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/favorite/farm`);
-            this.favoriteFarmList = response.data; // 즐겨찾기 농장 리스트 저장
+            this.favoriteFarmList = response.data;
         },
         nextFarm() {
             if (this.canGoToNextFarm) {
@@ -130,6 +132,28 @@ export default {
             const end = start + packageProductsPerPage;
             return this.subscriptionPackageProductList.slice(start, end);
         },
+        createReview() {
+            // 리뷰 모달 띄워주기
+            this.reviewModal = true;
+        },
+        receiptInfo() {
+            // 영수증 페이지로 보내주기
+        }
     }
 }
 </script>
+
+<style scoped>
+.toDetail {
+    color: #FFAF6E;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.detail-container{
+    display: flex;
+    justify-content: space-between;
+}
+</style>
