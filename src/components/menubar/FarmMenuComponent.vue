@@ -1,8 +1,8 @@
 <template>
-    <v-container>
+    <v-container style="max-width: 950px;">
         <!-- Header Text -->
-        <v-row justify="center" class="my-5">
-            <h1>애옹이네</h1>
+        <v-row justify="center" style="margin-bottom: 10px;">
+            <h2>애옹이네</h2>
         </v-row>
 
         <!-- Image Banner -->
@@ -10,7 +10,7 @@
             <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" height="400px" width="1000px" contain></v-img>
         </v-row>
         <br>
-        <v-row justify="center" class="mt-5 menubar">
+        <v-row justify="center" class="mt-5 menubar" style="line-height: 15px;">
             <v-col cols="3" class="text-center">
                 <span
                 @click="this.$router.push(`/farm/${farmId}`)"
@@ -27,7 +27,7 @@
             </v-col>
             <v-col cols="3" class="text-center">
                 <span
-                @click="this.$router.push(`/farm/${farmId}/notices`)"
+                @click="this.$router.push(`/farm/${farmId}/notice/list`)"
                 class="nav-link"
                 :class="{ 'selected-menu': this.currentMenu === 3 }"
                 >농장 공지</span>
@@ -84,6 +84,7 @@ export default {
     border-bottom: 1px solid black;
     margin-bottom: 30px;
     margin-top: 30px;
+    height: 40px;
 }
 
 

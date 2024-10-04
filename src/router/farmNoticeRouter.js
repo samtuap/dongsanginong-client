@@ -16,12 +16,12 @@ export const farmNoticeRouter = [
         component: FarmNoticeUpdate
     },
     {
-        path: '/farm/:id/notice/list',
+        path: '/farm/:farmId/notice/list',
         name: 'FarmNoticeList',
         component: FarmNoticeList,
     },
     {
-        path: '/farm/:farm_id/notice/:notice_id',
+        path: '/farm/:farmId/notice/:notice_id',
         name: 'NoticeDetailWithComment',
         component: NoticeDetailWithComment,
     }
