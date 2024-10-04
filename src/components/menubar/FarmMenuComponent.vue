@@ -9,6 +9,7 @@
         <v-row justify="center">
             <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" height="400px" width="1000px" contain></v-img>
         </v-row>
+        <br>
         <v-row justify="center" class="mt-5 menubar">
             <v-col cols="3" class="text-center">
                 <span
@@ -82,6 +83,7 @@ export default {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
     margin-bottom: 30px;
+    margin-top: 30px;
 }
 
 
