@@ -1,7 +1,8 @@
 <template>
     <!-- 완료 모달 -->
     <v-dialog v-model="alertModal" max-width="300px">
-        <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+        <v-card class="modal"
+            style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
             <v-card-text>{{ modalMessage }}</v-card-text>
             <v-btn @click="handleAlertClose" class="submit-btn">확인</v-btn>
         </v-card>
@@ -10,10 +11,8 @@
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
         <div class="member-info">
-            <div class="header">
-                <h2>전화번호 수정</h2>
-                <hr class="horizontal-divider" />
-            </div>
+            <h2>전화번호 수정</h2>
+            <hr class="horizontal-divider" />
 
             <div class="info-container">
                 <div class="label" style="padding-bottom: 20px;">
@@ -111,6 +110,10 @@ export default {
 </script>
 
 <style scoped>
+h2 {
+    margin-bottom: 10px;
+}
+
 .modal {
     position: fixed;
     top: -100px;
@@ -261,9 +264,10 @@ export default {
 }
 
 .divider {
-    width: 1px;
-    background-color: #ccc;
-    height: 100%;
+    width: 100%;
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 20px 0;
 }
 
 .submit-btn {
