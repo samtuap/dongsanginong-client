@@ -101,7 +101,7 @@ export default {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       };
-      const getUrl = await fetch(`http://localhost:8080/product-service/api/upload/presigned-url`, {
+      const getUrl = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/api/upload/presigned-url`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(body),
@@ -153,7 +153,7 @@ export default {
 
     async loadCategories() {
       try {
-        const response = await axios.get('http://localhost:8080/product-service/farm/categories'); // 카테고리 API
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/categories`); // 카테고리 API
         this.categories = response.data;
       } catch (error) {
         console.error('카테고리 불러오기 실패:', error);
@@ -190,7 +190,7 @@ export default {
           categories: this.selectedCategories,
         };
 
-        await axios.post('http://localhost:8080/product-service/farm/create', farmData);
+        await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/create`, farmData);
         this.alertModal = true; // 모달을 표시
       } catch (error) {
         console.error('농장 생성 실패:', error);

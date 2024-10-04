@@ -37,7 +37,7 @@ export default {
       },
       async onLogin() {
           try {
-              const response = await axios.post('http://localhost:8080/product-service/seller/sign-in', this.formData);
+              const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/seller/sign-in`, this.formData);
               const token = response.data.accessToken;
               
               localStorage.setItem('accessToken', token);

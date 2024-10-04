@@ -113,7 +113,7 @@
       // 이메일 인증번호 발송 후 모달 창 열기
       async sendAuthCode() {
         try {
-          await axios.post('http://localhost:8080/product-service/seller/sign-up', {
+          await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/seller/sign-up`, {
             email: this.formData.email,
             name: this.formData.name,
             password: this.formData.password,
@@ -140,7 +140,7 @@
       // 인증번호 확인 및 회원가입
       async verifyAuthCode() {
         try {
-          await axios.post('http://localhost:8080/product-service/seller/sign-up/verified', {
+          await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/seller/sign-up/verified`, {
             email: this.formData.email,
             code: this.formData.verificationCode
           });

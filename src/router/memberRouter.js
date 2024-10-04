@@ -5,6 +5,7 @@ import MemberSignUp from "@/views/member/login/MemberSignUp.vue";
 import MemberMyPage from "@/views/member/myPage/MemberMyPage.vue";
 import MemberPhoneUpdate from "@/views/member/myPage/MemberPhoneUpdate.vue";
 import MemberAddressUpdate from "@/views/member/myPage/MemberAddressUpdate.vue";
+import MemberCouponList from "@/views/order/coupon/MemberCouponList.vue"
 import MemberFavorite from "@/views/member/myPage/MemberFavorite.vue";
 import MemberPaymentList from "@/views/member/myPage/MemberPaymentList.vue";
 
@@ -43,6 +44,11 @@ export const memberRouter = [
     path: "/member/update/address",
     name: "MemberAddressUpdate",
     component: MemberAddressUpdate,
+  },
+  {
+    path: '/coupons//downloaded-coupons',
+    name: 'MemberCouponList',
+    component: MemberCouponList,
   },
   {
     path: "/member/favorite",
