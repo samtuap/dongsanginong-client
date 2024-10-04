@@ -55,7 +55,7 @@ import html2canvas from 'html2canvas';
 export default {
     data() {
         return {
-            receipt: {}, // 영수증 데이터를 저장할 객체
+            receipt: {},
         };
     },
     mounted() {
@@ -63,7 +63,7 @@ export default {
     },
     methods: {
         async getReceiptInfo() {
-            const receiptId = this.$route.params.receiptId; // 라우트에서 영수증 ID 가져옴
+            const receiptId = this.$route.params.receiptId;
             try {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/receipt`, {
                     params: { id: receiptId },
@@ -78,7 +78,7 @@ export default {
             if (value == null) {
                 return "0원";
             }
-            return parseInt(value).toLocaleString('ko-KR') + ' 원'; // 한국어 화폐 양식으로 변환
+            return parseInt(value).toLocaleString('ko-KR') + ' 원';
         },
         formatDate(paidAt) {
             if (!paidAt) {
@@ -91,7 +91,7 @@ export default {
         },
         async downloadPDF() {
             const element = document.querySelector(".receipt-container");
-            const downloadButton = document.querySelector(".pdf-download"); // 버튼 요소 선택
+            const downloadButton = document.querySelector(".pdf-download");
 
             // pdf 다운로드 버튼 숨기기
             downloadButton.style.display = "none";
@@ -130,7 +130,6 @@ export default {
 .receipt-page {
     width: 100%;
     max-width: 400px;
-    /* 세로로 긴 형태로 변환 */
     margin: 20px auto;
     text-align: center;
 }
@@ -144,7 +143,7 @@ export default {
     height: 600px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* 내용과 버튼 사이 간격 조정 */
+    justify-content: space-between;
 }
 
 .logo img {
@@ -160,23 +159,21 @@ export default {
 .detail {
     display: flex;
     justify-content: space-between;
-    margin: 20px 0; /* 항목 간의 간격을 20px로 설정 */
+    margin: 20px 0;
 }
 
 .label {
     font-weight: bold;
-    /* 왼쪽 항목 이름을 굵게 */
 }
 
 .dotted-line {
     border: none;
     border-top: 1px dotted #ddd;
-    /* 점선 구분선 */
-    margin: 20px 0; /* 구분선의 상하 간격도 20px로 설정 */
+    margin: 20px 0;
 }
 
 .pdf-download {
-    margin-top: 30px; /* 다운로드 버튼을 아래로 더 내리기 위한 마진 */
+    margin-top: 30px;
 }
 
 .pdf-download button {
