@@ -5,7 +5,7 @@
                 <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start">
                     <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
-                    <v-btn style="text-transform: none;">Live</v-btn>
+                    <v-btn :to="{ path: '/live/list'}" style="text-transform: none;">Live</v-btn>
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;" v-if="!isSeller">Mypage</v-btn>
                     <v-btn style="text-transform: none;" v-if="isSeller" @click="checkFarmAndRedirect">MyFarm</v-btn>
                 </v-col>
@@ -84,7 +84,7 @@ export default {
     methods: {
         async checkFarmAndRedirect() {
         try {
-            const response = await axios.get('http://localhost:8080/product-service/farm/exists', {
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/exists`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
                 }
