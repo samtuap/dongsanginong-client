@@ -5,8 +5,9 @@
                 <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start">
                     <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
-                    <v-btn :to="{ path: '/live/list'}" style="text-transform: none;">Live</v-btn>
-                    <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;" v-if="!isSeller">Mypage</v-btn>
+                    <v-btn :to="{ path: '/live/list' }" style="text-transform: none;">Live</v-btn>
+                    <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
+                        v-if="!isSeller">Mypage</v-btn>
                     <v-btn style="text-transform: none;" v-if="isSeller" @click="checkFarmAndRedirect">MyFarm</v-btn>
                 </v-col>
                 <v-col class="text-center">
@@ -42,7 +43,7 @@
     <v-dialog v-model="firstFarmModal" max-width="260px">
         <v-card class="farmModal" style="padding: 10px; padding-right: 20px; text-align: center;">
             <v-card-text style="font-weight: bold;">
-            농장 정보가 존재하지 않네요.<br><br>농장 정보를 입력해주세요. :)
+                농장 정보가 존재하지 않네요.<br><br>농장 정보를 입력해주세요. :)
             </v-card-text>
             <v-btn @click="goToFarmCreate" class="submit-btn">확인</v-btn>
         </v-card>
@@ -50,8 +51,10 @@
 </template>
 
 <script>
-
 import axios from 'axios';
+import 'firebase/messaging';
+import { initializeApp } from 'firebase/app';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 export default {
     data() {
@@ -74,26 +77,29 @@ export default {
             this.isLogin = false;
         }
 
-        if(role == "SELLER") {
+        if (role == "SELLER") {
             this.isSeller = true;
         } else {
             this.isSeller = false;
         }
 
+
+        this.initializeFCM()
     },
     methods: {
+
         async checkFarmAndRedirect() {
-        try {
-            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/exists`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                }
-            });
+            try {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/exists`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                    }
+                });
                 if (response.data) {
                     this.$router.push('/seller/delivery-management');
                 } else {
                     // 농장이 없을 경우 모달 띄우기
-                    this.firstFarmModal = true; 
+                    this.firstFarmModal = true;
                 }
             } catch (error) {
                 console.error('농장 확인 실패:', error);
@@ -111,6 +117,64 @@ export default {
             this.alertModal = false; // Close the modal
             window.location.href = '/'; // Redirect to home
         },
+        async initializeFCM() {
+            const firebaseConfig = {
+                apiKey: `${process.env.VUE_APP_FIREBASE_API_KEY}`,
+                authDomain: "dongsanginong-24f95.firebaseapp.com",
+                projectId: "dongsanginong-24f95",
+                storageBucket: "dongsanginong-24f95.appspot.com",
+                messagingSenderId: "331466655968",
+                appId: "1:331466655968:web:f9802c140ab1701b63a885",
+                measurementId: "G-WK79L8VKTR"
+            };
+            
+            // Initialize Firebase
+            // const firebase = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+            const firebase = initializeApp(firebaseConfig);
+            const messaging = getMessaging(firebase);
+
+            if (!localStorage.getItem("fcmToken")) {
+                try {
+                    // Await the FCM token
+                    const token = await getToken(messaging, {
+                        vapidKey: `${process.env.VUE_APP_FIREBASE_VAPID_KEY}`
+                    });
+
+                    // Store the token in local storage
+                    localStorage.setItem("fcmToken", token);
+                    console.log('fcmToken: ', token);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+
+            const body = {
+                "fcmToken" : localStorage.getItem("fcmToken")
+            };
+
+            // DB에 fcm 
+            try {
+                const res = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
+                console.log(res);
+            } catch(e) {
+                console.log(e);
+            }
+
+
+
+            onMessage(messaging, (payload) => {
+                console.log("Received message ", payload);
+                const notificationTitle = payload.notification.title;
+                const notificationOptions = {
+                    body: payload.notification.body,
+                    icon: "favicon.ico"
+                };
+
+                if (Notification.permission === "granted") {
+                    new Notification(notificationTitle, notificationOptions);
+                }
+            });
+        }
     },
 };
 </script>
@@ -138,11 +202,11 @@ export default {
 }
 
 .farmModal {
-  background-color: rgb(255, 255, 255);
-  border: none;
-  box-shadow: none;
-  border-radius: 10px;
-  width: 300px;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    box-shadow: none;
+    border-radius: 10px;
+    width: 300px;
 }
 
 .submit-btn {
