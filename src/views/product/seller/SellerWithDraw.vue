@@ -47,7 +47,7 @@
     async submitWithdraw() {
       try {
         // 비밀번호 검증 및 탈퇴 요청 전송
-        const response = await axios.delete('http://localhost:8080/product-service/seller/withdraw', {
+        const response = await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/product-service/seller/withdraw`, {
           data: this.password
         });
 

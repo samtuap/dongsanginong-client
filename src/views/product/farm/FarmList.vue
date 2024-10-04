@@ -72,13 +72,15 @@
                 </v-col>
     
             </v-row>
+            <v-container style="display: flex; justify-content: center;">
             <v-container class="d-flex custom-card-container">
-                <v-row>
+                <v-row style="margin:auto;">
                     <v-card v-for="(farm, index) in farmList" :key="index" class="farm-card" md="2" variant="text" style="width:190px; height:230px; margin: 10px; margin-bottom: 15px;">
                         <v-img
                         class="farm-image"
                         width="190px"
                         height="180px"
+                        @click="this.$router.push(`/farm/${farm.id}`)"
                         :src="farm.imageUrl"
                             alt="Farm 썸네일" cover />
                         <v-card-text>
@@ -95,6 +97,7 @@
                 </v-row>
 
             </v-container>
+        </v-container>
         </v-container>
 
         <!-- 농장 리스트 끝 -->

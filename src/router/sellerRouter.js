@@ -4,6 +4,9 @@ import CouponCreate from "@/views/order/coupon/CouponCreate.vue"
 import CouponList from "@/views/order/coupon/CouponList.vue"
 import SellerSignUp from "@/views/product/seller/SellerSignUp.vue"
 import SellerWithDraw from "@/views/product/seller/SellerWithDraw.vue"
+import ProductCreate from "@/views/product/package/ProductCreate.vue"
+import ProductList from "@/views/product/seller/ProductList.vue"
+import ProductUpdate from "@/views/product/seller/ProductUpdate.vue"
 
 export const sellerRouter = [
 
@@ -37,4 +40,19 @@ export const sellerRouter = [
         name: 'SellerWithdraw',
         component: SellerWithDraw
     },
+    {
+        path: '/seller/create-product',
+        name: 'ProductCreate',
+        component: ProductCreate
+    },
+    {
+        path: '/seller/product-list',
+        name: 'ProductList',
+        component: ProductList
+    },
+    {
+        path: '/seller/update-product/:id',
+        name: 'ProductUpdate',
+        component: ProductUpdate
+    }
 ]

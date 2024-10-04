@@ -8,6 +8,7 @@
                 <v-col class="text-center">
                     <v-btn class="cat_btn" :to="{path:'/member/update/phone'}">전화번호 변경</v-btn><br>
                     <v-btn class="cat_btn" :to="{path:'/member/update/address'}">주소지 변경</v-btn><br>
+                    <v-btn class="cat_btn" :to="{path:'/coupons/downloaded-coupons'}">보유한 쿠폰 조회</v-btn><br>
                     <v-btn class="cat_btn" :to="{path:'/member/favorite'}">구독 조회 / 변경</v-btn><br>
                     <v-btn class="cat_btn">보유한 쿠폰 조회</v-btn><br>
                     <v-btn class="cat_btn" :to="{path:'/member/payment/list'}">결제 내역 조회</v-btn><br>

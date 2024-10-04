@@ -1,5 +1,7 @@
 <template>
     <v-container>
+        <FarmMenuComponent
+        :currentMenu="3" />
         <v-row justify="center">
             <v-col cols="12" sm="8" md="6" lg="8">
                 <v-card v-for="notice in noticeList" :key="notice.id" class="notice-class elevation-0" outlined>
@@ -42,8 +44,12 @@
 </template>
 
 <script>
+import FarmMenuComponent from '@/components/menubar/FarmMenuComponent.vue';
 import axios from 'axios';
 export default {
+    components: {
+        FarmMenuComponent
+    },
     data() {
         return {
             noticeList: [],
@@ -68,7 +74,7 @@ export default {
     methods: {
         async farmNoticeList(page) {
             try {
-                const id = this.$route.params.id;
+                const id = this.$route.params.farmId;
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${id}/notice/list`, {
                     params: {
                         page: page - 1, 
@@ -83,10 +89,10 @@ export default {
             }
         },
         goToDetail(noticeId) {
-            const farm_id = this.$route.params.id;
+            const farmId = this.id;
             this.$router.push({ 
                 name: 'NoticeDetailWithComment', 
-                params: { farm_id: farm_id, notice_id: noticeId }
+                params: { farmId: farmId, notice_id: noticeId }
             });
         }
     }
