@@ -2,7 +2,7 @@
     <v-container style="max-width: 950px;">
         <!-- Header Text -->
         <v-row justify="center" style="margin-bottom: 10px;">
-            <h2>애옹이네</h2>
+            <h2>{{this.farmName}}</h2>
         </v-row>
 
         <!-- Image Banner -->
@@ -52,7 +52,8 @@ export default {
     data() {
         return {
             farmId: 0,
-            bannerImage: ""
+            bannerImage: "",
+            farmName: "",
         }
     },
     async created() {
@@ -63,6 +64,7 @@ export default {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/detail/${this.farmId}`);
             console.log(response);
             this.bannerImage = response.data.bannerImageUrl;
+            this.farmName = response.data.farmName;
             console.log(this.bannerImage);
         } catch(e) {
             console.log(e);
