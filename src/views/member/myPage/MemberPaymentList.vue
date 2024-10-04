@@ -25,7 +25,7 @@
                             <td>{{ payment.farmName }}</td>
                             <td>{{ formatDate(payment.orderAt) }}</td>
                             <td>{{ payment.paymentMethod }}</td>
-                            <td>{{ payment.totalPrice }}원</td>
+                            <td>{{ formatPrice(payment.totalPrice) }}</td>
                             <td class="receipt-icon-cell">
                                 <a :href="'/receipt/' + payment.receiptId" target="_blank" class="receipt-btn">
                                     <img src="https://cdn-icons-png.flaticon.com/512/201/201282.png" alt="영수증 아이콘" class="receipt-icon" />
@@ -64,6 +64,12 @@ export default {
         this.getPaymentList();
     },
     methods: {
+        formatPrice(value) {
+            if (value == null) {
+                return "0원";
+            }
+            return parseInt(value).toLocaleString('ko-KR') + ' 원'; // 한국어 화폐 양식으로 변환
+        },
         async getPaymentList(page = 1) {
             try {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/order/list`, {

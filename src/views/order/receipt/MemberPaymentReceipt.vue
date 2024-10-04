@@ -1,7 +1,5 @@
 <template>
     <div class="receipt-page">
-        <h2 style="margin-top:80px; margin-bottom: 20px;">결제 영수증 조회</h2>
-
         <div class="receipt-container">
             <div class="logo">
                 <img src="/inongLogo.png" alt="로고" />
@@ -9,32 +7,34 @@
 
             <div class="receipt-details">
                 <div class="detail">
-                    <span>구매 패키지</span>
+                    <span class="label">구매 패키지</span>
                     <span>{{ receipt.productName }}</span>
                 </div>
 
                 <div class="detail">
-                    <span>판매 농장</span>
+                    <span class="label">판매 농장</span>
                     <span>{{ receipt.farmName }}</span>
                 </div>
 
+                <hr class="dotted-line" />
+
                 <div class="detail">
-                    <span>패키지 금액</span>
-                    <span>{{ receipt.beforePrice }}원</span>
+                    <span class="label">패키지 금액</span>
+                    <span>{{ formatPrice(receipt.beforePrice) }}</span>
                 </div>
 
                 <div class="detail">
-                    <span>할인 금액</span>
-                    <span>{{ receipt.discountPrice }}원</span>
+                    <span class="label">할인 금액</span>
+                    <span>- {{ formatPrice(receipt.discountPrice) }}</span>
                 </div>
 
                 <div class="detail">
-                    <span>결제 금액</span>
-                    <span>{{ receipt.totalPrice }}원</span>
+                    <span class="label">결제 금액</span>
+                    <span>{{ formatPrice(receipt.totalPrice) }}</span>
                 </div>
 
                 <div class="detail">
-                    <span>결제일</span>
+                    <span class="label">결제일</span>
                     <span>{{ formatDate(receipt.paidAt) }}</span>
                 </div>
             </div>
@@ -69,30 +69,36 @@ export default {
                     params: { id: receiptId },
                 });
                 this.receipt = response.data;
-                console.log(this.receipt)
+                console.log(this.receipt);
             } catch (error) {
                 console.error("영수증 정보를 가져오는 중 오류가 발생했습니다.", error);
             }
         },
+        formatPrice(value) {
+            if (value == null) {
+                return "0원";
+            }
+            return parseInt(value).toLocaleString('ko-KR') + ' 원'; // 한국어 화폐 양식으로 변환
+        },
         formatDate(paidAt) {
             if (!paidAt) {
-                return '정보 없음';
+                return "정보 없음";
             }
 
-            const datePart = paidAt.split('T')[0]; // 날짜 부분
-            const timePart = paidAt.split('T')[1]; // 시간 부분
+            const datePart = paidAt.split("T")[0]; // 날짜 부분
+            const timePart = paidAt.split("T")[1]; // 시간 부분
             return `${datePart} ${timePart}`; // 공백으로 결합
         },
         async downloadPDF() {
-            const element = document.querySelector('.receipt-container');
-            const downloadButton = document.querySelector('.pdf-download'); // 버튼 요소 선택
+            const element = document.querySelector(".receipt-container");
+            const downloadButton = document.querySelector(".pdf-download"); // 버튼 요소 선택
 
             // pdf 다운로드 버튼 숨기기
-            downloadButton.style.display = 'none';
+            downloadButton.style.display = "none";
 
             // 화면 캡처
             const canvas = await html2canvas(element);
-            const imgData = canvas.toDataURL('image/png');
+            const imgData = canvas.toDataURL("image/png");
             const doc = new jsPDF();
             const imgWidth = 190;
             const pageHeight = doc.internal.pageSize.height;
@@ -100,13 +106,13 @@ export default {
             let heightLeft = imgHeight;
             let position = 0;
 
-            doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            doc.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
             heightLeft -= pageHeight;
 
             while (heightLeft >= 0) {
                 position = heightLeft - imgHeight;
                 doc.addPage();
-                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                doc.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
             }
 
@@ -114,7 +120,7 @@ export default {
             doc.save(`동상이농_결제 영수증_${this.receipt.paidAt}.pdf`);
 
             // 버튼 다시 표시
-            downloadButton.style.display = 'block';
+            downloadButton.style.display = "block";
         },
     },
 };
@@ -123,16 +129,22 @@ export default {
 <style scoped>
 .receipt-page {
     width: 100%;
-    max-width: 600px;
+    max-width: 400px;
+    /* 세로로 긴 형태로 변환 */
     margin: 20px auto;
     text-align: center;
 }
 
 .receipt-container {
+    margin-top: 80px;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background-color: white;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 내용과 버튼 사이 간격 조정 */
 }
 
 .logo img {
@@ -141,18 +153,35 @@ export default {
 }
 
 .receipt-details {
+    padding: 0 30px;
     margin-bottom: 20px;
 }
 
 .detail {
     display: flex;
     justify-content: space-between;
-    margin: 10px 0;
+    margin: 20px 0; /* 항목 간의 간격을 20px로 설정 */
+}
+
+.label {
+    font-weight: bold;
+    /* 왼쪽 항목 이름을 굵게 */
+}
+
+.dotted-line {
+    border: none;
+    border-top: 1px dotted #ddd;
+    /* 점선 구분선 */
+    margin: 20px 0; /* 구분선의 상하 간격도 20px로 설정 */
+}
+
+.pdf-download {
+    margin-top: 30px; /* 다운로드 버튼을 아래로 더 내리기 위한 마진 */
 }
 
 .pdf-download button {
-    background-color: #BCC07B;
-    color: white;
+    background-color: #bcc07b;
+    color: black;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
