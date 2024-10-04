@@ -143,7 +143,7 @@ export default {
                 return;
             }
             try {
-                const farm_id = this.$route.params.farm_id;
+                const farm_id = this.$route.params.farmId;
                 const notice_id = this.$route.params.notice_id;
                 const memberId = localStorage.getItem('memberId');
                 const commentData = {
@@ -165,7 +165,7 @@ export default {
         },
         async farmNoticeDetail(page) { // 공지사항 및 댓글 조회 
             try {
-                const farm_id = this.$route.params.farm_id;
+                const farm_id = this.$route.params.farmId;
                 const notice_id = this.$route.params.notice_id;
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farm_id}/notice/${notice_id}`);
                 console.log(response.data);

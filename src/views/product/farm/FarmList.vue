@@ -80,6 +80,7 @@
                         class="farm-image"
                         width="190px"
                         height="180px"
+                        @click="this.$router.push(`/farm/${farm.id}`)"
                         :src="farm.imageUrl"
                             alt="Farm 썸네일" cover />
                         <v-card-text>
