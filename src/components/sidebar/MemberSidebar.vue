@@ -6,9 +6,9 @@
                     <v-list-item-title class="item-title"><strong>내 정보 수정하기</strong></v-list-item-title>
                 </v-list-item>
                 <v-col class="text-center">
-                    <v-btn class="cat_btn">등록된 전화번호 변경</v-btn><br>
-                    <v-btn class="cat_btn">주소지 변경</v-btn><br>
-                    <v-btn class="cat_btn">구독 조회 / 변경</v-btn><br>
+                    <v-btn class="cat_btn" :to="{path:'/member/update/phone'}">전화번호 변경</v-btn><br>
+                    <v-btn class="cat_btn" :to="{path:'/member/update/address'}">주소지 변경</v-btn><br>
+                    <v-btn class="cat_btn" :to="{path:'/member/favorite'}">구독 조회 / 변경</v-btn><br>
                     <v-btn class="cat_btn">보유한 쿠폰 조회</v-btn><br>
                     <v-btn class="cat_btn">결제 내역 조회</v-btn><br>
                     <v-btn class="cat_btn">배송 조회</v-btn><br>

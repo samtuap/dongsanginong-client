@@ -5,9 +5,9 @@
                 <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start">
                     <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
-                    <v-btn style="text-transform: none;">Live</v-btn>
+                    <v-btn :to="{ path: '/live/list'}" style="text-transform: none;">Live</v-btn>
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;" v-if="!isSeller">Mypage</v-btn>
-                    <v-btn style="text-transform: none;" v-if="isSeller">MyFarm</v-btn>
+                    <v-btn style="text-transform: none;" v-if="isSeller" @click="checkFarmAndRedirect">MyFarm</v-btn>
                 </v-col>
                 <v-col class="text-center">
                     <v-btn :to="{ path: '/' }" color="white">
@@ -38,15 +38,28 @@
             <v-btn @click="handleLogout" class="submit-btn">close</v-btn>
         </v-card>
     </v-dialog>
+
+    <v-dialog v-model="firstFarmModal" max-width="260px">
+        <v-card class="farmModal" style="padding: 10px; padding-right: 20px; text-align: center;">
+            <v-card-text style="font-weight: bold;">
+            농장 정보가 존재하지 않네요.<br><br>농장 정보를 입력해주세요. :)
+            </v-card-text>
+            <v-btn @click="goToFarmCreate" class="submit-btn">확인</v-btn>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
+
+import axios from 'axios';
+
 export default {
     data() {
         return {
             alertModal: false, // Initialize alertModal as a reactive data property
             isLogin: false, // 로그인 여부 확인 
             isSeller: false, // seller인지 member인지 여부 확인
+            firstFarmModal: false,
         };
     },
     created() {
@@ -69,6 +82,29 @@ export default {
 
     },
     methods: {
+        async checkFarmAndRedirect() {
+        try {
+            const response = await axios.get('http://localhost:8080/product-service/farm/exists', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                }
+            });
+                if (response.data) {
+                    this.$router.push('/seller/delivery-management');
+                } else {
+                    // 농장이 없을 경우 모달 띄우기
+                    this.firstFarmModal = true; 
+                }
+            } catch (error) {
+                console.error('농장 확인 실패:', error);
+            }
+        },
+
+        goToFarmCreate() {
+            this.firstFarmModal = false;
+            this.$router.push('/farm/farm-create'); // 농장 생성 페이지로 이동
+        },
+
         handleLogout() {
             localStorage.clear();
             this.isLogin = false;
@@ -100,6 +136,15 @@ export default {
     box-shadow: none;
     border-radius: 10px;
 }
+
+.farmModal {
+  background-color: rgb(255, 255, 255);
+  border: none;
+  box-shadow: none;
+  border-radius: 10px;
+  width: 300px;
+}
+
 .submit-btn {
     margin-left: 10px;
     margin-top: 8px;

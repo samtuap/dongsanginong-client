@@ -3,6 +3,9 @@ import KakaoCallback from "@/views/member/login/KakaoCallback.vue";
 import GoogleCallback from "@/views/member/login/GoogleCallback.vue";
 import MemberSignUp from "@/views/member/login/MemberSignUp.vue";
 import MemberMyPage from "@/views/member/myPage/MemberMyPage.vue";
+import MemberPhoneUpdate from "@/views/member/myPage/MemberPhoneUpdate.vue";
+import MemberAddressUpdate from "@/views/member/myPage/MemberAddressUpdate.vue";
+import MemberFavorite from "@/views/member/myPage/MemberFavorite.vue";
 
 export const memberRouter = [
   {
@@ -29,5 +32,20 @@ export const memberRouter = [
     path: "/member/my-page",
     name: "MemberMyPage",
     component: MemberMyPage,
+  },
+  {
+    path: "/member/update/phone",
+    name: "MemberPhoneUpdate",
+    component: MemberPhoneUpdate,
+  },
+  {
+    path: "/member/update/address",
+    name: "MemberAddressUpdate",
+    component: MemberAddressUpdate,
+  },
+  {
+    path: "/member/favorite",
+    name: "MemberFavorite",
+    component: MemberFavorite
   },
 ];
