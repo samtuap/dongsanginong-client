@@ -136,7 +136,7 @@ export default {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       };
-      const getUrl = await fetch(`http://localhost:8080/product-service/api/upload/presigned-url`, {
+      const getUrl = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/api/upload/presigned-url`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(body),
@@ -205,7 +205,7 @@ export default {
           sellerId: sellerId,
         };
 
-        const response = await axios.post('http://localhost:8080/product-service/product/create', productData, {
+        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/create`, productData, {
           headers: headers
         });
         console.log('상품 등록 성공:', response.data);
@@ -216,6 +216,10 @@ export default {
     },
     closeSuccessModal() {
       this.successModal = false;
+      this.$nextTick(() => {
+        // 모달이 닫힌 후 페이지 이동
+        this.$router.push({ name: 'ProductList' });
+      })
     },
     closeValidationModal() {
       this.validationModal = false;
@@ -398,7 +402,6 @@ textarea {
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  font-weight: bold;
   color: black;
   margin-top: 20px;
   margin-left: -35%;
