@@ -1,216 +1,196 @@
 <template>
-  <div>
-    <h1>공지사항 수정</h1>
-    <v-btn @click="openEditDialog(21)">공지 수정</v-btn> <!-- 수정할 공지의 ID를 21로 고정 -->
-
-    <!-- 모달 -->
-    <v-dialog v-model="dialog" max-width="600" class="custom-dialog">
-      <v-card class="custom-card">
-        <v-card-title class="custom-title">
-          <span class="headline">커뮤니티</span>
-        </v-card-title>
-        <v-card-text>
-          <form @submit.prevent="updateNotice">
-            <div>
-              <input 
-                type="text" 
-                v-model="notice.title" 
-                id="title" 
-                placeholder="제목을 입력하세요" 
-                required 
-                class="custom-input" />
-            </div>
-            <div>
-              <textarea 
-                v-model="notice.content" 
-                id="content" 
-                placeholder="내용을 입력하세요" 
-                required 
-                class="custom-input"></textarea>
-            </div>
-            <div> 
-              <!-- 파일 업로드 -->
-              <input 
-                type="file" 
-                @change="handleFileSelection" 
-                class="custom-input" 
-                ref="fileInput" /> <!-- ref 속성 추가 -->
-            </div>
-            <!-- 선택된 파일들 표시 -->
-            <div v-if="filePreviews.length">
-              <h3>선택된 파일:</h3>
-              <ul class="preview-list">
-                <li v-for="(preview, index) in filePreviews" :key="index" class="preview-container">
-                  <div class="image-wrapper">
-                    <img :src="preview.url" class="preview-image" alt="선택된 이미지" />
-                    <v-btn icon @click="removeFile(index)" class="remove-btn">
-                      <v-icon color="#BCC07B">mdi-close-circle</v-icon> <!-- "X" 모양 아이콘 -->
-                    </v-btn>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </form>
-        </v-card-text>
-
-        <v-card-actions class="action-buttons">
-          <v-spacer />
-          <v-btn 
-            color="light_green" 
-            class="custom-button"
-            @click="updateNotice"
-          >
-            수정
-          </v-btn>
-          <v-btn 
-            color="light_green" 
-            class="custom-button"
-            text 
-            @click="dialog = false"
-          >
-            닫기
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+  <v-dialog v-model="dialog" max-width="600" class="custom-dialog">
+    <v-card class="custom-card">
+      <v-card-title class="custom-title">
+        <span class="headline">커뮤니티 수정</span>
+      </v-card-title>
+      <v-card-text>
+        <form @submit.prevent="updateNotice">
+          <div>
+            <input 
+              type="text" 
+              v-model="notice.title" 
+              id="title" 
+              placeholder="제목을 입력하세요" 
+              required 
+              class="custom-input" />
+          </div>
+          <div>
+            <textarea 
+              v-model="notice.content" 
+              id="content" 
+              placeholder="내용을 입력하세요" 
+              required 
+              class="custom-input"></textarea>
+          </div>
+          <div>
+            <input 
+              type="file" 
+              @change="handleFileSelection" 
+              class="custom-input" 
+              ref="fileInput" 
+              multiple />
+          </div>
+          <div v-if="filePreviews.length">
+            <h3>선택된 파일:</h3>
+            <ul class="preview-list">
+              <li v-for="(preview, index) in filePreviews" :key="index" class="preview-container">
+                <div class="image-wrapper">
+                  <img :src="preview.url" class="preview-image" alt="선택된 이미지" />
+                  <v-btn icon @click="removeFile(index)" class="remove-btn">
+                    <v-icon color="#BCC07B">mdi-close-circle</v-icon>
+                  </v-btn>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </form>
+      </v-card-text>
+      <v-card-actions class="action-buttons">
+        <v-spacer />
+        <v-btn 
+          color="light_green" 
+          class="custom-button"
+          @click="updateNotice"
+        >
+          수정
+        </v-btn>
+        <v-btn 
+          color="light_green" 
+          class="custom-button" 
+          text 
+          @click="dialog = false"
+        >
+          닫기
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
+  props: {
+    noticeId: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       notice: {
         title: '',
         content: '',
-        imageUrls: [] // 서버에서 받아온 noticeImages를 여기에 할당
+        imageUrls: []
       },
-      dialog: false, // 공지사항 수정 모달 상태
-      selectedFiles: [], // 선택된 파일을 저장하기 위한 배열
-      filePreviews: [] // 파일 미리보기 URL을 저장하기 위한 배열
+      dialog: false,
+      selectedFiles: [],
+      filePreviews: [],
     };
   },
   methods: {
-    // 모달을 열고 공지사항 데이터를 받아옴
-    async openEditDialog(noticeId) {
-      this.dialog = true; // 모달 열기
+    getFarmIdFromToken() {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.farmId; // 토큰에서 farmId 추출
+      }
+      return null;
+    },
+    async openEditDialog() {
+      this.dialog = true;
       try {
-        const token = localStorage.getItem('Bearer Token');
-        const farmId = 7; // 수정할 공지의 농장ID
-
-        // 공지사항 데이터를 가져오는 API 호출
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farmId}/notice/${noticeId}`, {
+        const token = localStorage.getItem('accessToken');
+        const farmId = this.getFarmIdFromToken(); // 동적으로 farmId 가져오기
+        const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farmId}/notice/${this.noticeId}`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
-
-        // 공지 데이터를 notice 객체에 저장
-        const data = response.data;
-        console.log(data); // 데이터 확인을 위한 출력
+        const data = await response.json();
         this.notice.title = data.title;
         this.notice.content = data.content;
-        
-        // 이미지 URL을 notice.imageUrls에 할당
         this.notice.imageUrls = data.noticeImages || [];
-
-        // 미리보기 이미지 준비
         this.filePreviews = this.notice.imageUrls.map(url => ({ url }));
       } catch (error) {
-        console.error('Error fetching notice data:', error.response ? error.response.data : error.message);
+        console.error('Error fetching notice data:', error);
       }
     },
-
-    // 파일 선택 시 호출되는 메서드
     handleFileSelection(event) {
-      const file = event.target.files[0]; // 단일 파일 선택
-      if (file) {
-        this.selectedFiles.push(file); // 선택된 파일을 배열에 추가
-        const previewUrl = URL.createObjectURL(file); // 미리보기 URL 생성
-        this.filePreviews.push({ url: previewUrl, file }); // 미리보기 배열에 URL과 파일 추가
-        this.$refs.fileInput.value = null; // 파일 입력 필드 초기화
-      }
+      const files = Array.from(event.target.files);
+      files.forEach(file => {
+        this.selectedFiles.push(file);
+        const previewUrl = URL.createObjectURL(file);
+        this.filePreviews.push({ url: previewUrl, file });
+      });
+      this.$refs.fileInput.value = null;
     },
-
-    // 선택한 파일을 배열에서 삭제하는 메서드
     removeFile(index) {
-      this.selectedFiles.splice(index, 1); // 해당 인덱스의 파일을 배열에서 삭제
-      this.filePreviews.splice(index, 1); // 해당 인덱스의 미리보기 URL도 삭제
+      this.selectedFiles.splice(index, 1);
+      this.filePreviews.splice(index, 1);
     },
-
-    // 선택한 여러 파일을 S3에 업로드하는 메서드
     async uploadFiles() {
-      const uploadedImageUrls = []; // 업로드된 이미지 URL을 저장할 배열
-
-      for (let i = 0; i < this.selectedFiles.length; i++) {
-        const file = this.selectedFiles[i];
-        const imageUrl = await this.uploadImage(file); // 파일을 S3에 업로드 후 URL 반환
-        uploadedImageUrls.push(imageUrl); // URL을 배열에 저장
+      const uploadedImageUrls = [];
+      for (let file of this.selectedFiles) {
+        const imageUrl = await this.uploadImage(file);
+        uploadedImageUrls.push(imageUrl);
       }
-
-      this.notice.imageUrls = uploadedImageUrls; // 업로드된 이미지 URL 배열을 notice에 저장
+      this.notice.imageUrls = [...this.notice.imageUrls, ...uploadedImageUrls];
     },
-
-    // 이미지 업로드 메서드 (단일 파일 업로드)
-    async uploadImage(file) {
-      const token = localStorage.getItem('Bearer Token');
-
-      // presigned URL 얻기 위한 POST 요청
-      const getUrlResponse = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/api/upload/presigned-url`, {
+    async uploadImage(blob) {
+      const accessToken = localStorage.getItem('accessToken');
+      const body = {
         prefix: "community-notice",
-        url: file.name
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
+        url: `${blob?.name}`,
+      };
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      };
+      const getUrl = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/api/upload/presigned-url`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body),
       });
 
-      const presignedUrl = getUrlResponse.data;
+      const getUrlResult = await getUrl.text();
+      const awsUrl = {
+        data: `${getUrlResult.split("?")[0]}`,
+        auth: `?${getUrlResult.split("?")[1]}`,
+      };
 
-      // PUT 요청 (S3로 파일 업로드)
-      try {
-        await axios.put(presignedUrl, file, {
-          headers: {
-            "Content-Type": file.type,  // 선택한 파일의 Content-Type 설정
-            "Cache-Control": "no-cache", // 캐시 방지
-          }
-        });
-      } catch (error) {
-        console.error('S3 업로드 중 오류 발생:', error);
-      }
+      const options = {
+        method: "PUT",
+        headers: {
+          "Content-Type": blob.type,
+        },
+        body: blob,
+      };
+      await fetch(awsUrl.data + awsUrl.auth, options);
 
-      return presignedUrl.split('?')[0]; // 업로드 후 이미지 URL 반환
+      return awsUrl.data;
     },
-
-    // 공지사항 수정 메서드
     async updateNotice() {
-      // 우선 파일 업로드를 진행한 후 공지사항을 수정합니다.
       await this.uploadFiles();
-
       const requestData = {
         title: this.notice.title,
         content: this.notice.content,
-        imageUrls: this.notice.imageUrls // 여러 이미지 URL 배열을 전송
+        imageUrls: this.notice.imageUrls,
       };
-
-      const token = localStorage.getItem('Bearer Token');
-      const noticeId = 21; // 수정할 공지의 ID
-
+      const accessToken = localStorage.getItem('accessToken');
       try {
-        const response = await axios.put(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/${noticeId}/update`, requestData, {
+        await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/${this.noticeId}/update`, {
+          method: 'PUT',
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
         });
-        console.log('Notice updated:', response.data);
-        alert('공지사항이 성공적으로 수정되었습니다.'); // 성공 메시지 alert로 표시
+        this.$emit('notice-updated');
+        this.dialog = false;
       } catch (error) {
-        console.error('Error updating notice:', error.response ? error.response.data : error.message);
-        alert('공지사항 수정에 실패했습니다.'); // 실패 메시지 alert로 표시
-      } finally {
-        this.dialog = false; // 공지사항 수정 모달 닫기
+        console.error('공지사항 수정 실패:', error);
       }
     },
   },
@@ -318,4 +298,21 @@ textarea.custom-input {
 .custom-button:hover {
   background-color: #BCC07B; /* 마우스 호버 시 배경색 변경 */
 }
+
+/* 완료 메시지 모달 */
+.modal {
+  background-color: rgb(255, 255, 255);
+  border: none;
+  box-shadow: none;
+  border-radius: 10px;
+}
+
+.submit-btn {
+  margin-left: 10px;
+  margin-top: 8px;
+  background-color: #BCC07B;
+  color: black;
+  border-radius: 50px;
+}
 </style>
+
