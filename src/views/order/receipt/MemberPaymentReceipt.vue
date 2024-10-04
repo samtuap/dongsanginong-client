@@ -1,6 +1,6 @@
 <template>
     <div class="receipt-page">
-        <h2>결제 영수증 조회</h2>
+        <h2 style="margin-top:80px; margin-bottom: 20px;">결제 영수증 조회</h2>
 
         <div class="receipt-container">
             <div class="logo">
@@ -76,7 +76,7 @@ export default {
         },
         formatDate(paidAt) {
             if (!paidAt) {
-                return '정보 없음'; // paidAt이 없을 경우의 대체 텍스트
+                return '정보 없음';
             }
 
             const datePart = paidAt.split('T')[0]; // 날짜 부분
@@ -87,7 +87,7 @@ export default {
             const element = document.querySelector('.receipt-container');
             const downloadButton = document.querySelector('.pdf-download'); // 버튼 요소 선택
 
-            // 버튼 숨기기
+            // pdf 다운로드 버튼 숨기기
             downloadButton.style.display = 'none';
 
             // 화면 캡처
@@ -111,7 +111,7 @@ export default {
             }
 
             // PDF 다운로드
-            doc.save(`receipt_${this.receipt.id}.pdf`);
+            doc.save(`동상이농_결제 영수증_${this.receipt.paidAt}.pdf`);
 
             // 버튼 다시 표시
             downloadButton.style.display = 'block';

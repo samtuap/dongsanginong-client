@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="margin-right: 250px">
         <!-- 멤버 사이드바 유지 -->
         <MemberSidebar />
 
