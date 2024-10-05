@@ -39,10 +39,8 @@
                         @click="this.$router.push(`/notifications`)"
                         >
                             <v-list-item-content>
-                                <p style="font-weight: bold;">{{ notification.notification.title }}</p>
-                                <!-- Optional: Display the date or any other info -->
-                                <p style="font-size: small">{{ JSON.parse(notification.notification.body).content.substring(0, 10) }}</p>
-                                <v-list-item-subtitle style="font-size:small">{{ getFormattedTime(JSON.parse(notification.notification.body).issuedAt) }}</v-list-item-subtitle>
+                                <v-list-item-title style="font-weight: bold;">{{ notification.notification.title }}</v-list-item-title>
+                                <v-list-item-subtitle style="font-size:small">{{ notification.notification.body.substring(0, 10) }}</v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
                         <v-list-item v-if="notifications.length > 0"
@@ -315,21 +313,6 @@ export default {
                 console.error("Error opening IndexedDB", event);
             };
         },
-        getFormattedTime(timeStr) {
-            const date = new Date(timeStr);
-            const year = date.getFullYear(); // 연도
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1), 2자리로 맞춤
-            const day = String(date.getDate()).padStart(2, '0'); // 일, 2자리로 맞춤
-
-            const hours = String(date.getHours()).padStart(2, '0'); // 시, 2자리로 맞춤
-            const minutes = String(date.getMinutes()).padStart(2, '0'); // 분, 2자리로 맞춤
-            const seconds = String(date.getSeconds()).padStart(2, '0'); // 초, 2자리로 맞춤
-
-            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-            return formattedDate;
-        }
-
     },
 };
 </script>
