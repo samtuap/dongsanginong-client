@@ -4,8 +4,8 @@
       <div id="session-header" style="display: flex; flex-direction: column; align-items: center; padding-top: 30px;">
         <h3 style="text-align: center;">{{ title }}</h3>
         <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 10px;">
-          <v-btn class="live-btn" v-if="isPublisher" @click="leaveSession">라이브 종료</v-btn>
-          <v-btn class="live-btn" v-if="!isPublisher" @click="leaveSession">나가기</v-btn>
+          <v-btn class="live-btn" v-if="isPublisher" @click="showExitModal">라이브 종료</v-btn>
+          <v-btn class="live-btn" v-if="!isPublisher" @click="showExitModal">나가기</v-btn>
         </div>
       </div>
       <div id="main-video" class="col-md-6 video-style" v-if="isPublisher">
@@ -20,13 +20,25 @@
           @click="updateMainVideoStreamManager(sub)" />
       </div>
     </div>
+
+    <!-- 라이브 종료(publisher) 확인 모달창 -->
+    <v-dialog v-model="exitModalVisible" max-width="350px">
+        <v-card class="end-modal">
+            <v-card-text style="text-align: center;">라이브를 정말 종료하시겠습니까?</v-card-text>
+            <v-card-actions>
+                <v-btn class="modal-btn" @click="confirmExit" style="background-color: #BCC07B;">종료</v-btn>
+                <v-btn class="modal-btn" @click="cancelExit" style="background-color: #e0e0e0;">취소</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
   </template>
   
-  <script>
-  import axios from 'axios';
-  import { OpenVidu } from "openvidu-browser";
-  import UserVideo from "@/components/video/UserVideo"; //⭐
-  export default {
+<script>
+import axios from 'axios';
+import { OpenVidu } from "openvidu-browser";
+import UserVideo from "@/components/video/UserVideo"; //⭐
+
+export default {
     components: {
       UserVideo //⭐
     },
@@ -40,6 +52,9 @@
         title: "", 
         OV: undefined,
         mySessionId: "",
+
+        exitModalVisible: false,
+        nextRoute: null
       };
     },
     async created() {
@@ -97,11 +112,21 @@
             const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/live-service/api/sessions/${sessionId}/connections`);
             return response.data;
         },
+
+        showExitModal() {
+            this.exitModalVisible = true;
+        },
+        confirmExit() {
+            this.exitModalVisible = false;
+            this.leaveSession();
+        },
+        cancelExit() {
+            this.exitModalVisible = false;
+        },
         async leaveSession() {
             if (this.session) {
                 if (this.isPublisher) {
                     await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/live-service/api/sessions/${this.mySessionId}/leave`); // 서버에 세션 종료 요청
-                    // this.session.disconnect();
                 }
                 this.session.disconnect();
             }
@@ -115,7 +140,15 @@
             window.location.href = '/live/list';
         },
     },
-  };
+    beforeRouteLeave(to, from, next) {
+        if (!this.exitModalVisible) {
+            this.exitModalVisible = true;
+            next(false); 
+        } else {
+            next(); 
+        }
+    },
+};
 </script>
 <style scroped>
 .live-btn {
@@ -125,6 +158,13 @@
 }
 .video-style {
     margin-left: 8%;
+}
+.modal-btn {
+    border-radius: 50px;
+    margin-left: 10px; 
+}
+.end-modal {
+    padding: 10px;
 }
 </style>
 
