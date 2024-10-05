@@ -15,30 +15,34 @@ const firebaseConfig = {
   const messaging = firebase.messaging();
 
   messaging.onBackgroundMessage((payload) => {   
-      console.log(
-        '[firebase-messaging-sw.js] Received background message ',
-        payload
-      );
+      // console.log(
+      //   '[firebase-messaging-sw.js] Received background message ',
+      //   payload
+      // );
+      console.log("!!");  
+
       const notificationTitle = payload.notification.title;
       const notificationOptions = {
         body: payload.notification.body,
         icon: "favicon.ico"
       };
-    
+
+  
       self.registration.showNotification(notificationTitle, notificationOptions);
     });
 
 
     messaging.onMessage((payload) => {   
-      console.log(
-        '[firebase-messaging-sw.js] Received foreground message!! ',
-        payload
-      );
+      // console.log(
+      //   '[firebase-messaging-sw.js] Received foreground message!! ',
+      //   payload
+      // );
+
+      console.log("~~");
       const notificationTitle = payload.notification.title;
       const notificationOptions = {
         body: payload.notification.body,
         icon: "favicon.ico"
       };
-    
       self.registration.showNotification(notificationTitle, notificationOptions);
     });

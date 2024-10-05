@@ -21,9 +21,34 @@
                         :to="{ path: '/member/sign-in' }">Login</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
                         @click="alertModal = true">Logout</v-btn> <!-- Open modal instead of logging out directly -->
-                    <v-btn color="white" class="reduce-spacing">
-                        <img src="/notifications.png" width=25 alt="Logo" />
-                    </v-btn>
+
+                    <v-menu>
+                    <template v-slot:activator="{ props }">
+                        <v-btn v-bind="props" color="white" class="reduce-spacing">
+                            <img src="/notifications.png" width=25 alt="Logo" />
+                            <span v-if="notifications.length  > 0" class="notification-mark"></span>
+                        </v-btn>
+                    </template>
+                    <v-list>
+                        <v-list-item v-if="notifications.length === 0">
+                            <v-list-item-title>새로운 알림이 없네요!</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item v-for="(notification, index) in notifications" :key="index" >
+                            <v-list-item-content>
+                                <v-list-item-title>{{ notification.notification.title }}</v-list-item-title>
+                                <!-- Optional: Display the date or any other info -->
+                                <v-list-item-subtitle>{{ notification.notification.body }}</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item v-if="notifications.length > 0"
+                            color="light_green"
+                            @click="markAsRead()"
+                            >모두 읽음 표시
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
+                    
+                    
                     <v-btn color="white">
                         <img src="/searchLogo.png" width=17 alt="Logo" />
                     </v-btn>
@@ -55,6 +80,7 @@ import axios from 'axios';
 import 'firebase/messaging';
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { mapGetters } from 'vuex';
 
 export default {
     data() {
@@ -63,7 +89,12 @@ export default {
             isLogin: false, // 로그인 여부 확인 
             isSeller: false, // seller인지 member인지 여부 확인
             firstFarmModal: false,
+            notiCount: 0,
+            notifications: []
         };
+    },
+    computed: {
+      ...mapGetters(['getNotiCount']),
     },
     created() {
         const token = localStorage.getItem('accessToken');
@@ -85,6 +116,10 @@ export default {
 
 
         this.initializeFCM()
+        const savedNotifications = localStorage.getItem('notifications');
+        if (savedNotifications) {
+            this.notifications = JSON.parse(savedNotifications);
+        }
     },
     methods: {
 
@@ -105,7 +140,6 @@ export default {
                 console.error('농장 확인 실패:', error);
             }
         },
-
         goToFarmCreate() {
             this.firstFarmModal = false;
             this.$router.push('/farm/farm-create'); // 농장 생성 페이지로 이동
@@ -142,7 +176,6 @@ export default {
 
                     // Store the token in local storage
                     localStorage.setItem("fcmToken", token);
-                    console.log('fcmToken: ', token);
                 } catch (err) {
                     console.log(err);
                 }
@@ -152,7 +185,7 @@ export default {
                 "fcmToken" : localStorage.getItem("fcmToken")
             };
 
-            // DB에 fcm 
+            // DB에 fcm 토큰을 저장
             try {
                 const res = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
                 console.log(res);
@@ -163,6 +196,11 @@ export default {
 
 
             onMessage(messaging, (payload) => {
+        
+                this.notifications.push(payload);
+                localStorage.setItem("notifications", JSON.stringify(this.notifications));
+
+
                 console.log("Received message ", payload);
                 const notificationTitle = payload.notification.title;
                 const notificationOptions = {
@@ -170,10 +208,17 @@ export default {
                     icon: "favicon.ico"
                 };
 
+
+
                 if (Notification.permission === "granted") {
                     new Notification(notificationTitle, notificationOptions);
                 }
+
             });
+        },
+        markAsRead() {
+            this.notifications = [];
+            localStorage.removeItem("notifications");
         }
     },
 };
@@ -215,5 +260,13 @@ export default {
     background-color: #BCC07B;
     color: black;
     border-radius: 50px;
+}
+
+.notification-mark {
+    background-color: #FFAF6E;
+    border-radius: 20px;
+    width: 10px;
+    height: 10px;
+    margin-bottom: 10px;
 }
 </style>
