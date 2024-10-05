@@ -116,6 +116,7 @@ export default {
 
 
         this.initializeFCM()
+        
         // IndexedDB에서 알림 데이터 가져오기
         this.getNotificationsFromIndexedDB()
             .then((notifications) => {
