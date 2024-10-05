@@ -19,7 +19,7 @@
                                     width="235"
                                     height="300px"
                                     :src="live.liveImage"
-                                    alt="Farm 썸네일"
+                                    alt="Live 썸네일"
                                     cover
                                 />
                                 <v-card-text style="text-align: center;">
@@ -54,11 +54,11 @@
                         <v-card v-for="live in liveList" :key="live.liveId" class="farm-card" md="2" variant="text" style="width:200px; height:360; margin: 10px; margin-bottom: 15px;"
                         @click="joinExistingSession(live.liveId)">
                             <v-img
-                            class="farm-image"
+                            class="live-image"
                             width="180px"
                             height="280px"
                             :src="live.liveImage"
-                                alt="Farm 썸네일" cover />
+                                alt="live 썸네일" cover />
                             <v-card-text>
                                 <span v-if="live.title.length > 10">[ {{ live.farmName }} ] {{ live.title.substring(0, 10) }}... </span>
                                 <span v-else>[ {{ live.farmName }} ] {{live.title}}</span>
@@ -98,7 +98,6 @@
             </v-dialog>
         </template>
 
-
         <!-- 🔖 라이브 세션 화면 : 라이브가 실행되고 비디오가 출력되는 화면면 -->
         <template v-else>
             <div>
@@ -119,7 +118,6 @@
                 </div>
             </div>
         </template>
-
     </v-container>
 </template>
 
@@ -155,6 +153,11 @@ export default {
             title: "",
             liveImage: "",
             file: null,
+
+            isLoading: false,
+            isLastPage: false,
+            currentPage: 0,
+            pageSize: 7,
         };
     },
     async created() {
@@ -180,12 +183,19 @@ export default {
         }
 
         // 전체 라이브 목록 뿌리기 
+        let params = {
+            page: this.currentPage,
+            size: this.pageSize,
+        }
         try {
-            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/active`);
-            this.liveList = response.data;
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/active`, {params});
+            console.log("전체 : ", response.data.content);
+            this.liveList = response.data.content;
         } catch(e) {
             console.log(e);
         }
+
+        window.addEventListener('scroll', this.scrollPagination);
     },
     methods: {
         // 썸넬 이미지 등록 
@@ -247,6 +257,36 @@ export default {
         prev() {
             this.onboarding = this.onboarding - 1 <= 0 ? this.windowCount : this.onboarding - 1;
         },
+        // 스크롤 
+        async loadLive() {
+            try {
+                if(this.isLoading || this.isLastPage) return;
+
+                this.isLoading = true;
+                this.currentPage++;
+                let params = {
+                    page: this.currentPage,
+                    size: this.pageSize,
+                }
+
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/active`, { params });
+                const additionalData = response.data.content;
+                this.liveList = [...this.liveList, ...additionalData]; 
+                
+                this.isLastPage = response.data.last; // 라스트 여부
+                this.isLoading = false; // 로딩 끝!
+            } catch(e) {
+                console.log(e);
+            }
+            console.log(this.currentPage);
+        },
+        scrollPagination() {
+            const isBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+            if(isBottom && !this.isLastPage && !this.isLoading) {
+                this.loadLive();
+            }
+        },
+
         // 라이브 시작하기 위해 title, 썸네일 추가하는 모달창 
         openModal() {
             this.startLiveDialog = true;

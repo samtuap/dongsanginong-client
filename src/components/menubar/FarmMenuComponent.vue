@@ -1,8 +1,8 @@
 <template>
     <v-container style="max-width: 950px;">
         <!-- Header Text -->
-        <v-row justify="center" style="margin-bottom: 10px;">
-            <h2>{{this.farmName}}</h2>
+        <v-row justify="center" style="margin-top: 10px; margin-bottom: 10px;">
+            <h3>{{this.farmName}}</h3>
         </v-row>
 
         <!-- Image Banner -->
@@ -79,14 +79,19 @@ export default {
 }
 .nav-link:hover {
     opacity: 1;
-    transition: 0.3s ease; }
+    /* transition: 0.3s ease;  */
+    background-color: #e0e0e0;
+    padding: 5px;
+    border-radius: 10px;
+}
 
 .menubar {
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
-    margin-bottom: 30px;
+    border-top: 1.7px solid #b3b3b3;
+    border-bottom: 1.7px solid #b3b3b3;
+    margin-bottom: 10px;
     margin-top: 30px;
     height: 40px;
+    font-size: 14px;
 }
 
 
