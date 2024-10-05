@@ -1,5 +1,6 @@
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js");
+import { mapGetters } from "vuex";
 
 
 const firebaseConfig = {
@@ -14,12 +15,13 @@ const firebaseConfig = {
   firebase.initializeApp(firebaseConfig);
   const messaging = firebase.messaging();
 
-  messaging.onBackgroundMessage((payload) => {   
-      // console.log(
-      //   '[firebase-messaging-sw.js] Received background message ',
-      //   payload
-      // );
-      console.log("!!");  
+  messaging.onBackgroundMessage((payload) => { 
+    saveToIndexedDB(payload);
+    
+      console.log(
+        '[firebase-messaging-sw.js] Received background message ',
+        payload,
+      );
 
       const notificationTitle = payload.notification.title;
       const notificationOptions = {
@@ -33,12 +35,13 @@ const firebaseConfig = {
 
 
     messaging.onMessage((payload) => {   
-      // console.log(
-      //   '[firebase-messaging-sw.js] Received foreground message!! ',
-      //   payload
-      // );
+      saveToIndexedDB(payload);
+  
+      console.log(
+        '[firebase-messaging-sw.js] Received foreground message!! ',
+        payload
+      );
 
-      console.log("~~");
       const notificationTitle = payload.notification.title;
       const notificationOptions = {
         body: payload.notification.body,
@@ -46,3 +49,26 @@ const firebaseConfig = {
       };
       self.registration.showNotification(notificationTitle, notificationOptions);
     });
+
+// IndexedDB를 사용하여 데이터를 저장하는 함수
+function saveToIndexedDB(payload) {
+const request = indexedDB.open("notificationDB", 1);
+
+request.onupgradeneeded = (event) => {
+  const db = event.target.result;
+  if (!db.objectStoreNames.contains("notifications")) {
+    db.createObjectStore("notifications", { keyPath: "id", autoIncrement: true });
+  }
+};
+
+request.onsuccess = (event) => {
+  const db = event.target.result;
+  const transaction = db.transaction("notifications", "readwrite");
+  const store = transaction.objectStore("notifications");
+  store.add(payload);
+};
+
+request.onerror = (event) => {
+  console.error("Error opening IndexedDB", event);
+};
+}

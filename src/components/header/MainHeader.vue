@@ -116,11 +116,30 @@ export default {
 
 
         this.initializeFCM()
-        const savedNotifications = localStorage.getItem('notifications');
-        if (savedNotifications) {
-            this.notifications = JSON.parse(savedNotifications);
-        }
+        // IndexedDB에서 알림 데이터 가져오기
+        this.getNotificationsFromIndexedDB()
+            .then((notifications) => {
+                this.notifications = notifications;
+            })
+            .catch((error) => {
+                console.error("Failed to retrieve notifications from IndexedDB:", error);
+            });
+        
+            console.log("notifications:");
+            console.log(this.notifications);
+
+            // 주기적으로 IndexedDB 상태 확인 (예: 5초마다)
+            setInterval(() => {
+                this.getNotificationsFromIndexedDB()
+                    .then((notifications) => {
+                        this.notifications = notifications;
+                    })
+                    .catch((error) => {
+                        console.error("Failed to retrieve notifications from IndexedDB:", error);
+                    });
+            }, 5000); // 5초마다 확인
     },
+    
     methods: {
 
         async checkFarmAndRedirect() {
@@ -197,8 +216,10 @@ export default {
 
             onMessage(messaging, (payload) => {
         
+                // IndexedDB에 저장
+                this.saveNotificationToIndexedDB(payload);
+                // notifications 배열 업데이트
                 this.notifications.push(payload);
-                localStorage.setItem("notifications", JSON.stringify(this.notifications));
 
 
                 console.log("Received message ", payload);
@@ -218,8 +239,78 @@ export default {
         },
         markAsRead() {
             this.notifications = [];
-            localStorage.removeItem("notifications");
+            this.clearNotificationsFromIndexedDB();
+        },
+        saveNotificationToIndexedDB(notification) {
+            const request = indexedDB.open("notificationDB", 1);
+
+            request.onsuccess = (event) => {
+                const db = event.target.result;
+                const transaction = db.transaction("notifications", "readwrite");
+                const store = transaction.objectStore("notifications");
+                store.add(notification);
+            };
+
+            request.onerror = (event) => {
+                console.error("Error saving notification to IndexedDB", event);
+            };
+        },
+        getNotificationsFromIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open("notificationDB", 1);
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains("notifications")) {
+                        db.createObjectStore("notifications", { keyPath: "id", autoIncrement: true });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    const db = event.target.result;
+                    const transaction = db.transaction("notifications", "readonly");
+                    const store = transaction.objectStore("notifications");
+                    const getAllRequest = store.getAll();
+
+                    getAllRequest.onsuccess = () => {
+                        resolve(getAllRequest.result);
+                    };
+
+                    getAllRequest.onerror = (error) => {
+                        reject(error);
+                    };
+                };
+
+                request.onerror = (event) => {
+                    reject(event);
+                };
+            });
+        },
+        clearNotificationsFromIndexedDB() {
+            const request = indexedDB.open("notificationDB", 1);
+
+            request.onsuccess = (event) => {
+                const db = event.target.result;
+                const transaction = db.transaction("notifications", "readwrite");
+                const store = transaction.objectStore("notifications");
+                
+                // 모든 데이터를 삭제
+                const clearRequest = store.clear();
+
+                clearRequest.onsuccess = () => {
+                    console.log("All notifications cleared from IndexedDB");
+                };
+
+                clearRequest.onerror = (event) => {
+                    console.error("Error clearing notifications from IndexedDB", event);
+                };
+            };
+
+            request.onerror = (event) => {
+                console.error("Error opening IndexedDB", event);
+            };
         }
+
     },
 };
 </script>
