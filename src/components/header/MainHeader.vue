@@ -33,17 +33,21 @@
                         <v-list-item v-if="notifications.length === 0">
                             <v-list-item-title>새로운 알림이 없네요!</v-list-item-title>
                         </v-list-item>
-                        <v-list-item v-for="(notification, index) in notifications" :key="index" >
+                        <v-list-item
+                        v-for="(notification, index) in notifications"
+                        :key="index" style="border-bottom: 1px #DBE098 dashed"
+                        @click="this.$router.push(`/notifications`)"
+                        >
                             <v-list-item-content>
-                                <v-list-item-title>{{ notification.notification.title }}</v-list-item-title>
+                                <p style="font-weight: bold;">{{ notification.notification.title }}</p>
                                 <!-- Optional: Display the date or any other info -->
-                                <v-list-item-subtitle>{{ notification.notification.body }}</v-list-item-subtitle>
+                                <p style="font-size: small">{{ JSON.parse(notification.notification.body).content.substring(0, 10) }}</p>
+                                <v-list-item-subtitle style="font-size:small">{{ getFormattedTime(JSON.parse(notification.notification.body).issuedAt) }}</v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
                         <v-list-item v-if="notifications.length > 0"
-                            color="light_green"
                             @click="markAsRead()"
-                            >모두 읽음 표시
+                            >✅ 모두 읽음 표시
                         </v-list-item>
                     </v-list>
                 </v-menu>
@@ -116,7 +120,7 @@ export default {
 
 
         this.initializeFCM()
-        
+
         // IndexedDB에서 알림 데이터 가져오기
         this.getNotificationsFromIndexedDB()
             .then((notifications) => {
@@ -310,6 +314,20 @@ export default {
             request.onerror = (event) => {
                 console.error("Error opening IndexedDB", event);
             };
+        },
+        getFormattedTime(timeStr) {
+            const date = new Date(timeStr);
+            const year = date.getFullYear(); // 연도
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1), 2자리로 맞춤
+            const day = String(date.getDate()).padStart(2, '0'); // 일, 2자리로 맞춤
+
+            const hours = String(date.getHours()).padStart(2, '0'); // 시, 2자리로 맞춤
+            const minutes = String(date.getMinutes()).padStart(2, '0'); // 분, 2자리로 맞춤
+            const seconds = String(date.getSeconds()).padStart(2, '0'); // 초, 2자리로 맞춤
+
+            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+            return formattedDate;
         }
 
     },
