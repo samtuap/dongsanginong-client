@@ -24,3 +24,5 @@ pnpm-debug.log*
 *.sw?
 
 package-lock.json
+
+docker-compose-local.yml

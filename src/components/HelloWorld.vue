@@ -11,18 +11,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 
 export default {
-  async created() {
-    console.log("created");
-    try {
-      const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/healthcheck`);
-      console.log(res);
-    } catch(e) {
-      console.log(e);
-    }
-  },
   data: () => ({
     ecosystem: [
       {
