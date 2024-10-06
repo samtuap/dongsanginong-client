@@ -26,13 +26,12 @@
                             <v-img class="package-img" style="width:190px; height:190px;" width="190px" height="180px"
                                 :src="packageProduct.imageUrl" alt="Farm 썸네일" cover />
                         </div>
-                        <div>
-                            <p style="font-size: middle"><span>{{ index + 1 }}</span> {{ packageProduct.packageName }}
-                            </p>
-                            <p style="font-size: small; color: #5D5D5D;" v-if="packageProduct.farmName.length > 10"> {{
-                                packageProduct.farmName.substring(0, 10) }}... </p>
-                            <p v-else> {{ packageProduct.farmName }}</p>
+                        <div style="display: flex;">
+                            <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div> <p>{{ packageProduct.packageName }}</p>
                         </div>
+                        <p style="font-size: small; color: #5D5D5D;" v-if="packageProduct.farmName.length > 10"> {{
+                            packageProduct.farmName.substring(0, 10) }}... </p>
+                        <p v-else> {{ packageProduct.farmName }}</p>
                     </div>
                 </div>
             </v-window-item>
@@ -47,7 +46,7 @@
         </v-card-actions>
         <!-- 전체보기 버튼 -->
         <v-col cols="12" class="text-center">
-            <v-btn color="deep_green" @click="viewAll">
+            <v-btn color="deep_green" @click="this.$router.push()">
                 🥦 패키지 전체보기
             </v-btn>
         </v-col>
@@ -60,7 +59,7 @@
         <!-- 제목 -->
         <v-col cols="12">
             <h3 class="text-center">
-                실시간 인기 농장
+                🏠 실시간 인기 농장 🏠
             </h3>
             <p class="text-center">즐겨찾기 수가 많은 농장들입니다.</p>
         </v-col>
@@ -74,19 +73,28 @@
                             <v-img class="package-img" style="width:190px; height:190px;" width="190px" height="180px"
                                 :src="farm.imageUrl" alt="Farm 썸네일" cover />
                         </div>
-                        <div>
-                            <p style="font-size: middle"><span>{{ index + 1 }}</span> {{ farm.farmNAme }}
-                            </p>
-                            <!-- <p style="font-size: small; color: #5D5D5D;" v-if="packageProduct.farmName.length > 10"> {{
-                                packageProduct.farmName.substring(0, 10) }}... </p>
-                            <p v-else> {{ packageProduct.farmName }}</p> -->
+                        <div style="display: flex; justify-content:center">
+                            <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div>
+                            <p style="font-size: middle"> {{ farm.farmName }}</p>
+                            <v-chip
+                            class="like-chip"
+                            size="small"
+                            color="deep_orange"
+                            style="margin-left: 10px;"
+                            @click="clickLike((4 * (n-1) + index + 1))"
+                            >
+                            💛 {{ farm.favoriteCount }}
+                            </v-chip>
+
+                            <!-- 하트 이모지 애니메이션 -->
+                            <div v-if="likes[(4 * (n-1) + index + 1)] == true" class="heart-emoji">💛</div>
                         </div>
                     </div>
                 </div>
             </v-window-item>
         </v-window>
         <v-card-actions style="justify-content: center;">
-            <v-item-group v-model="onboarding" class="text-center" mandatory>
+            <v-item-group v-model="farmOnboarding" class="text-center" mandatory>
                 <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
                     <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
                         @click="toggle"></v-btn>
@@ -95,7 +103,7 @@
         </v-card-actions>
         <!-- 전체보기 버튼 -->
         <v-col cols="12" class="text-center">
-            <v-btn color="deep_green" @click="viewAll">
+            <v-btn color="deep_green" @click="this.$router.push('/farm')">
                 🌾 농장 둘러보기
             </v-btn>
         </v-col>
@@ -115,12 +123,13 @@ export default {
             onboarding: 1,
             scrollPosition: 0,
             farmList: [],
-            farmOnboarding: 1
+            farmOnboarding: 1,
+            likes: [],
         }
     },
     mounted() {
         // 3초마다 슬라이드 전환
-        this.startAutoSlide();
+        // this.startAutoSlide();
     },
     methods: {
         startAutoSlide() {
@@ -153,6 +162,17 @@ export default {
         restoreScrollPosition() {
             window.scrollTo(0, this.scrollPosition);  // 저장된 스크롤 위치로 이동
         },
+        clickLike(idx) {
+            if(this.likes[Number(idx)] == false) {
+                this.likes[Number(idx)] = true;
+            } else {
+                this.likes[Number(idx)] = false;
+            }
+
+            setTimeout(() => {
+                this.likes[Number(idx)] = false;  // 1초 후에 liked 상태를 다시 false로 변경
+            }, 1000);  // 1초 동안 하트 표시
+        }
 
     },
     async created() {
@@ -178,7 +198,12 @@ export default {
         try {
             const response2 = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/list`, { params });
             this.farmList = response2.data.content;
-        } catch(e) {
+
+            this.likes = new Array(this.farmList.length);
+            for(let i=0; i<this.farmList.length; ++i) {
+                this.likes[i] = false;
+            }
+        } catch (e) {
             console.log(e);
         }
 
@@ -238,17 +263,64 @@ export default {
     width: 100%;
     overflow: hidden;
     position: relative;
-  }
-  
-  .slider {
+}
+
+.slider {
     display: flex;
     width: max-content;
     transition: transform 0.1s linear;
-  }
-  
-  .card {
+}
+
+.card {
     flex-shrink: 0;
     width: 300px;
     margin: 0 10px;
-  }
+}
+
+.grade {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    background-color: #D8D8D8;
+    margin-right: 10px;
+    border-radius: 10px;
+    font-size: large;
+    color: #424242;
+}
+
+.top-grade {
+    background-color: #FFE2A6;
+    font-weight: bold;
+    font-size: large;
+    color: #DF7401;
+}
+
+.like-chip:hover {
+    background-color: #FFE2A6;
+    transition: 0.5s ease;
+}
+
+.heart-emoji {
+    position: absolute;
+    transform: translateX(-50%); /* 중앙 정렬을 위한 트랜스폼 */
+    font-size: 24px;
+    opacity: 0; /* 애니메이션 전에는 보이지 않도록 설정 */
+    animation: popUp 1s ease-in-out forwards; /* 애니메이션 정의 */
+}
+
+@keyframes popUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0); /* 처음에는 원래 위치에서 scale 0으로 시작 */
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50px) scale(1.5); /* 위로 이동하면서 크기 확대 */
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100px) scale(0); /* 더 위로 이동하면서 크기 축소 */
+    }
+}
 </style>
