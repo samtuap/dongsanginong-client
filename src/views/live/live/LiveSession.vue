@@ -19,6 +19,10 @@
           :stream-manager="sub" 
           @click="updateMainVideoStreamManager(sub)" />
       </div>
+
+      <div class="chat-section">
+        <ChatBox :liveId="mySessionId" :currentSellerId="currentSellerId" :isPublisher="isPublisher" />
+      </div>
     </div>
 
     <!-- 라이브 종료(publisher) 확인 모달창 -->
@@ -37,10 +41,12 @@
 import axios from 'axios';
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/video/UserVideo"; //⭐
+import ChatBox from '../chat/ChatBox.vue';
 
 export default {
     components: {
-      UserVideo //⭐
+      UserVideo, //⭐
+      ChatBox
     },
     data() {
       return {
@@ -49,6 +55,7 @@ export default {
         publisher: undefined,
         subscribers: [],
         isPublisher: false,
+        currentSellerId: "",
         title: "", 
         OV: undefined,
         mySessionId: "",
@@ -65,6 +72,13 @@ export default {
         this.title = title;
         this.isPublisher = isPublisher;
         this.mySessionId = sessionId;
+
+        if (isPublisher) {
+            this.currentSellerId = localStorage.getItem('sellerId');
+        } else {
+            this.currentSellerId = this.$route.query.sellerId; 
+        }
+        console.log('Current Seller ID:', this.currentSellerId);
         this.joinSession(sessionId);    
     },
     methods: {
@@ -111,6 +125,10 @@ export default {
         async getToken(sessionId) {
             const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/live-service/api/sessions/${sessionId}/connections`);
             return response.data;
+        },
+
+        updateMainVideoStreamManager(streamManager) {
+            this.mainStreamManager = streamManager; // 메인 비디오 스트림을 업데이트
         },
 
         showExitModal() {
@@ -165,6 +183,19 @@ export default {
 }
 .end-modal {
     padding: 10px;
+}
+.live-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+.video-section {
+  flex: 2; /* 비디오가 더 많은 공간을 차지하도록 설정 */
+  margin-right: 10px;
+}
+.chat-section {
+  flex: 1; /* 채팅은 비디오의 절반 정도 공간 차지 */
 }
 </style>
 
