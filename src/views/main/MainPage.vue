@@ -2,9 +2,12 @@
     <!-- <v-container> -->
         <v-carousel
           cycle
-          hide-delimiters
+          :show-arrows="false"
+          delimiter-icon="mdi-square"
+          delimiter-color="light_green"
           height="380"
           interval="5000"
+          hide-delimiter-background
         > <!--5초마다 슬라이드-->
           <v-carousel-item v-for="(image, index) in images" :key="index" style="overflow: hidden;">
             <img
