@@ -1,5 +1,5 @@
 import LiveList from '@/views/live/live/LiveList.vue'
-// import LiveStream from '@/views/live/live/LiveStream.vue';
+import LiveSession from '@/views/live/live/LiveSession.vue'
 
 export const liveRouter = [
 
@@ -8,9 +8,9 @@ export const liveRouter = [
         name: 'LiveList',
         component: LiveList
     },
-    // {
-    //     path: '/live/stream/:sessionId',
-    //     name: 'LiveStream',
-    //     component: LiveStream,
-    //   }
+    {
+        path: '/live/:sessionId', //⭐
+        name: 'LiveSession',
+        component: LiveSession,
+      },
 ]
