@@ -19,7 +19,7 @@
         <!-- 상품 슬라이드 -->
         <v-window v-model="onboarding" style="width: 1080px; justify-content: center; margin: auto;">
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
-            <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n">
+            <v-window-item v-for="n in packageWindowCount" :key="`window-${n}`" :value="n">
                 <div class="d-flex justify-center">
                     <div v-for="(packageProduct, index) in paginatedPackages(n)" :key="index" style="margin: auto;">
                         <div style="padding-bottom: 30px;">
@@ -38,7 +38,7 @@
         </v-window>
         <v-card-actions style="justify-content: center;">
             <v-item-group v-model="onboarding" class="text-center" mandatory>
-                <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
+                <v-item v-for="n in packageWindowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
                     <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
                         @click="toggle"></v-btn>
                 </v-item>
@@ -66,7 +66,7 @@
 
         <v-window v-model="farmOnboarding" style="width: 1080px; justify-content: center; margin: auto;">
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
-            <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n">
+            <v-window-item v-for="n in farmWindowCount" :key="`window-${n}`" :value="n">
                 <div class="d-flex justify-center">
                     <div v-for="(farm, index) in paginatedFarm(n)" :key="index" style="margin: auto;">
                         <div style="padding-bottom: 30px;">
@@ -95,7 +95,7 @@
         </v-window>
         <v-card-actions style="justify-content: center;">
             <v-item-group v-model="farmOnboarding" class="text-center" mandatory>
-                <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
+                <v-item v-for="n in farmWindowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
                     <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
                         @click="toggle"></v-btn>
                 </v-item>
@@ -119,7 +119,8 @@ export default {
         return {
             images: [],
             items: [],
-            windowCount: 3,
+            packageWindowCount: 0,
+            farmWindowCount: 0,
             onboarding: 1,
             scrollPosition: 0,
             farmList: [],
@@ -187,7 +188,7 @@ export default {
 
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
         this.items = response.data;
-        console.log(this.items);
+        this.farmWindowCount = (this.items / 4) + 1;
 
         const params = {
             "page": 0,
@@ -198,6 +199,7 @@ export default {
         try {
             const response2 = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/list`, { params });
             this.farmList = response2.data.content;
+            this.farmWindowCount = (this.farmList.length / 4) + 1;
 
             this.likes = new Array(this.farmList.length);
             for(let i=0; i<this.farmList.length; ++i) {
