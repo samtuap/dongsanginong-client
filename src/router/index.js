@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import MainPage from "../views/main/MainPage.vue";
 
 import { farmNoticeRouter } from "./farmNoticeRouter";
 import { sellerRouter } from '@/router/sellerRouter';
@@ -7,13 +7,14 @@ import { memberRouter } from "./memberRouter";
 import { farmRouter } from "./farmRouter";
 import { liveRouter } from "./liveRouter";
 import { reviewRouter } from "./reviewRouter";
+import { receiptRouter } from "./receiptRouter";
 
 
 const routes = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: MainPage,
   },
   {
     path: "/about",
@@ -31,6 +32,7 @@ const routes = [
   ...reviewRouter,
   ...farmRouter,
   ...liveRouter,
+  ...receiptRouter,
 ];
 
 const router = createRouter({

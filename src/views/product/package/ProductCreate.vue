@@ -395,16 +395,16 @@ textarea {
 }
 
 .submit-button {
-  width: 80%;
+  width: 30%;
   padding: 10px;
   background-color: #bcc07b;
   border: none;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
   font-size: 16px;
   color: black;
   margin-top: 20px;
-  margin-left: -35%;
+  margin-left: 70%;
 }
 
 .submit-button:hover {
