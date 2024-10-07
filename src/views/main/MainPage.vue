@@ -128,7 +128,6 @@ export default {
             likes: [],
         }
     },
-
     methods: {
         paginatedPackages(page) {
             // 페이지에 따라 프로젝트를 반환하도록 수정
@@ -177,7 +176,7 @@ export default {
 
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
         this.items = response.data;
-        this.farmWindowCount = (this.items / 4) + 1;
+        this.packageWindowCount = parseInt(this.items.length / 4) + 1;
 
         const params = {
             "page": 0,
@@ -188,7 +187,7 @@ export default {
         try {
             const response2 = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/list`, { params });
             this.farmList = response2.data.content;
-            this.farmWindowCount = (this.farmList.length / 4) + 1;
+            this.farmWindowCount = parseInt((this.farmList.length / 4)) + 1;
 
             this.likes = new Array(this.farmList.length);
             for(let i=0; i<this.farmList.length; ++i) {
