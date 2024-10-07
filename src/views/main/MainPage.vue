@@ -128,19 +128,8 @@ export default {
             likes: [],
         }
     },
-    mounted() {
-        // 3초마다 슬라이드 전환
-        // this.startAutoSlide();
-    },
+
     methods: {
-        startAutoSlide() {
-            setInterval(() => {
-                this.saveScrollPosition();  // 스크롤 위치 저장
-                this.onboarding = (this.onboarding + 1) % this.windowCount;
-                this.farmOnboarding = (this.farmOnboarding + 1) % this.windowCount;
-                this.restoreScrollPosition();  // 스크롤 위치 복원
-            }, 5000); // 3000ms마다 다음 슬라이드로 이동
-        },
         paginatedPackages(page) {
             // 페이지에 따라 프로젝트를 반환하도록 수정
             const packagesPerPage = 4;
