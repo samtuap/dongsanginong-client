@@ -23,7 +23,7 @@
       </div>
 
       <div class="chat-section">
-        <ChatBox :liveId="mySessionId" :isPublisher="isPublisher" :title="title" /> //☀️
+        <ChatBox :liveId="mySessionId" :isPublisher="isPublisher" :title="title" />
       </div>
     </div>
 

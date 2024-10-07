@@ -73,7 +73,8 @@
                 @click="joinExistingSession(live.liveId)">
                 <div v-if="live.participantCount !== null && live.participantCount !== undefined" class="viewer-count">
                   {{ live.participantCount }}명 시청 중
-                </div> //☀️
+                </div>
+                <!-- //☀️ -->
                 <v-img
                   class="live-image"
                   width="180px"
