@@ -12,6 +12,7 @@
                     <v-btn class="cat_btn">커뮤니티 관리</v-btn><br>
                     <v-btn class="cat_btn">리뷰 관리</v-btn><br>
                     <v-btn class="cat_btn">쿠폰 관리</v-btn><br>
+                    <v-btn class="cat_btn" :to="{path: '/my-farm/update'}">내 농장 관리</v-btn><br>
                 </v-col>
             </v-list-item-group>
         </v-list>
