@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import MainPage from "../views/main/MainPage.vue";
 
 import { farmNoticeRouter } from "./farmNoticeRouter";
 import { sellerRouter } from '@/router/sellerRouter';
@@ -13,7 +13,7 @@ const routes = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: MainPage,
   },
   {
     path: "/about",
