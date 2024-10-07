@@ -39,7 +39,7 @@
                         <p v-if="packageProduct.farmName.length > 20" style="font-size: small; color: #5D5D5D; margin-left: 27px"> {{
                             packageProduct.farmName.substring(0, 20) }}... </p>
                         <p v-else style="font-size: small; color: #5D5D5D; margin-left: 27px;"> {{ packageProduct.farmName }}</p> -->
-                        <p style="font-weight:bold; margin-left: 27px;">27,000<span style="color: black; opacity: 0.5; font-weight: 500"> 원</span></p> 
+                        <p style="font-weight:bold; margin-left: 27px;">{{ packageProduct.price }}<span style="color: black; opacity: 0.5; font-weight: 500"> 원</span></p> 
                     </div>
                 </div>
                 </div>
