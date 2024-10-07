@@ -22,7 +22,7 @@
                     md="3" 
                     class="d-flex justify-center">
                     <v-card variant="text" style="width:235px; height:360px;" @click="joinExistingSession(live.id)">
-                      <div class="viewer-count">{{ live.participantCount }}명 시청 중</div> //☀️
+                      <div class="viewer-count">{{ live.participantCount - 1}}명 시청 중</div>
                       <v-img
                         class="live-image"
                         width="235"
@@ -72,7 +72,7 @@
                 style="width:200px; height:360; margin: 10px; margin-bottom: 15px;" 
                 @click="joinExistingSession(live.liveId)">
                 <div v-if="live.participantCount !== null && live.participantCount !== undefined" class="viewer-count">
-                  {{ live.participantCount }}명 시청 중
+                  {{ live.participantCount - 1}}명 시청 중
                 </div>
                 <!-- //☀️ -->
                 <v-img

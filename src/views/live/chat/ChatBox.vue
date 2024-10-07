@@ -110,7 +110,7 @@ export default {
         const message = {
           memberId: this.memberId,
           sellerId: this.sellerId,
-          liveId: this.liveId,
+          sessionId: this.liveId,
           content: this.chatMessage,
           name: this.senderName,
           isOwner: this.isPublisher,

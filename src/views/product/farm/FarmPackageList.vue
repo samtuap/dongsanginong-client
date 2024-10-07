@@ -16,29 +16,29 @@
       </v-row>
   
       <!-- 패키지 리스트 슬라이드 -->
-      <v-row v-else justify="center" style="gap: 10px;"> <!-- 중앙 정렬을 위한 justify-center -->
+      <v-row v-else justify="center" style="gap: 5px;"> <!-- 중앙 정렬을 위한 justify-center -->
         <v-col
           v-for="(packageProduct, index) in paginatedPackageList"
           :key="index"
           cols="12"
           sm="6"
           md="3"
-          lg="2"
           class="d-flex justify-center"
-          style="margin:25px; padding: 0px;"
+          style="margin:9px; padding: 0px;"
         >
-          <v-card elevation="0" class="v-card" style="width: 190px; height: 220px; padding: 0px;">
+          <v-card elevation="0" class="v-card" style="width: 400px; height: 400px; padding: 0px;">
             <v-img
               :src="packageProduct.imageUrl"
               alt="Package Image"
-              height="150px"
-              contain
+              height="300px"
+              width="300px"
+              cover
             ></v-img>
-            <v-card-text>
-              <div class="package-name" style="text-align: left;">
+            <v-card-text style="padding: 0; margin: 0; padding-top: 5px;">
+              <div class="package-name" style="text-align: left; padding-top: 0; margin-top: 0;">
                 {{ packageProduct.packageName }}
               </div>
-              <div class="package-price" style="text-align: left; color: #8e8e8e;">
+              <div class="package-price" style="text-align: left; color: #8e8e8e; padding-top: 0; margin-top: 0;">
                 {{ packageProduct.price.toLocaleString() }} 원
               </div>
             </v-card-text>
@@ -68,7 +68,7 @@ export default {
     return {
       packageProductList: [], // 전체 상품 리스트
       currentPage: 1, // 현재 페이지
-      itemsPerPage: 4, // 한 페이지당 보여줄 아이템 수
+      itemsPerPage: 3, // 한 페이지당 보여줄 아이템 수
       farmId: null,
       errorMessage: null
     };
@@ -88,7 +88,7 @@ export default {
   async created() {
     this.farmId = this.$route.params.farmId;
 
-    try {
+    try { 
       const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmId}`);
       this.packageProductList = response.data;
     } catch (e) {
@@ -114,7 +114,7 @@ export default {
 
 <style scoped>
 .package-name {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     margin-top: 10px;
     white-space: nowrap;
@@ -123,7 +123,7 @@ export default {
 }
 
 .package-price {
-    font-size: 14px;
+    font-size: 13px;
     color: #8e8e8e;
 }
 </style>
