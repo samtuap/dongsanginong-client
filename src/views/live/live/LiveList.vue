@@ -22,6 +22,7 @@
                     md="3" 
                     class="d-flex justify-center">
                     <v-card variant="text" style="width:235px; height:360px;" @click="joinExistingSession(live.id)">
+                      <div class="viewer-count">{{ live.participantCount }}명 시청 중</div> //☀️
                       <v-img
                         class="live-image"
                         width="235"
@@ -70,6 +71,10 @@
                 variant="text" 
                 style="width:200px; height:360; margin: 10px; margin-bottom: 15px;" 
                 @click="joinExistingSession(live.liveId)">
+                <div v-if="live.participantCount !== null && live.participantCount !== undefined" class="viewer-count">
+                  {{ live.participantCount }}명 시청 중
+                </div>
+                <!-- //☀️ -->
                 <v-img
                   class="live-image"
                   width="180px"
@@ -337,4 +342,15 @@ export default {
     border-radius: 50px;
     margin-left: 10px; 
 }
+.viewer-count {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7); /* 배경을 반투명하게 설정 */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 1; /* 이미지를 덮도록 설정 */
+} /* ☀️ */
 </style>
