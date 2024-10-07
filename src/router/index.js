@@ -6,6 +6,7 @@ import { sellerRouter } from '@/router/sellerRouter';
 import { memberRouter } from "./memberRouter";
 import { farmRouter } from "./farmRouter";
 import { liveRouter } from "./liveRouter";
+import { reviewRouter } from "./reviewRouter";
 import { receiptRouter } from "./receiptRouter";
 
 
@@ -28,6 +29,7 @@ const routes = [
   ...farmNoticeRouter,
   ...sellerRouter,
   ...memberRouter,
+  ...reviewRouter,
   ...farmRouter,
   ...liveRouter,
   ...receiptRouter,
