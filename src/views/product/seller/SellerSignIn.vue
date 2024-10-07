@@ -43,6 +43,7 @@ export default {
               localStorage.setItem('accessToken', token);
               localStorage.setItem('sellerId', response.data.sellerId)
               localStorage.setItem('role', response.data.role)
+              localStorage.setItem('farmId', response.data.farmId)
   
               this.$emit("login", this.formData);   
               this.closeModal();

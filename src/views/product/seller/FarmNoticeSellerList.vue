@@ -21,6 +21,13 @@
 
                     <br>
                     <v-row>
+                        <!-- 댓글 수와 아이콘 -->
+                        <v-btn @click="goToDetail(notice.id)" color="white" style="box-shadow: none; border: none; margin-bottom: 10px; font-size: 12px;">
+                            <img src="/comment.png" width=25 alt="Logo" /> 
+                            {{ notice.commentCnt }}
+                        </v-btn>
+
+                        <!-- 자세히 보기 버튼 -->
                         <v-btn @click="goToDetail(notice.id)" class="btn-no-background">자세히 보기</v-btn>
                     </v-row>
 
@@ -60,8 +67,7 @@ export default {
         }
     },
     created() {
-        this.farmNoticeList(this.currentPage)
-
+        this.farmNoticeList(this.currentPage);
     },
     methods: {
         async farmNoticeList(page) {
@@ -81,14 +87,13 @@ export default {
             }
         },
         goToDetail(noticeId) {
-            const farmId = this.id;
+            const farmId = this.$route.params.farmId;
             this.$router.push({
                 name: 'FarmNoticeSellerDetail',
                 params: { farmId: farmId, notice_id: noticeId }
             });
         }
     }
-
 };
 </script>
 
@@ -98,7 +103,6 @@ export default {
     width: 800px;
     border: 1px solid #d4d4d4;
     border-radius: 10px;
-
     padding-top: 10px;
     padding-bottom: 10px;
     padding-right: 30px;

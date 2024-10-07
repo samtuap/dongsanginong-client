@@ -89,19 +89,11 @@ export default {
     };
   },
   methods: {
-    getFarmIdFromToken() {
-      const token = localStorage.getItem('accessToken');
-      if (token) {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.farmId; // 토큰에서 farmId 추출
-      }
-      return null;
-    },
     async openEditDialog() {
       this.dialog = true;
       try {
+        const farmId = this.$route.params.farmId;
         const token = localStorage.getItem('accessToken');
-        const farmId = this.getFarmIdFromToken(); // 동적으로 farmId 가져오기
         const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farmId}/notice/${this.noticeId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -128,6 +120,10 @@ export default {
     removeFile(index) {
       this.selectedFiles.splice(index, 1);
       this.filePreviews.splice(index, 1);
+      // notice.imageUrls에서도 삭제
+      if (index < this.notice.imageUrls.length) {
+        this.notice.imageUrls.splice(index, 1); // 기존 이미지 배열에서 삭제
+      }
     },
     async uploadFiles() {
       const uploadedImageUrls = [];
@@ -172,11 +168,16 @@ export default {
     },
     async updateNotice() {
       await this.uploadFiles();
+
+      // 삭제된 이미지를 반영
+      const remainingImageUrls = this.filePreviews.map(preview => preview.url);
+
       const requestData = {
         title: this.notice.title,
         content: this.notice.content,
-        imageUrls: this.notice.imageUrls,
+        imageUrls: remainingImageUrls,  // 남은 이미지들만 전송
       };
+
       const accessToken = localStorage.getItem('accessToken');
       try {
         await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/${this.noticeId}/update`, {
@@ -315,4 +316,3 @@ textarea.custom-input {
   border-radius: 50px;
 }
 </style>
-

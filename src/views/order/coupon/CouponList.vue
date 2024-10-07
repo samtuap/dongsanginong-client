@@ -1,7 +1,7 @@
 <template>
   <SellerSidebar />
-
   <v-container fluid>
+    <h3 class="coupon-header">쿠폰관리</h3>
     <v-row justify="center">
       <!-- Coupon Table -->
       <v-col cols="12" md="8" offset-md="0">
@@ -117,10 +117,15 @@ export default {
 </script>
 
 <style scoped>
+.coupon-header{
+  margin-top: 30px;
+  margin-left: 120px;
+  margin-bottom: -20px;
+}
 .table-container {
   max-width: 100%;
   overflow-x: auto;
-  margin-left: -120px; /* 왼쪽으로 100px 이동 */
+  margin-left: -120px;
   margin-top: 15px;
 }
 

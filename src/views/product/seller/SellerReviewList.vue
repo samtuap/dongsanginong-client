@@ -1,9 +1,8 @@
 <template>
-  <FarmMenuComponent
-        :currentMenu="4" />
+    <SellerSidebar />
     <br><br>
     <div class="review-container">
-      <h2 class="review-header" >전체 리뷰({{ reviews.length }})</h2>
+      <h3 class="review-header">전체 리뷰({{ reviews.length }})</h3>
   
       <!-- 리뷰 목록 -->
       <v-row v-if="paginatedReviews.length > 0" class="review-row">
@@ -60,13 +59,13 @@
         class="pagination"
       ></v-pagination>
     </div>
-</template>
-
-<script>
-  import FarmMenuComponent from '@/components/menubar/FarmMenuComponent.vue';
+  </template>
+  
+  <script>
+  import SellerSidebar from '@/components/sidebar/SellerSidebar.vue';
   export default {
     components: {
-        FarmMenuComponent
+        SellerSidebar
     },
     data() {
       return {
@@ -113,93 +112,94 @@
       },
       // 리뷰 디테일 페이지로 이동하는 함수
       goToReviewDetail(reviewId) {
-        this.$router.push({ name: 'ReviewDetail', params: { reviewId } });
+        this.$router.push({ name: 'SellerReviewDetail', params: { reviewId } });
       },
     },
   };
-</script>
-
-<style scoped>
-.review-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-left: 200px; 
-}
-
-.review-header {
-  text-align: left;
-  width: 100%;
-  max-width: 1000px; /* 카드와 동일한 최대 폭으로 설정 */
-  margin-bottom: 30px;
-  padding-left: 0; /* 왼쪽 여백을 없앰 */
-}
-
-.review-row {
-  justify-content: center; /* 리뷰 카드들을 가운데 정렬 */
-  width: 100%;
-}
-
-.review-card {
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
-  margin-bottom: 20px;
-  text-align: left; /* 카드 내부 내용 왼쪽 정렬 */
-  width: 80%;
-  max-width: 2000px; /* 카드의 최대 폭 설정 */
-  cursor: pointer; /* 클릭 가능한 커서로 변경 */
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.rating {
-  display: flex;
-  align-items: center;
-}
-
-.star-icon {
-  color: #FFCC80;
-  font-size: 30px;
-  padding: 0 5px;
-  border-radius: 50%;
-}
-
-.review-date {
-  font-size: 14px;
-  color: #888;
-}
-
-.review-title {
-  margin: 10px 0;
-  font-size: 18px;
-}
-
-/* 상품 이름을 회색으로 표시 */
-.package-name {
-  font-size: 16px;
-  color: #888;
-}
-
-.review-images {
-  display: flex;
-  gap: 10px;
-}
-
-.review-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-.pagination {
-  margin-top: 20px;
-}
-</style>
+  </script>
+  
+  <style scoped>
+  .review-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .review-header {
+    text-align: left;
+    width: 100%;
+    max-width: 1200px; /* 카드와 동일한 최대 폭으로 설정 */
+    margin-bottom: 30px;
+    padding-left: 0; /* 왼쪽 여백을 없앰 */
+  }
+  
+  .review-row {
+    justify-content: left; /* 리뷰 카드들을 가운데 정렬 */
+    margin-left: 180px;
+    width: 100%;
+  }
+  
+  .review-card {
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    text-align: left; /* 카드 내부 내용 왼쪽 정렬 */
+    width: calc(60% + 40%);
+    max-width: 2000px; /* 카드의 최대 폭 설정 */
+    cursor: pointer; /* 클릭 가능한 커서로 변경 */
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .rating {
+    display: flex;
+    align-items: center;
+  }
+  
+  .star-icon {
+    color: #FFCC80;
+    font-size: 30px;
+    padding: 0 5px;
+    border-radius: 50%;
+  }
+  
+  .review-date {
+    font-size: 14px;
+    color: #888;
+  }
+  
+  .review-title {
+    margin: 10px 0;
+    font-size: 18px;
+  }
+  
+  /* 상품 이름을 회색으로 표시 */
+  .package-name {
+    font-size: 16px;
+    color: #888;
+  }
+  
+  .review-images {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .review-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+  .pagination {
+    margin-top: 20px;
+  }
+  </style>
+  
