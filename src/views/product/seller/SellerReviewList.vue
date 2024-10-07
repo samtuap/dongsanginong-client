@@ -134,7 +134,8 @@
   }
   
   .review-row {
-    justify-content: center; /* 리뷰 카드들을 가운데 정렬 */
+    justify-content: left; /* 리뷰 카드들을 가운데 정렬 */
+    margin-left: 180px;
     width: 100%;
   }
   
@@ -142,10 +143,10 @@
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     margin-bottom: 20px;
     text-align: left; /* 카드 내부 내용 왼쪽 정렬 */
-    width: 80%;
+    width: calc(60% + 40%);
     max-width: 2000px; /* 카드의 최대 폭 설정 */
     cursor: pointer; /* 클릭 가능한 커서로 변경 */
   }
@@ -163,7 +164,7 @@
   }
   
   .star-icon {
-    color: #FF462D;
+    color: #FFCC80;
     font-size: 30px;
     padding: 0 5px;
     border-radius: 50%;

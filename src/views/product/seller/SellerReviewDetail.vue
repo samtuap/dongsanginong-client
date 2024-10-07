@@ -193,7 +193,7 @@ display: flex;
 align-items: center;
 }
 .star-icon {
-color: #FF462D;
+color: #FFCC80;
 font-size: 30px;
 padding: 0 5px;
 border-radius: 50%;

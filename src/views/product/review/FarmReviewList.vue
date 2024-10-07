@@ -3,7 +3,7 @@
         :currentMenu="4" />
     <br><br>
     <div class="review-container">
-      <h2 class="review-header">전체 리뷰({{ reviews.length }})</h2>
+      <h2 class="review-header" >전체 리뷰({{ reviews.length }})</h2>
   
       <!-- 리뷰 목록 -->
       <v-row v-if="paginatedReviews.length > 0" class="review-row">
@@ -124,7 +124,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: 200px; /* 왼쪽으로 100px 이동 */
+  margin-left: 200px; 
 }
 
 .review-header {
@@ -144,7 +144,7 @@
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
+  background-color: #f9f9f9;
   margin-bottom: 20px;
   text-align: left; /* 카드 내부 내용 왼쪽 정렬 */
   width: 80%;
@@ -165,7 +165,7 @@
 }
 
 .star-icon {
-  color: #FF462D;
+  color: #FFCC80;
   font-size: 30px;
   padding: 0 5px;
   border-radius: 50%;
