@@ -56,8 +56,14 @@
   
           <div class="input-group">
             <label for="deliveryPeriod">배송주기</label>
-            <input type="text" id="deliveryPeriod" v-model="deliveryPeriod" placeholder="배송주기를 입력해주세요." />
-          </div>
+            <select id="deliveryPeriod" v-model="deliveryPeriod">
+              <option value="1">1일</option>
+              <option value="4">4일</option>
+              <option value="7">7일</option>
+              <option value="14">14일</option>
+              <option value="28">28일</option>
+          </select>
+        </div>
   
           <div class="input-group">
             <label for="origin">원산지</label>
@@ -106,7 +112,7 @@
         productName: '',
         productDescription: '',
         price: '',
-        deliveryPeriod: '',
+        deliveryPeriod: 1,
         origin: '',
         imageUrls: [], // 기존 이미지 리스트
         newImageUrls: [], // 새로 추가된 이미지 리스트
@@ -132,7 +138,7 @@
           this.productDescription = productData.productDescription;
           this.price = productData.price;
           this.deliveryPeriod = productData.delivery_cycle;
-          this.origin = productData.farmName;
+          this.origin = productData.origin;
           this.imageUrls = productData.imageUrls;
           console.log(response)
         } catch (error) {
@@ -419,7 +425,7 @@
   }
   
   input,
-  textarea {
+  textarea, select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;

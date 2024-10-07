@@ -7,6 +7,10 @@ import SellerWithDraw from "@/views/product/seller/SellerWithDraw.vue"
 import ProductCreate from "@/views/product/package/ProductCreate.vue"
 import ProductList from "@/views/product/seller/ProductList.vue"
 import ProductUpdate from "@/views/product/seller/ProductUpdate.vue"
+import FarmNoticeSellerList from "@/views/product/seller/FarmNoticeSellerList.vue";
+import FarmNoticeSellerDetail from "@/views/product/seller/FarmNoticeSellerDetail.vue";
+import SellerReviewList from "@/views/product/seller/SellerReviewList.vue"
+import SellerReviewDetail from"@/views/product/seller/SellerReviewDetail.vue"
 
 export const sellerRouter = [
 
@@ -54,5 +58,25 @@ export const sellerRouter = [
         path: '/seller/update-product/:id',
         name: 'ProductUpdate',
         component: ProductUpdate
-    }
+    },
+    {
+        path: '/seller/:farmId/notice/list',
+        name: 'FarmNoticeSellerList',
+        component: FarmNoticeSellerList,
+    },
+    {
+        path: '/seller/:farmId/notice/:notice_id',
+        name: 'FarmNoticeSellerDetail',
+        component: FarmNoticeSellerDetail,
+    },
+    {
+        path: '/seller/:farmId/review/list',
+        name: 'SellerReviewList',
+        component: SellerReviewList,
+    },
+    {
+        path: '/seller/reviews/:reviewId/detail',
+        name: 'SellerReviewDetail',
+        component: SellerReviewDetail
+    },
 ]

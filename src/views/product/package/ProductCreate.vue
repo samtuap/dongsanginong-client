@@ -56,7 +56,13 @@
 
         <div class="input-group">
           <label for="deliveryPeriod">배송주기</label>
-          <input type="text" id="deliveryPeriod" v-model="deliveryPeriod" placeholder="배송주기를 입력해주세요." />
+          <select id="deliveryPeriod" v-model="deliveryPeriod">
+            <option value="1">1일</option>
+            <option value="4">4일</option>
+            <option value="7">7일</option>
+            <option value="14">14일</option>
+            <option value="28">28일</option>
+          </select>
         </div>
 
         <div class="input-group">
@@ -105,7 +111,7 @@ export default {
       productName: '',
       productDescription: '',
       price: '',
-      deliveryPeriod: '',
+      deliveryPeriod: 1,
       origin: '',
       imageUrls: [], // 업로드된 이미지 리스트
       currentIndex: 0, // 현재 슬라이더에서 표시되는 이미지 인덱스
@@ -380,7 +386,7 @@ label {
   margin-bottom: 5px;
 }
 
-input, textarea {
+input, textarea, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
