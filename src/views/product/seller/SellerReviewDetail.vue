@@ -265,7 +265,7 @@ padding: 10px 20px;
 font-size: 15px;
 font-weight: bold;
 line-height: 1.5;
-transform: translateX(1060px);
+transform: translateX(1150px);
 max-width: 200px;
 }
 
