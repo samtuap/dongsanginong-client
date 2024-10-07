@@ -17,22 +17,31 @@
         </v-col>
 
         <!-- 상품 슬라이드 -->
-        <v-window v-model="onboarding" style="width: 1080px; justify-content: center; margin: auto;">
+        <v-window v-model="onboarding" style="width: 1080px; margin: auto;">
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
             <v-window-item v-for="n in packageWindowCount" :key="`window-${n}`" :value="n">
-                <div class="d-flex justify-center">
-                    <div v-for="(packageProduct, index) in paginatedPackages(n)" :key="index" style="margin: auto;">
+                <div class="d-flex">
+                    <div v-for="(packageProduct, index) in paginatedPackages(n)" :key="index" style="margin-left: 50px;" class="card-outer">
                         <div style="padding-bottom: 30px;">
-                            <v-img class="package-img" style="width:190px; height:190px;" width="190px" height="180px"
+                            <v-img class="package-img" style="width:190px; height:190px;"
                                 :src="packageProduct.imageUrl" alt="Farm 썸네일" cover />
                         </div>
-                        <div style="display: flex; align-items: center;">
-                            <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div> <p>{{ packageProduct.packageName }}</p>
+                        <div style="display: flex; width: 190px; min-height: 70px;">
+                            <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div>
+                            <!-- 패키지 이름 -->
+                            <p v-if="packageProduct.packageName.length > 50" style="font-size: 15px;"> {{
+                                packageProduct.packageName.substring(0, 50) }}... </p>
+                            <p v-else style="font-size: 15px;"> {{ packageProduct.packageName }}</p>
                         </div>
-                        <p v-if="packageProduct.farmName.length > 10" style="font-size: small; color: #5D5D5D;"> {{
-                            packageProduct.farmName.substring(0, 10) }}... </p>
-                        <p v-else style="font-size: small; color: #5D5D5D;"> {{ packageProduct.farmName }}</p>
+
+                        <div style="width: 190px;">
+                        <!-- 농장 이름
+                        <p v-if="packageProduct.farmName.length > 20" style="font-size: small; color: #5D5D5D; margin-left: 27px"> {{
+                            packageProduct.farmName.substring(0, 20) }}... </p>
+                        <p v-else style="font-size: small; color: #5D5D5D; margin-left: 27px;"> {{ packageProduct.farmName }}</p> -->
+                        <p style="font-weight:bold; margin-left: 27px;">27,000<span style="color: black; opacity: 0.5; font-weight: 500"> 원</span></p> 
                     </div>
+                </div>
                 </div>
             </v-window-item>
         </v-window>
@@ -64,31 +73,37 @@
             <p class="text-center">즐겨찾기 수가 많은 농장들입니다.</p>
         </v-col>
 
-        <v-window v-model="farmOnboarding" style="width: 1080px; justify-content: center; margin: auto;">
+        <v-window v-model="farmOnboarding" style="width: 1080px; margin: auto;">
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
             <v-window-item v-for="n in farmWindowCount" :key="`window-${n}`" :value="n">
-                <div class="d-flex justify-center">
-                    <div v-for="(farm, index) in paginatedFarm(n)" :key="index" style="margin: auto;">
+                <div style="display:flex">
+                    <div v-for="(farm, index) in paginatedFarm(n)" :key="index" style="margin-left: 50px;" class="card-outer">
                         <div style="padding-bottom: 30px;">
-                            <v-img class="package-img" style="width:190px; height:190px;" width="190px" height="180px"
+                            <v-img class="package-img" style="width:190px; height:190px;"
                                 :src="farm.imageUrl" alt="Farm 썸네일" cover />
                         </div>
-                        <div style="display: flex; justify-content:center">
-                            <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div>
-                            <p style="font-size: middle"> {{ farm.farmName }}</p>
-                            <v-chip
-                            class="like-chip"
-                            size="small"
-                            color="deep_orange"
-                            style="margin-left: 10px;"
-                            @click="clickLike((4 * (n-1) + index + 1))"
-                            >
-                            💛 {{ farm.favoriteCount }}
-                            </v-chip>
 
-                            <!-- 하트 이모지 애니메이션 -->
-                            <div v-if="likes[(4 * (n-1) + index + 1)] == true" class="heart-emoji">💛</div>
+                        <div style="display: flex; width: 190px; height: 30px;">
+                            <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div>
+                            <div style="width: 120px;">
+                            <p v-if="farm.farmName.length < 8"> {{ farm.farmName }}</p>
+                            <p v-else> {{ farm.farmName.substring(0, 8) }}... </p>
                         </div>
+
+
+                        <v-chip
+                        class="like-chip"
+                        size="small"
+                        color="deep_orange"
+                        @click="clickLike((4 * (n-1) + index + 1))"
+                        >
+                        💛 {{ farm.favoriteCount }}
+                        </v-chip>
+
+                        <!-- 하트 이모지 애니메이션 -->
+                        <div v-if="likes[(4 * (n-1) + index + 1)] == true" class="heart-emoji">💛</div>
+                        </div>
+
                     </div>
                 </div>
             </v-window-item>
@@ -238,10 +253,6 @@ export default {
     border-radius: 10px;
 }
 
-.package-img:hover {
-    box-shadow: 10px 10px #5D5D5D, 0 25px 40px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
-    transition: 0.5s ease;
-}
 
 .farm-container {
     margin-top: 20px;
@@ -268,14 +279,14 @@ export default {
 }
 
 .grade {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
     text-align: center;
-    line-height: 30px;
+    line-height: 20px;
     background-color: #D8D8D8;
-    margin-right: 10px;
-    border-radius: 10px;
-    font-size: large;
+    margin-right: 7px;
+    border-radius: 4px;
     color: #424242;
 }
 
@@ -297,6 +308,19 @@ export default {
     font-size: 24px;
     opacity: 0; /* 애니메이션 전에는 보이지 않도록 설정 */
     animation: popUp 1s ease-in-out forwards; /* 애니메이션 정의 */
+    margin-left: 35px;
+}
+
+.card-outer {
+    border: 1px #D4D4D4 solid;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.card-outer:hover {
+    box-shadow: 10px 10px #5D5D5D, 0 25px 40px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+    transition: 0.5s ease;
 }
 
 @keyframes popUp {
