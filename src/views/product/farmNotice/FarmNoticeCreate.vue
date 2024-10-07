@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>공지사항 생성</h1>
-    <v-btn @click="dialog = true">공지 생성</v-btn> <!-- 버튼 클릭 시 모달 열림 -->
+    <v-btn @click="dialog = true" class="custom-create-button">공지 생성</v-btn> <!-- 버튼 클릭 시 모달 열림 -->
 
     <!-- 모달 -->
     <v-dialog v-model="dialog" max-width="600" class="custom-dialog">
@@ -34,7 +33,8 @@
                 type="file" 
                 @change="handleFileSelection" 
                 class="custom-input" 
-                ref="fileInput" /> <!-- ref 속성 추가 -->
+                ref="fileInput" 
+                multiple /> <!-- 다중 파일 업로드 -->
             </div>
             <!-- 선택된 파일들 표시 -->
             <div v-if="filePreviews.length">
@@ -44,7 +44,7 @@
                   <div class="image-wrapper">
                     <img :src="preview.url" class="preview-image" alt="선택된 이미지" />
                     <v-btn icon @click="removeFile(index)" class="remove-btn">
-                      <v-icon color="#BCC07B">mdi-close-circle</v-icon> <!-- "X" 모양 아이콘 -->
+                      <v-icon color="#BCC07B">mdi-close-circle</v-icon>
                     </v-btn>
                   </div>
                 </li>
@@ -73,12 +73,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 완료 메시지 모달 -->
+    <v-dialog v-model="alertModal" max-width="260px">
+      <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+        <v-card-text>{{ alertMessage }}</v-card-text>
+        <v-btn @click="alertModal = false;" class="submit-btn">close</v-btn>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   data() {
     return {
@@ -89,19 +95,21 @@ export default {
       },
       dialog: false, // 공지사항 생성 모달 상태
       selectedFiles: [], // 선택된 파일을 저장하기 위한 배열
-      filePreviews: [] // 파일 미리보기 URL을 저장하기 위한 배열
+      filePreviews: [], // 파일 미리보기 URL을 저장하기 위한 배열
+      alertModal: false, // 완료 메시지 모달 상태
+      alertMessage: '' // 모달에 표시될 메시지
     };
   },
   methods: {
     // 파일 선택 시 호출되는 메서드
     handleFileSelection(event) {
-      const file = event.target.files[0]; // 단일 파일 선택
-      if (file) {
+      const files = Array.from(event.target.files); // 여러 파일을 배열로 저장
+      files.forEach(file => {
         this.selectedFiles.push(file); // 선택된 파일을 배열에 추가
         const previewUrl = URL.createObjectURL(file); // 미리보기 URL 생성
         this.filePreviews.push({ url: previewUrl, file }); // 미리보기 배열에 URL과 파일 추가
-        this.$refs.fileInput.value = null; // 파일 입력 필드 초기화
-      }
+      });
+      this.$refs.fileInput.value = null; // 파일 입력 필드 초기화
     },
     
     // 선택한 파일을 배열에서 삭제하는 메서드
@@ -114,8 +122,7 @@ export default {
     async uploadFiles() {
       const uploadedImageUrls = []; // 업로드된 이미지 URL을 저장할 배열
 
-      for (let i = 0; i < this.selectedFiles.length; i++) {
-        const file = this.selectedFiles[i];
+      for (let file of this.selectedFiles) {
         const imageUrl = await this.uploadImage(file); // 파일을 S3에 업로드 후 URL 반환
         uploadedImageUrls.push(imageUrl); // URL을 배열에 저장
       }
@@ -123,42 +130,49 @@ export default {
       this.notice.imageUrls = uploadedImageUrls; // 업로드된 이미지 URL 배열을 notice에 저장
     },
 
-    // 이미지 업로드 메서드 (단일 파일 업로드)
-    async uploadImage(file) {
-      const token = localStorage.getItem('Bearer Token');
-
-      // presigned URL 얻기 위한 POST 요청
-      const getUrlResponse = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/api/upload/presigned-url`, {
-        prefix: "community-notice",
-        url: file.name
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
+    // 패키지 등록과 동일한 방식으로 이미지 업로드
+    async uploadImage(blob) {
+      const accessToken = localStorage.getItem('accessToken');
+      const body = {
+        prefix: "notice",
+        url: `${blob?.name}`,
+      };
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      };
+      const getUrl = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/api/upload/presigned-url`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body),
       });
 
-      const presignedUrl = getUrlResponse.data;
+      const getUrlResult = await getUrl.text();
 
-      // PUT 요청 (S3로 파일 업로드)
-      try {
-        await axios.put(presignedUrl, file, {
-          headers: {
-            "Content-Type": file.type,  // 선택한 파일의 Content-Type 설정
-            "Cache-Control": "no-cache", // 캐시 방지
-          }
-        });
-      } catch (error) {
-        console.error('S3 업로드 중 오류 발생:', error);
-      }
+      const awsUrl = {
+        data: `${getUrlResult.split("?")[0]}`,
+        auth: `?${getUrlResult.split("?")[1]}`,
+      };
 
-      return presignedUrl.split('?')[0]; // 업로드 후 이미지 URL 반환
+      // S3로 이미지 업로드
+      const options = {
+        method: "PUT",
+        headers: {
+          "Content-Type": blob.type,
+        },
+        body: blob,
+      };
+      await fetch(awsUrl.data + awsUrl.auth, options);
+
+      return awsUrl.data; // 업로드된 이미지 URL 반환
     },
 
     // 공지사항 생성 메서드
     async createNotice() {
       // 값 검증: title과 content가 비어 있는지 확인
       if (!this.notice.title || !this.notice.content) {
-        alert('제목과 내용을 입력하세요.');
+        this.alertMessage = '제목과 내용을 입력하세요.';
+        this.alertModal = true;
         return;
       }
 
@@ -171,19 +185,24 @@ export default {
         imageUrls: this.notice.imageUrls // 여러 이미지 URL 배열을 전송
       };
 
-      const token = localStorage.getItem('Bearer Token');
+      const accessToken = localStorage.getItem('accessToken');
 
       try {
-        const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/create`, requestData, {
+        await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/create`, {
+          method: 'POST',
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
         });
-        console.log('Notice created:', response.data);
-        alert('공지사항이 성공적으로 생성되었습니다.'); // 성공 메시지 alert로 표시
+
+        this.alertMessage = '공지사항이 성공적으로 생성되었습니다.';
+        this.alertModal = true;
       } catch (error) {
-        console.error('Error creating notice:', error.response ? error.response.data : error.message);
-        alert('공지사항 생성에 실패했습니다.'); // 실패 메시지 alert로 표시
+        console.error('공지사항 생성 실패:', error);
+        this.alertMessage = '공지사항 생성에 실패했습니다.';
+        this.alertModal = true;
       } finally {
         this.dialog = false; // 공지사항 생성 모달 닫기
       }
@@ -191,6 +210,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* form 스타일 */
@@ -292,5 +312,32 @@ textarea.custom-input {
 
 .custom-button:hover {
   background-color: #BCC07B; /* 마우스 호버 시 배경색 변경 */
+}
+
+/* 완료 메시지 모달 */
+.modal {
+  background-color: rgb(255, 255, 255);
+  border: none;
+  box-shadow: none;
+  border-radius: 10px;
+}
+
+.submit-btn {
+  margin-left: 10px;
+  margin-top: 8px;
+  background-color: #BCC07B;
+  color: black;
+  border-radius: 50px;
+}
+
+.custom-create-button {
+  background-color: #BCC07B;
+  color: black;
+  margin-left: 650px;
+  border-radius: 30px;
+  padding: 10px 40px;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.5;
 }
 </style>
