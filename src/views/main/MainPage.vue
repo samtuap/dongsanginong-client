@@ -26,12 +26,12 @@
                             <v-img class="package-img" style="width:190px; height:190px;" width="190px" height="180px"
                                 :src="packageProduct.imageUrl" alt="Farm 썸네일" cover />
                         </div>
-                        <div style="display: flex;">
+                        <div style="display: flex; align-items: center;">
                             <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div> <p>{{ packageProduct.packageName }}</p>
                         </div>
-                        <p style="font-size: small; color: #5D5D5D;" v-if="packageProduct.farmName.length > 10"> {{
+                        <p v-if="packageProduct.farmName.length > 10" style="font-size: small; color: #5D5D5D;"> {{
                             packageProduct.farmName.substring(0, 10) }}... </p>
-                        <p v-else> {{ packageProduct.farmName }}</p>
+                        <p v-else style="font-size: small; color: #5D5D5D;"> {{ packageProduct.farmName }}</p>
                     </div>
                 </div>
             </v-window-item>
@@ -46,7 +46,7 @@
         </v-card-actions>
         <!-- 전체보기 버튼 -->
         <v-col cols="12" class="text-center">
-            <v-btn color="deep_green" @click="this.$router.push()">
+            <v-btn color="#FFFFFF" @click="this.$router.push('packages/')" style="border-radius: 50px;">
                 🥦 패키지 전체보기
             </v-btn>
         </v-col>
@@ -103,7 +103,7 @@
         </v-card-actions>
         <!-- 전체보기 버튼 -->
         <v-col cols="12" class="text-center">
-            <v-btn color="deep_green" @click="this.$router.push('/farm')">
+            <v-btn color="#FFFFFF" @click="this.$router.push('/farm')" style="border-radius: 50px;">
                 🌾 농장 둘러보기
             </v-btn>
         </v-col>
@@ -246,7 +246,7 @@ export default {
 .farm-container {
     margin-top: 20px;
     padding-top: 10px;
-    border-top: 1px #5D5D5D solid;
+    border-top: 1px #D5D5D5 solid;
 }
 
 .slider-wrapper {
