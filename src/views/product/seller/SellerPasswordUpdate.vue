@@ -7,7 +7,7 @@
         </v-card>
     </v-dialog>
 
-    <div class="seller-page" style="padding-right: 300px;">
+    <div class="seller-page" style="padding-left: 200px;">
         <sellerSidebar />
         <div class="seller-info">
             <h2>비밀번호 수정</h2>
