@@ -1,7 +1,7 @@
 <template>
     <SellerSidebar />
     <v-container>
-        <v-row justify="left">
+        <v-row justify="left" style="padding-left: 70px;">
             <v-col cols="12" sm="8" md="6" lg="8">
 
                 <!-- 수정 및 삭제 버튼을 수평으로 배치 -->
@@ -15,7 +15,7 @@
 
                 <v-card class="notice-class elevation-0" outlined>
                     <v-card-title style="font-size: 17px;"> {{ title }} </v-card-title>
-                    
+
                     <v-card-text>{{ content }}</v-card-text>
 
                     <v-carousel v-if="images && images.length > 0" hide-delimiters height="300" class="mt-3">
@@ -23,6 +23,7 @@
                             <v-img :src="image" alt="Notice image" height="300"></v-img>
                         </v-carousel-item>
                     </v-carousel>
+                    <br>
                 </v-card>
 
                 <!-- 댓글 조회 -->
@@ -164,7 +165,7 @@ export default {
 }
 
 .edit-btn {
-    margin-right: -10px ;
+    margin-right: -65px ;
     background-color: #BCC07B;
     color: black;
     border-radius: 30px;
@@ -175,7 +176,7 @@ export default {
     box-shadow: none;
 }
 .delete-btn{
-    margin-right: -10px ;
+    margin-right: -65px ;
     background-color: #e0e0e0;
     color: black;
     border-radius: 30px;
