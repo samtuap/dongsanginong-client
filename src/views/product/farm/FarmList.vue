@@ -23,8 +23,8 @@
                                         (n - 1) +
                                         index + 1 }}</div>
                                     <div style="width: 120px;">
-                                        <p v-if="farm.farmName.length < 8"> {{ farm.farmName }}</p>
-                                        <p v-else> {{ farm.farmName.substring(0, 8) }}... </p>
+                                        <p v-if="farm.farmName.length < 8" style="font-size: 13px; font-weight: 500;"> {{ farm.farmName }}</p>
+                                        <p v-else style="font-size: 13px; font-weight: 500;"> {{ farm.farmName.substring(0, 8) }}... </p>
                                     </div>
 
 
