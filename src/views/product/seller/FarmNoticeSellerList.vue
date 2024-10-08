@@ -1,9 +1,8 @@
 <template>
     <SellerSidebar />
-    <v-container>
-        <br>
-        <h3>커뮤니티 관리</h3>
-        <v-row justify="center">
+    <v-container fluid>
+        <h3 style="padding: 10px; padding-left: 70px;">커뮤니티 관리</h3><br><br>
+        <v-row class="align-center" style="padding-left: 70px; margin-top: -45px;">
             <v-col cols="12" sm="8" md="6" lg="12">
                 <FarmNoticeCreate />
                 <v-card v-for="notice in noticeList" :key="notice.id" class="notice-class elevation-0" outlined>
