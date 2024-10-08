@@ -3,7 +3,7 @@
         :currentMenu="4" />
     <br><br>
     <div class="review-container">
-      <h2 class="review-header" >전체 리뷰({{ reviews.length }})</h2>
+      <h4 class="review-header" >전체 리뷰({{ reviews.length }})</h4>
   
       <!-- 리뷰 목록 -->
       <v-row v-if="paginatedReviews.length > 0" class="review-row">
@@ -53,12 +53,14 @@
       </v-row>
   
       <!-- 페이지네이션 -->
+      <v-row class="align-center" style="padding-right: 200px; margin-top: 20px;">
       <v-pagination
         v-model="currentPage"
         :length="totalPages"
         @input="paginateReviews"
         class="pagination"
       ></v-pagination>
+    </v-row>
     </div>
 </template>
 
@@ -124,13 +126,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: -20px;
   margin-left: 200px; 
 }
 
 .review-header {
   text-align: left;
   width: 100%;
-  max-width: 1000px; /* 카드와 동일한 최대 폭으로 설정 */
+  max-width: 950px; /* 카드와 동일한 최대 폭으로 설정 */
   margin-bottom: 30px;
   padding-left: 0; /* 왼쪽 여백을 없앰 */
 }
@@ -173,6 +176,7 @@
 
 .review-date {
   font-size: 14px;
+  padding: 10px;
   color: #888;
 }
 

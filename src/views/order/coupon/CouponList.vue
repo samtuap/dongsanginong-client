@@ -1,46 +1,46 @@
 <template>
   <SellerSidebar />
   <v-container fluid>
-    <h3 class="coupon-header">쿠폰관리</h3>
-    <v-row justify="center">
-      <!-- Coupon Table -->
-      <v-col cols="12" md="8" offset-md="0">
-        <v-row>
-          <v-btn class="create-btn" @click="openCouponCreateModal">쿠폰 생성</v-btn>
-        </v-row>
-        <div class="table-container">
-          <v-card class="excel-table">
-            <thead>
-              <tr>
-                <th class="excel-header">쿠폰명</th>
-                <th class="excel-header">할인율(%)</th>
-                <th class="excel-header">유효기간</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="coupon in paginatedCoupons" :key="coupon.id">
-                <td class="excel-cell">{{ coupon.couponName }}</td>
-                <td class="excel-cell">{{ coupon.discountPercentage }}%</td>
-                <td class="excel-cell">{{ formatDateTime(coupon.expiration) }}</td>
-              </tr>
-            </tbody>
-          </v-card>
-        </div>
+    <h3 style="padding: 10px; padding-left: 70px;">쿠폰 관리</h3><br><br>
+
+    <v-row class="align-center" style="padding-left: 70px; margin-top: -45px;">
+      <v-col>
+        <h4>등록된 쿠폰 목록</h4>
+      </v-col>
+      <v-col class="text-right">
+        <v-btn @click="openCouponCreateModal" class="create-btn" style="border-radius: 50px; right: 200px;">
+          쿠폰 생성
+        </v-btn>
       </v-col>
     </v-row>
 
-    <!-- Pagination Buttons -->
-    <v-row justify="center" class="pagination-buttons">
-      <v-btn icon @click="prevPage" :disabled="currentPage === 1">
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-      <v-btn icon @click="nextPage" :disabled="isLastPage">
-        <v-icon>mdi-chevron-right</v-icon>
-      </v-btn>
-    </v-row>
+    <v-col style="position: relative;"></v-col>
+      <v-card class="product-card elevation-0" outlined>
+        <v-table class="table-header">
+          <thead>
+            <tr>
+              <th class="table-header">No.</th>
+              <th class="table-header">쿠폰명</th>
+              <th class="table-header">할인율(%)</th>
+              <th class="table-header">유효기간</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(coupon, index) in paginatedCoupons" :key="coupon.id">
+              <td>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
+              <td>{{ coupon.couponName }}</td>
+              <td>{{ coupon.discountPercentage }}%</td>
+              <td>{{ formatDateTime(coupon.expiration) }}</td>
+            </tr>
+          </tbody>
+        </v-table>
 
-    <!-- 쿠폰 생성 모달 -->
-    <CouponCreate v-model:dialog="isCouponCreateModalOpen" @new-coupon="getCouponList" />
+        <!-- 페이징 처리 -->
+        <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+      </v-card>
+
+      <!-- 쿠폰 생성 모달 -->
+      <CouponCreate v-model:dialog="isCouponCreateModalOpen" @new-coupon="getCouponList" />
   </v-container>
 </template>
 
@@ -52,136 +52,78 @@ import CouponCreate from '@/views/order/coupon/CouponCreate.vue';
 export default {
   components: {
     SellerSidebar,
-    CouponCreate, // 쿠폰 생성 컴포넌트 등록
+    CouponCreate,
   },
   data() {
     return {
-      couponList: [], // 전체 쿠폰 리스트
-      currentPage: 1, // 현재 페이지
-      itemsPerPage: 10, // 한 번에 보여줄 쿠폰 수 (10개로 설정)
-      isLastPage: false, // 마지막 페이지 여부
-      isCouponCreateModalOpen: false, // 쿠폰 생성 모달 상태
+      couponList: [],
+      currentPage: 1,
+      itemsPerPage: 10,
+      isCouponCreateModalOpen: false,
     };
   },
   computed: {
     paginatedCoupons() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-      return this.couponList.slice(start, end); // 현재 페이지에 해당하는 쿠폰 리스트 반환
+      return this.couponList.slice(start, end);
     },
+    pageCount() {
+      return Math.ceil(this.couponList.length / this.itemsPerPage);
+    }
   },
   mounted() {
-    this.getCouponList(); // 처음 페이지 로드 시 쿠폰 리스트를 불러옴
+    this.getCouponList();
   },
   methods: {
     async getCouponList() {
       try {
-        const farmId = this.$route.params.farm_id;
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/coupons/${farmId}/list`);
-        
-        // 쿠폰 리스트를 id 기준으로 내림차순 정렬
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/coupons/list`);
         this.couponList = response.data.sort((a, b) => b.id - a.id);
-
-        this.checkIfLastPage();
       } catch (error) {
         console.error('Error fetching coupon list:', error);
       }
     },
-    nextPage() {
-      if (!this.isLastPage) {
-        this.currentPage++;
-        this.checkIfLastPage();
-      }
-    },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-        this.isLastPage = false; // 이전 페이지로 이동 시 마지막 페이지가 아님
-      }
-    },
-    checkIfLastPage() {
-      const totalItems = this.couponList.length;
-      const totalPages = Math.ceil(totalItems / this.itemsPerPage);
-      this.isLastPage = this.currentPage >= totalPages;
-    },
     formatDateTime(dateString) {
       const date = new Date(dateString);
       const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-      return date.toLocaleString(undefined, options); // 날짜와 시간을 보기 좋게 포맷
+      return date.toLocaleString(undefined, options);
     },
     openCouponCreateModal() {
-      this.isCouponCreateModalOpen = true; // 모달 열기
+      this.isCouponCreateModalOpen = true;
     },
   },
 };
 </script>
 
 <style scoped>
-.coupon-header{
-  margin-top: 30px;
-  margin-left: 120px;
-  margin-bottom: -20px;
-}
-.table-container {
-  max-width: 100%;
-  overflow-x: auto;
-  margin-left: -120px;
-  margin-top: 15px;
-}
-
-.excel-table {
-  width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-  border-collapse: collapse;
-  border-radius: 10px;
+.product-card {
   overflow-x: hidden;
-  margin-top: 5px;
-}
-
-.excel-header {
-  background-color: #e0e0e0;
-  font-weight: bold;
-  text-align: center;
-  padding: 16px;
-  border: 1px solid #e0e0e0;
-  font-size: 18px;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-.excel-cell {
-  width: 300px;
-  height: 60px;
-  padding: 16px;
-  text-align: center;
-  border: 1px solid #ddd;
-  font-size: 16px;
-}
-
-.v-progress-circular {
   margin-top: 20px;
+  width: 80%; /* 테이블 가로 길이 줄임 */
+  margin: 0 auto; /* 중앙에 위치 */
+  height: auto;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  padding: 20px;
+  right: 62px;
 }
 
-.v-btn {
-  margin: 10px;
-}
-
-.pagination-buttons {
-  margin-left: -250px; /* 페이지네이션 버튼 왼쪽으로 100px 이동 */
-  margin-bottom: 50px; /* 페이지네이션 버튼 밑으로 50px */
+.table-header {
+  text-align: center !important;
+  font-size: 14px;
+  background-color: none;
+  border-bottom: 1px solid #d4d4d4;
 }
 
 .create-btn {
-  background-color: #BCC07B;
+  background-color: #bcc07b;
   color: black;
-  border-radius: 30px;
-  padding: 10px 40px;
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 1.5;
-  margin-left: 650px;
-  margin-top: 50px;
 }
+
+.v-pagination {
+  margin-top: 20px;
+  justify-content: center;
+}
+
 </style>
