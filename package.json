@@ -15,13 +15,15 @@
     "firebase": "^10.14.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
+    "openvidu-browser": "2.30.0",
     "roboto-fontface": "*",
+    "sockjs-client": "^1.6.1",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuetify": "^3.0.0-beta.0",
     "vuex": "^4.0.2",
     "webfontloader": "^1.0.0",
-    "openvidu-browser": "2.30.0"
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

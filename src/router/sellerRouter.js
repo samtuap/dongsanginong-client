@@ -11,6 +11,7 @@ import FarmNoticeSellerList from "@/views/product/seller/FarmNoticeSellerList.vu
 import FarmNoticeSellerDetail from "@/views/product/seller/FarmNoticeSellerDetail.vue";
 import SellerReviewList from "@/views/product/seller/SellerReviewList.vue"
 import SellerReviewDetail from"@/views/product/seller/SellerReviewDetail.vue"
+import SellerPasswordUpdate from "@/views/product/seller/SellerPasswordUpdate.vue"
 
 export const sellerRouter = [
 
@@ -78,5 +79,10 @@ export const sellerRouter = [
         path: '/seller/reviews/:reviewId/detail',
         name: 'SellerReviewDetail',
         component: SellerReviewDetail
+    },
+    {
+        path: '/seller/password/update',
+        name: 'SellerPasswordUpdate',
+        component: SellerPasswordUpdate
     },
 ]

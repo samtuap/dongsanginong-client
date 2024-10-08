@@ -50,7 +50,7 @@
                 </v-menu>
                     
                     
-                    <v-btn color="white">
+                    <v-btn color="white" @click="openSearchModal">
                         <img src="/searchLogo.png" width=17 alt="Logo" />
                     </v-btn>
                 </v-col>
@@ -74,6 +74,68 @@
             <v-btn @click="goToFarmCreate" class="submit-btn">확인</v-btn>
         </v-card>
     </v-dialog>
+
+    <!-- 검색 모달 -->
+    <v-dialog v-model="searchDialog" max-width="600px" class="search-modal" @close="closeModal">
+        <v-card class="search-card" style="height: 500px;">
+            <v-row style="height: 5%;">
+                <v-text-field
+                    v-model="keyword"
+                    label="검색어를 입력하세요."
+                    prepend-inner-icon="mdi-magnify"
+                    outlined
+                    style="margin-bottom: -15px;"
+                ></v-text-field>
+                <v-btn @click="performSearch" class="search-btn" style="margin-top: 17px;">검색</v-btn>
+            </v-row>
+            <v-row style="justify-content: center;">
+                <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;"
+                :class="{ active: selectedCategory === 'all' }" @click="selectedCategory = 'all'">
+                    전체
+                </v-btn>
+                <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;" 
+                :class="{ active: selectedCategory === 'farm' }" @click="selectedCategory = 'farm'">
+                    농장
+                </v-btn>
+                <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;" 
+                :class="{ active: selectedCategory === 'package' }" @click="selectedCategory = 'package'">
+                    패키지
+                </v-btn>
+            </v-row>
+
+            <v-card class="result-card" style="height: 320px; overflow-y: auto;">
+                <v-list v-if="total.length > 0 && selectedCategory === 'all'">
+                    <v-card v-for="item in total" :key="item.id" class="list-card" @click="goToDetail(item)">
+                        <v-card-title style="font-size: 15px;">
+                            <strong>
+                                {{ item.farmName || item.packageName }}
+                            </strong>
+                        </v-card-title>
+                        <v-card-text style="font-size: 14px;">
+                            {{ item.farmIntro || item.productDescription }}
+                        </v-card-text>
+                    </v-card>
+                </v-list>
+                <v-list v-else-if="farms.length > 0 && selectedCategory === 'farm'">
+                    <v-card v-for="farm in farms" :key="farm.id" class="list-card" @click="goToFarmDetail(farm.id)">
+                        <v-card-title style="font-size: 15px;"><strong>{{ farm.farmName }}</strong></v-card-title>
+                        <v-card-text style="font-size: 14px;">{{ farm.farmIntro }}</v-card-text>
+                    </v-card>
+                </v-list>
+                <v-list v-else-if="products.length > 0 && selectedCategory === 'package'">
+                    <v-card v-for="product in products" :key="product.id" class="list-card">
+                        <v-card-title style="font-size: 15px;"><strong>{{ product.packageName }}</strong></v-card-title>
+                        <v-card-text style="font-size: 14px;">{{ product.productDescription }}</v-card-text>
+                    </v-card>
+                </v-list>
+                <v-list v-else>
+                    <v-list-item>
+                        <v-list-item-title style="text-align: center;">검색 결과가 없습니다.</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-card>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
@@ -91,7 +153,16 @@ export default {
             isSeller: false, // seller인지 member인지 여부 확인
             firstFarmModal: false,
             notiCount: 0,
-            notifications: []
+            notifications: [],
+
+            // 검색
+            searchDialog: false,
+            searchKeyword: '',
+            farms: [],
+            products: [],
+            total: [],
+            keyword: "",
+            selectedCategory: 'all', // 선택된 카테고리를 저장하는 변수 추가
         };
     },
     computed: {
@@ -143,7 +214,6 @@ export default {
     },
     
     methods: {
-
         async checkFarmAndRedirect() {
             try {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/exists`, {
@@ -213,8 +283,6 @@ export default {
             } catch(e) {
                 console.log(e);
             }
-
-
 
             onMessage(messaging, (payload) => {
         
@@ -312,10 +380,84 @@ export default {
                 console.error("Error opening IndexedDB", event);
             };
         },
+        // 검색 모달창
+        openSearchModal() {
+            this.closeModal();
+            this.searchDialog = true;
+        },
+        //  검색 버튼 
+        async performSearch() {
+            this.total = [];
+
+            if (this.selectedCategory === 'farm') {
+                await this.searchFarms();
+                this.total = [...this.farms];
+                
+            } else if (this.selectedCategory === 'package') {
+                await this.searchPackageProduct();
+                this.total = [...this.products];
+
+            } else {
+                // 전체 카테고리 선택 시, 두 검색을 모두 수행
+                console.log("all로 들어옴")
+                await this.searchFarms();
+                await this.searchPackageProduct();
+                this.total = [...this.farms, ...this.products];
+            }
+        },
+        //  농장 카테고리로 검색
+        async searchFarms() {
+            try {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/es/farms/search`, {
+                    params: {
+                        keyword: this.keyword
+                    }
+                });
+                this.farms = response.data;
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+            }
+        },
+        // 상품 카테고리로 검색 
+        async searchPackageProduct() {
+            try {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/es/product/search`, {
+                    params: {
+                        keyword: this.keyword
+                    }
+                });
+                console.log(response.data);
+                this.products = response.data;
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+            }
+        },
+        // 모달 닫기
+        closeModal() {
+            this.keyword = '';
+            this.farms = [];
+            this.products = [];
+            this.total = [];
+            this.selectedCategory = 'all';
+        },
+        // 농장 detail로 라우팅
+        goToFarmDetail(farmId) {
+            this.searchDialog = false;
+            this.$router.push({ path: `/farm/${farmId}` });
+        },
+        goToPackageDetail() {
+            console.log("아직 라우팅 안됨");
+        },
+        goToDetail(item) {
+            if (item.farmName) {
+                this.goToFarmDetail(item.id);
+            } else if (item.packageName) {
+                this.goToPackageDetail(item.id);
+            }
+        }
     },
 };
 </script>
-
 
 <style scoped>
 .bar {
@@ -360,5 +502,39 @@ export default {
     width: 10px;
     height: 10px;
     margin-bottom: 10px;
+}
+.search-card {
+    border-radius: 10 !important;
+    padding: 20px;
+    padding-top: 20px;
+}
+.search-btn {
+    border: none;
+    box-shadow: none;
+    background-color: #BCC07B;
+    border-radius: 50px;
+    margin-right: 3px;
+    margin-left: 3px;
+}
+.cat-btn {
+    box-shadow: none;
+    /* background-color: #ffffff; */
+    border-radius: 50px;
+    margin-right: 3px;
+    margin-left: 3px;
+}
+.result-card {
+    border: none;
+    box-shadow: none;
+}
+.list-card {
+    border: none;
+    box-shadow: none;
+    border-radius: 0px;
+}
+.cat-btn.active {
+    background-color: #e0e0e0 !important;
+    color: #000 !important; /* Change the text color if needed */
+    border-color: #525252 !important; /* Keep the border consistent */
 }
 </style>

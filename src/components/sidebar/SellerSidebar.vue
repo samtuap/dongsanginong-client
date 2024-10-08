@@ -12,6 +12,8 @@
                     <v-btn class="cat_btn" :to="{ path: `/seller/notice/list`}">커뮤니티 관리</v-btn><br>
                     <v-btn class="cat_btn" :to="{ path: `/seller/review/list`}">리뷰 관리</v-btn><br>
                     <v-btn class="cat_btn" :to="{ path: `/coupons/list`}">쿠폰 관리</v-btn><br>
+                    <v-btn class="cat_btn" :to="{ path: `/seller/password/update`}">비밀번호 변경</v-btn><br>
+                    <v-btn class="cat_btn" :to="{path: '/my-farm/update'}">내 농장 관리</v-btn><br>
                 </v-col>
             </v-list-item-group>
         </v-list>

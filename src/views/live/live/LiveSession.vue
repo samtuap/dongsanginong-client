@@ -1,23 +1,29 @@
 <template>
     <!-- 🔖 라이브 세션 화면 -->
-    <div>
-      <div id="session-header" style="display: flex; flex-direction: column; align-items: center; padding-top: 30px;">
-        <h3 style="text-align: center;">{{ title }}</h3>
-        <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 10px;">
+    <div class="live-container">
+      <div class="video-section">
+       <div id="session-header" style="display: flex; justify-content: space-between; align-items: center; padding-top: 30px;">
+          <h3>{{ title }}</h3>
           <v-btn class="live-btn" v-if="isPublisher" @click="showExitModal">라이브 종료</v-btn>
           <v-btn class="live-btn" v-if="!isPublisher" @click="showExitModal">나가기</v-btn>
         </div>
-      </div>
-      <div id="main-video" class="col-md-6 video-style" v-if="isPublisher">
+
+      <div id="main-video" class="video-style" v-if="isPublisher">
         <user-video :stream-manager="mainStreamManager" />
       </div>
-      <div id="video-container" class="col-md-6 video-style" v-if="!isPublisher">
+  
+      <div id="video-container" class="video-style" v-if="!isPublisher">
         <user-video :stream-manager="publisher" @click="updateMainVideoStreamManager(publisher)" />
         <user-video 
           v-for="sub in subscribers" 
           :key="sub.stream.connection.connectionId" 
           :stream-manager="sub" 
           @click="updateMainVideoStreamManager(sub)" />
+        </div>
+      </div>
+
+      <div class="chat-section">
+        <ChatBox :liveId="mySessionId" :isPublisher="isPublisher" :title="title" />
       </div>
     </div>
 
@@ -37,10 +43,12 @@
 import axios from 'axios';
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/video/UserVideo"; //⭐
+import ChatBox from '../chat/ChatBox.vue';
 
 export default {
     components: {
-      UserVideo //⭐
+      UserVideo, //⭐
+      ChatBox
     },
     data() {
       return {
@@ -113,6 +121,10 @@ export default {
             return response.data;
         },
 
+        updateMainVideoStreamManager(streamManager) {
+            this.mainStreamManager = streamManager; // 메인 비디오 스트림을 업데이트
+        },
+
         showExitModal() {
             this.exitModalVisible = true;
         },
@@ -150,14 +162,15 @@ export default {
     },
 };
 </script>
-<style scroped>
+<style scoped>
 .live-btn {
     background-color: #BCC07B; 
     border-radius: 50px;
     margin-right: 8%;
 }
 .video-style {
-    margin-left: 8%;
+    width: 100%;
+    margin-bottom: 20px;
 }
 .modal-btn {
     border-radius: 50px;
@@ -166,6 +179,18 @@ export default {
 .end-modal {
     padding: 10px;
 }
+.live-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+.video-section {
+  flex: 2; /* 비디오가 더 많은 공간을 차지하도록 설정 */
+  margin-right: 10px;
+}
+.chat-section {
+  flex: 1; /* 채팅은 비디오의 절반 정도 공간 차지 */
+}
 </style>
-
   
