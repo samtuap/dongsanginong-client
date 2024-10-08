@@ -1,9 +1,8 @@
 <template>
     <SellerSidebar />
-    <v-container>
-        <br>
-        <h3>커뮤니티 관리</h3>
-        <v-row justify="center">
+    <v-container fluid>
+        <h3 style="padding: 10px; padding-left: 70px;">커뮤니티 관리</h3><br><br>
+        <v-row class="align-center" style="padding-left: 70px; margin-top: -45px;">
             <v-col cols="12" sm="8" md="6" lg="12">
                 <FarmNoticeCreate />
                 <v-card v-for="notice in noticeList" :key="notice.id" class="notice-class elevation-0" outlined>
@@ -33,7 +32,9 @@
 
                 </v-card>
                 <!-- 페이징 처리 -->
-                <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+                <v-row class="align-center" style="padding-left: 350px; margin-top: 20px;">
+                    <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+                  </v-row>
             </v-col>
         </v-row>
     </v-container>
@@ -52,7 +53,7 @@ export default {
         return {
             noticeList: [],
             currentPage: 1, // 페이지 1번부터 시작 
-            pageSize: 15, // 한 페이지에 15개씩 출력 
+            pageSize: 5, // 한 페이지에 5개씩 출력 
             totalItems: 0,
         }
     },
@@ -72,8 +73,8 @@ export default {
     methods: {
         async farmNoticeList(page) {
             try {
-                const id = this.$route.params.farmId;
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${id}/notice/list`, {
+                const farmId = localStorage.getItem('farmId');
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farmId}/notice/list`, {
                     params: {
                         page: page - 1,
                         size: this.pageSize
