@@ -21,13 +21,15 @@
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
             <v-window-item v-for="n in packageWindowCount" :key="`window-${n}`" :value="n">
                 <div class="d-flex">
-                    <div v-for="(packageProduct, index) in paginatedPackages(n)" :key="index" style="margin-left: 50px;" class="card-outer">
+                    <div v-for="(packageProduct, index) in paginatedPackages(n)" :key="index" style="margin-left: 50px;"
+                        class="card-outer">
                         <div style="padding-bottom: 30px;">
-                            <v-img class="package-img" style="width:190px; height:190px;"
-                                :src="packageProduct.imageUrl" alt="Farm 썸네일" cover />
+                            <v-img class="package-img" style="width:190px; height:190px;" :src="packageProduct.imageUrl"
+                                alt="Farm 썸네일" cover />
                         </div>
                         <div style="display: flex; width: 190px; min-height: 70px;">
-                            <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div>
+                            <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">{{ 4 * (n - 1) +
+                                index + 1 }}</div>
                             <!-- 패키지 이름 -->
                             <p v-if="packageProduct.packageName.length > 50" style="font-size: 15px;"> {{
                                 packageProduct.packageName.substring(0, 50) }}... </p>
@@ -35,13 +37,14 @@
                         </div>
 
                         <div style="width: 190px;">
-                        <!-- 농장 이름
+                            <!-- 농장 이름
                         <p v-if="packageProduct.farmName.length > 20" style="font-size: small; color: #5D5D5D; margin-left: 27px"> {{
                             packageProduct.farmName.substring(0, 20) }}... </p>
                         <p v-else style="font-size: small; color: #5D5D5D; margin-left: 27px;"> {{ packageProduct.farmName }}</p> -->
-                        <p style="font-weight:bold; margin-left: 27px;">{{ packageProduct.price }}<span style="color: black; opacity: 0.5; font-weight: 500"> 원</span></p> 
+                            <p style="font-weight:bold; margin-left: 27px;">{{ packageProduct.price }}<span
+                                    style="color: black; opacity: 0.5; font-weight: 500"> 원</span></p>
+                        </div>
                     </div>
-                </div>
                 </div>
             </v-window-item>
         </v-window>
@@ -77,31 +80,29 @@
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
             <v-window-item v-for="n in farmWindowCount" :key="`window-${n}`" :value="n">
                 <div style="display:flex">
-                    <div v-for="(farm, index) in paginatedFarm(n)" :key="index" style="margin-left: 50px;" class="card-outer">
+                    <div v-for="(farm, index) in paginatedFarm(n)" :key="index" style="margin-left: 50px;"
+                        class="card-outer">
                         <div style="padding-bottom: 30px;">
-                            <v-img class="package-img" style="width:190px; height:190px;"
-                                :src="farm.imageUrl" alt="Farm 썸네일" cover />
+                            <v-img class="package-img" style="width:190px; height:190px;" :src="farm.imageUrl"
+                                alt="Farm 썸네일" cover />
                         </div>
 
                         <div style="display: flex; width: 190px; height: 30px;">
-                            <div class="grade" :class="{ 'top-grade': (4 * (n-1) + index + 1) <= 3 }">{{ 4 * (n-1) + index + 1 }}</div>
+                            <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">{{ 4 * (n - 1) +
+                                index + 1 }}</div>
                             <div style="width: 120px;">
-                            <p v-if="farm.farmName.length < 8"> {{ farm.farmName }}</p>
-                            <p v-else> {{ farm.farmName.substring(0, 8) }}... </p>
-                        </div>
+                                <p v-if="farm.farmName.length < 8"> {{ farm.farmName }}</p>
+                                <p v-else> {{ farm.farmName.substring(0, 8) }}... </p>
+                            </div>
 
 
-                        <v-chip
-                        class="like-chip"
-                        size="small"
-                        color="deep_orange"
-                        @click="clickLike((4 * (n-1) + index + 1))"
-                        >
-                        💛 {{ farm.favoriteCount }}
-                        </v-chip>
+                            <v-chip class="like-chip" size="small" color="deep_orange"
+                                @click="clickLike((4 * (n - 1) + index + 1))">
+                                💛 {{ farm.favoriteCount }}
+                            </v-chip>
 
-                        <!-- 하트 이모지 애니메이션 -->
-                        <div v-if="likes[(4 * (n-1) + index + 1)] == true" class="heart-emoji">💛</div>
+                            <!-- 하트 이모지 애니메이션 -->
+                            <div v-if="likes[(4 * (n - 1) + index + 1)] == true" class="heart-emoji">💛</div>
                         </div>
 
                     </div>
@@ -167,7 +168,7 @@ export default {
             window.scrollTo(0, this.scrollPosition);  // 저장된 스크롤 위치로 이동
         },
         clickLike(idx) {
-            if(this.likes[Number(idx)] == false) {
+            if (this.likes[Number(idx)] == false) {
                 this.likes[Number(idx)] = true;
             } else {
                 this.likes[Number(idx)] = false;
@@ -205,7 +206,7 @@ export default {
             this.farmWindowCount = parseInt((this.farmList.length / 4)) + 1;
 
             this.likes = new Array(this.farmList.length);
-            for(let i=0; i<this.farmList.length; ++i) {
+            for (let i = 0; i < this.farmList.length; ++i) {
                 this.likes[i] = false;
             }
         } catch (e) {
@@ -304,10 +305,13 @@ export default {
 
 .heart-emoji {
     position: absolute;
-    transform: translateX(-50%); /* 중앙 정렬을 위한 트랜스폼 */
+    transform: translateX(-50%);
+    /* 중앙 정렬을 위한 트랜스폼 */
     font-size: 24px;
-    opacity: 0; /* 애니메이션 전에는 보이지 않도록 설정 */
-    animation: popUp 1s ease-in-out forwards; /* 애니메이션 정의 */
+    opacity: 0;
+    /* 애니메이션 전에는 보이지 않도록 설정 */
+    animation: popUp 1s ease-in-out forwards;
+    /* 애니메이션 정의 */
     margin-left: 35px;
 }
 
@@ -316,25 +320,31 @@ export default {
     border-radius: 10px;
     padding: 5px;
     margin-bottom: 20px;
+    transition: 0.5s ease;
 }
 
 .card-outer:hover {
     box-shadow: 10px 10px #5D5D5D, 0 25px 40px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
-    transition: 0.5s ease;
+    transition: 0.7s ease;
 }
 
 @keyframes popUp {
     0% {
         opacity: 0;
-        transform: translate(-50%, 0) scale(0); /* 처음에는 원래 위치에서 scale 0으로 시작 */
+        transform: translate(-50%, 0) scale(0);
+        /* 처음에는 원래 위치에서 scale 0으로 시작 */
     }
+
     50% {
         opacity: 1;
-        transform: translate(-50%, -50px) scale(1.5); /* 위로 이동하면서 크기 확대 */
+        transform: translate(-50%, -50px) scale(1.5);
+        /* 위로 이동하면서 크기 확대 */
     }
+
     100% {
         opacity: 0;
-        transform: translate(-50%, -100px) scale(0); /* 더 위로 이동하면서 크기 축소 */
+        transform: translate(-50%, -100px) scale(0);
+        /* 더 위로 이동하면서 크기 축소 */
     }
 }
 </style>
