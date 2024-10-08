@@ -250,10 +250,9 @@ export default {
 }
 
 .package-img {
-    margin-top: 20px;
     border-radius: 10px;
 }
-
+d
 
 .farm-container {
     margin-top: 30px;
