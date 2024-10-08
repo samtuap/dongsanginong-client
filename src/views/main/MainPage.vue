@@ -75,7 +75,6 @@
             </h3>
             <p class="text-center">즐겨찾기 수가 많은 농장들입니다.</p>
         </v-col>
-
         <v-window v-model="farmOnboarding" style="width: 1080px; margin: auto;">
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
             <v-window-item v-for="n in farmWindowCount" :key="`window-${n}`" :value="n">
@@ -251,13 +250,14 @@ export default {
 }
 
 .package-img {
+    margin-top: 20px;
     border-radius: 10px;
 }
 
 
 .farm-container {
-    margin-top: 20px;
-    padding-top: 10px;
+    margin-top: 30px;
+    padding-top: 20px;
     border-top: 1px #D5D5D5 solid;
 }
 
