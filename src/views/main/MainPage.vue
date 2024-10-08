@@ -27,22 +27,20 @@
                             <v-img class="package-img" style="width:190px; height:190px;" :src="packageProduct.imageUrl"
                                 alt="Farm 썸네일" cover />
                         </div>
-                        <div style="display: flex; width: 190px; min-height: 70px;">
+                        <div style="display: flex; width: 190px;">
                             <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">{{ 4 * (n - 1) +
                                 index + 1 }}</div>
                             <!-- 패키지 이름 -->
-                            <p v-if="packageProduct.packageName.length > 50" style="font-size: 15px;"> {{
+                            <p v-if="packageProduct.packageName.length > 50"
+                                style="font-size: 13px; font-weight: 500;"
+                                > {{
                                 packageProduct.packageName.substring(0, 50) }}... </p>
-                            <p v-else style="font-size: 15px;"> {{ packageProduct.packageName }}</p>
+                            <p v-else style="font-size: 15px; font-weight: 500;"> {{ packageProduct.packageName }}</p>
                         </div>
 
                         <div style="width: 190px;">
-                            <!-- 농장 이름
-                        <p v-if="packageProduct.farmName.length > 20" style="font-size: small; color: #5D5D5D; margin-left: 27px"> {{
-                            packageProduct.farmName.substring(0, 20) }}... </p>
-                        <p v-else style="font-size: small; color: #5D5D5D; margin-left: 27px;"> {{ packageProduct.farmName }}</p> -->
-                            <p style="font-weight:bold; margin-left: 27px;">{{ packageProduct.price }}<span
-                                    style="color: black; opacity: 0.5; font-weight: 500"> 원</span></p>
+                            <p style="font-weight: 500; opacity: 0.5; font-size: small; margin-left: 27px;">{{ packageProduct.price }}
+                                <span style="color: black; "> 원</span></p>
                         </div>
                     </div>
                 </div>
@@ -90,8 +88,8 @@
                             <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">{{ 4 * (n - 1) +
                                 index + 1 }}</div>
                             <div style="width: 120px;">
-                                <p v-if="farm.farmName.length < 8"> {{ farm.farmName }}</p>
-                                <p v-else> {{ farm.farmName.substring(0, 8) }}... </p>
+                                <p v-if="farm.farmName.length < 8" style="font-size: 15px; font-weight: 500;"> {{ farm.farmName }}</p>
+                                <p v-else style="font-size: 15px; font-weight: 500;"> {{ farm.farmName.substring(0, 8) }}... </p>
                             </div>
 
 
@@ -250,10 +248,8 @@ export default {
 }
 
 .package-img {
-    margin-top: 20px;
     border-radius: 10px;
 }
-
 
 .farm-container {
     margin-top: 30px;
