@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn @click="dialog = true" class="custom-create-button">공지 생성</v-btn> <!-- 버튼 클릭 시 모달 열림 -->
+    <v-btn @click="openDialog" class="custom-create-button">공지 생성</v-btn> <!-- 버튼 클릭 시 모달 열림 -->
 
     <!-- 모달 -->
     <v-dialog v-model="dialog" max-width="600" class="custom-dialog">
@@ -66,7 +66,7 @@
             color="light_green" 
             class="custom-button"
             text 
-            @click="dialog = false"
+            @click="closeDialog"
           >
             닫기
           </v-btn>
@@ -78,7 +78,7 @@
     <v-dialog v-model="alertModal" max-width="260px">
       <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
         <v-card-text>{{ alertMessage }}</v-card-text>
-        <v-btn @click="alertModal = false;" class="submit-btn">close</v-btn>
+        <v-btn @click="closeAlertModal" class="submit-btn">close</v-btn>
       </v-card>
     </v-dialog>
   </div>
@@ -207,10 +207,38 @@ export default {
         this.dialog = false; // 공지사항 생성 모달 닫기
       }
     },
+
+    // 모달 닫기 버튼을 눌렀을 때 값을 초기화
+    closeDialog() {
+      this.dialog = false;
+      this.resetFormData(); // 입력된 데이터를 초기화하는 메서드 호출
+    },
+
+    // 입력된 데이터를 초기화하는 메서드
+    resetFormData() {
+      this.notice = {
+        title: '',
+        content: '',
+        imageUrls: []
+      };
+      this.selectedFiles = [];
+      this.filePreviews = [];
+    },
+
+    // 완료 메시지 모달을 닫고 페이지를 새로고침하는 메서드
+    closeAlertModal() {
+      this.alertModal = false;
+      window.location.reload(); // 페이지 새로고침
+    },
+
+    // 공지 생성 모달을 열 때, 입력값을 초기화
+    openDialog() {
+      this.resetFormData();
+      this.dialog = true;
+    }
   },
 };
 </script>
-
 
 <style scoped>
 /* form 스타일 */

@@ -217,6 +217,7 @@ export default {
       this.datePickerDialog = false;
       this.timePickerDialog = false;
       this.alertDialog = false;
+      window.location.reload();
     },
   },
 };
