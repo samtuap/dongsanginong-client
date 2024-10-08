@@ -8,6 +8,7 @@ import { farmRouter } from "./farmRouter";
 import { liveRouter } from "./liveRouter";
 import { reviewRouter } from "./reviewRouter";
 import { receiptRouter } from "./receiptRouter";
+import { productRouter } from "./productRouter";
 
 
 const routes = [
@@ -33,6 +34,7 @@ const routes = [
   ...farmRouter,
   ...liveRouter,
   ...receiptRouter,
+  ...productRouter,
 ];
 
 const router = createRouter({
