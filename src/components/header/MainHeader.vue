@@ -77,8 +77,8 @@
 
     <!-- 검색 모달 -->
     <v-dialog v-model="searchDialog" max-width="600px" class="search-modal" @close="closeModal">
-        <v-card class="search-card" style="height: 350px;">
-            <v-row>
+        <v-card class="search-card" style="height: 500px;">
+            <v-row style="height: 5%;">
                 <v-text-field
                     v-model="keyword"
                     label="검색어를 입력하세요."
@@ -103,8 +103,20 @@
                 </v-btn>
             </v-row>
 
-            <v-card class="result-card" style="height: 200px; overflow-y: auto;">
-                <v-list v-if="farms.length > 0 && selectedCategory === 'farm'">
+            <v-card class="result-card" style="height: 320px; overflow-y: auto;">
+                <v-list v-if="total.length > 0 && selectedCategory === 'all'">
+                    <v-card v-for="item in total" :key="item.id" class="list-card" @click="goToDetail(item)">
+                        <v-card-title style="font-size: 15px;">
+                            <strong>
+                                {{ item.farmName || item.packageName }}
+                            </strong>
+                        </v-card-title>
+                        <v-card-text style="font-size: 14px;">
+                            {{ item.farmIntro || item.productDescription }}
+                        </v-card-text>
+                    </v-card>
+                </v-list>
+                <v-list v-else-if="farms.length > 0 && selectedCategory === 'farm'">
                     <v-card v-for="farm in farms" :key="farm.id" class="list-card" @click="goToFarmDetail(farm.id)">
                         <v-card-title style="font-size: 15px;"><strong>{{ farm.farmName }}</strong></v-card-title>
                         <v-card-text style="font-size: 14px;">{{ farm.farmIntro }}</v-card-text>
@@ -148,6 +160,7 @@ export default {
             searchKeyword: '',
             farms: [],
             products: [],
+            total: [],
             keyword: "",
             selectedCategory: 'all', // 선택된 카테고리를 저장하는 변수 추가
         };
@@ -374,14 +387,22 @@ export default {
         },
         //  검색 버튼 
         async performSearch() {
+            this.total = [];
+
             if (this.selectedCategory === 'farm') {
                 await this.searchFarms();
+                this.total = [...this.farms];
+                
             } else if (this.selectedCategory === 'package') {
                 await this.searchPackageProduct();
+                this.total = [...this.products];
+
             } else {
                 // 전체 카테고리 선택 시, 두 검색을 모두 수행
+                console.log("all로 들어옴")
                 await this.searchFarms();
                 await this.searchPackageProduct();
+                this.total = [...this.farms, ...this.products];
             }
         },
         //  농장 카테고리로 검색
@@ -416,6 +437,7 @@ export default {
             this.keyword = '';
             this.farms = [];
             this.products = [];
+            this.total = [];
             this.selectedCategory = 'all';
         },
         // 농장 detail로 라우팅
@@ -423,6 +445,16 @@ export default {
             this.searchDialog = false;
             this.$router.push({ path: `/farm/${farmId}` });
         },
+        goToPackageDetail() {
+            console.log("아직 라우팅 안됨");
+        },
+        goToDetail(item) {
+            if (item.farmName) {
+                this.goToFarmDetail(item.id);
+            } else if (item.packageName) {
+                this.goToPackageDetail(item.id);
+            }
+        }
     },
 };
 </script>
