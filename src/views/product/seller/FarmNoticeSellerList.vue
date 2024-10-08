@@ -1,7 +1,7 @@
 <template>
     <SellerSidebar />
     <v-container fluid>
-        <h3 style="padding: 10px; padding-left: 70px;">커뮤니티 관리</h3><br><br>
+        <h3 style="padding: 10px; padding-left: 70px;">커뮤니티 관리</h3>
         <v-row class="align-center" style="padding-left: 70px; margin-top: -45px;">
             <v-col cols="12" sm="8" md="6" lg="12">
                 <FarmNoticeCreate />

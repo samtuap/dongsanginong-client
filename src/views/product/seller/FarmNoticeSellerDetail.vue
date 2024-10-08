@@ -1,7 +1,7 @@
 <template>
     <SellerSidebar />
-    <v-container class="container-move">
-        <v-row justify="center">
+    <v-container>
+        <v-row justify="left">
             <v-col cols="12" sm="8" md="6" lg="8">
 
                 <!-- 수정 및 삭제 버튼을 수평으로 배치 -->
@@ -15,7 +15,7 @@
 
                 <v-card class="notice-class elevation-0" outlined>
                     <v-card-title style="font-size: 17px;"> {{ title }} </v-card-title>
-                    <br>
+                    
                     <v-card-text>{{ content }}</v-card-text>
 
                     <v-carousel v-if="images && images.length > 0" hide-delimiters height="300" class="mt-3">
@@ -151,11 +151,6 @@ export default {
 </script>
 
 <style scoped>
-.container-move {
-    margin-top: 80px;
-    margin-left: -50px;
-    transform: scale(1.2);
-}
 
 .notice-class {
     margin-top: 20px;

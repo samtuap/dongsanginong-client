@@ -64,7 +64,7 @@
           </v-btn>
           <v-btn 
             color="light_green" 
-            class="custom-button"
+            class="custom-close-button"
             text 
             @click="closeDialog"
           >
@@ -342,6 +342,16 @@ textarea.custom-input {
   background-color: #BCC07B; /* 마우스 호버 시 배경색 변경 */
 }
 
+.custom-close-button {
+  color: black !important; /* 텍스트 색상 검정으로 설정 */
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드럽게 전환 */
+  border-radius: 50px; /* 모서리 둥글기 50px로 설정 */
+}
+
+.custom-close-button:hover {
+  background-color: #e0e0e0; /* 마우스 호버 시 배경색 변경 */
+}
+
 /* 완료 메시지 모달 */
 .modal {
   background-color: rgb(255, 255, 255);
@@ -361,10 +371,10 @@ textarea.custom-input {
 .custom-create-button {
   background-color: #BCC07B;
   color: black;
-  margin-left: 650px;
+  margin-left: 700px;
   border-radius: 30px;
-  padding: 10px 40px;
-  font-size: 15px;
+  padding: 10px 20px;
+  font-size: 13px;
   font-weight: bold;
   line-height: 1.5;
 }
