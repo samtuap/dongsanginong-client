@@ -437,6 +437,7 @@ export default {
             this.keyword = '';
             this.farms = [];
             this.products = [];
+            this.total = [];
             this.selectedCategory = 'all';
         },
         // 농장 detail로 라우팅
