@@ -11,10 +11,12 @@
                         style="align-items: center;">
                         <v-row class="d-flex" style="align-items: center; padding-top: 20px;">
                             <div v-for="(farm, index) in paginatedFarms(n)" :key="index" style="margin-left: 50px;"
-                                @click="this.$router.push(`/farm/${farm.id}`)"
                                 class="card-outer">
                                 <div style="padding-bottom: 30px;">
-                                    <v-img class="package-img" style="width:190px; height:190px;" :src="farm.imageUrl"
+                                    <v-img class="package-img"
+                                    style="width:190px; height:190px;"
+                                    @click="this.$router.push(`/farm/${farm.id}`)"
+                                    :src="farm.imageUrl"
                                         alt="Farm 썸네일" cover />
                                 </div>
 
@@ -23,8 +25,8 @@
                                         (n - 1) +
                                         index + 1 }}</div>
                                     <div style="width: 120px;">
-                                        <p v-if="farm.farmName.length < 8" style="font-size: 13px; font-weight: 500;"> {{ farm.farmName }}</p>
-                                        <p v-else style="font-size: 13px; font-weight: 500;"> {{ farm.farmName.substring(0, 8) }}... </p>
+                                        <p v-if="farm.farmName.length < 8" style="font-size: 14px; font-weight: 500;"> {{ farm.farmName }}</p>
+                                        <p v-else style="font-size: 14px; font-weight: 500;"> {{ farm.farmName.substring(0, 8) }}... </p>
                                     </div>
 
 
@@ -73,21 +75,30 @@
 
             </v-row>
             <v-row>
-                <div v-for="(farm, index) in farmList" :key="index" class="farm-card-outer" @click="this.$router.push(`/farm/${farm.id}`)">
+                <div v-for="(farm, index) in farmList" :key="index" class="farm-card-outer">
 
-                    <div class="farm-info" >
+                    <div class="farm-info">
                         <!-- 사진 영역 -->
-                        <div>
-                            <v-img :src="farm.imageUrl" class="farm-image-circle" cover />
+                        <div class="farm-image-frame">
+                            <v-img :src="farm.imageUrl"
+                            class="farm-image-circle"
+                            @click="this.$router.push(`/farm/${farm.id}`)"
+                            cover />
                         </div>
                         <!-- 제목 영역 -->
                         <div class="farm-description">
-                            <b style="font-size: large;">{{ farm.farmName }}</b>
+                            <p style="font-size: 15px; font-weight: 600; font-size: 16px;">{{ farm.farmName }}</p>
                         </div>
 
                         <!-- 즐겨찾기 영역 -->
-                        <div style="line-height: 80px;">
-                            <v-chip class="like-chip" color="deep_orange">
+                         <div class="order-count-box">
+                            <v-chip class="order-count-chip" size="small">
+                                판매 {{farm.orderCount}}개
+                            </v-chip>
+                         </div>
+
+                        <div style="line-height: 70px;">
+                            <v-chip class="like-chip" color="deep_orange" size="small">
                                 <!-- @click="clickLike((4 * (n - 1) + index + 1))"> -->
                                 💛 {{ farm.favoriteCount }}
                             </v-chip>
@@ -95,9 +106,10 @@
                     </div>
 
                     <div class="package-info">
-                        <div style="width: 100%; height: 170px; margin-top: 10px; display: flex; border-radius: 10px; overflow-x: scroll;">
-                            <div v-for="(product, index) in farm.packages" :key="index" style="margin-right: 3px;">
-                                <img :src="product.imageUrl" class="package-img"/>
+                        <div style="width: 100%; height: 170px; margin-top: 10px; display: flex; border-radius: 10px; overflow-x: scroll;" class="package-images-box">
+                            <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
+                                <img :src="product.imageUrl" class="package-img"
+                                />
                             </div>
 
                         </div>
@@ -242,7 +254,7 @@ export default {
                     this.isLastPage = true;
                 }
 
-                            // 상품 끼워넣기
+                // 상품 끼워넣기
                 for(let i=0; i<this.farmList.length; i++) {
                     const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
@@ -360,25 +372,90 @@ export default {
     display: flex;
 }
 
+
 .farm-image-circle {
     border-radius: 200px;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
+    border: solid 0.5px #D4D4D4;
+    background-position: center;
+    background-size: cover; /* 기본적으로 이미지를 꽉 채움 */
+    transition: background-size 0.5s ease; /* 배율 변경 시 부드러운 트랜지션 효과 */
+}
+
+.farm-image-circle:hover {
+    background-size: 120%;
+    cursor: pointer;
+    transition: background-size 0.5s ease;
 }
 
 .farm-description {
-    margin-left: 30px;
-    line-height: 80px;
+    margin-left: 20px;
+    line-height: 70px;
 }
 
 .package-img {
-    height: 170px;
+    height: 150px;
     width: auto;
     border-radius: 5px;
 }
 
-.package-img:hover {
-    cursor: pointer;
-    
+.package-images-box {
+    height: 170px;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden; /* 영역을 넘어가는 부분을 잘라냄 */
+    transition: all 0.3s ease; /* 부드러운 트랜지션 효과 */
 }
+
+.product-image-frame {
+    height: 150px;
+    width: auto;
+    border-radius: 5px;
+    margin-right: 3px;
+    overflow: hidden; /* 영역을 넘어가는 부분을 잘라냄 */
+    transition: transform 0.3s ease; /* 이미지 확대 시 부드러운 트랜지션 */
+}
+
+.product-image-frame img {
+    height: 100%;
+    width: auto;
+    border-radius: 5px;
+    transition: transform 0.3s ease; /* 이미지 확대 시 부드러운 트랜지션 */
+}
+
+.product-image-frame:hover img {
+    transform: scale(1.05); /* 이미지 확대 */
+}
+
+
+.package-images-box{
+    -ms-overflow-style: none;
+}
+
+.package-images-box::-webkit-scrollbar{
+   display:none;
+}
+
+.order-count-box {
+    line-height: 70px;
+    width: auto
+}
+
+.order-count-chip {
+    color: rgb(220, 225, 153, 0.5);
+    color: rgb(122, 124, 84);
+    width: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: small;
+    border-radius: 3px;
+}
+
+.like-chip {
+    border-radius: 3px;
+}
+
 </style>

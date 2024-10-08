@@ -267,6 +267,18 @@ export default {
 
                     // Store the token in local storage
                     localStorage.setItem("fcmToken", token);
+
+                    // DB에 fcm 토큰을 저장
+                    try {
+                        const role = localStorage.getItem("role");
+                        if(role === 'MEMBER') {
+                            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
+                        } else if(role === 'SELLER') {
+                            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/fcm/token`, body);
+                        }
+                    } catch(e) {
+                        console.log(e);
+                    }
                 } catch (err) {
                     console.log(err);
                 }
@@ -276,13 +288,7 @@ export default {
                 "fcmToken" : localStorage.getItem("fcmToken")
             };
 
-            // DB에 fcm 토큰을 저장
-            try {
-                const res = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
-                console.log(res);
-            } catch(e) {
-                console.log(e);
-            }
+
 
             onMessage(messaging, (payload) => {
         
