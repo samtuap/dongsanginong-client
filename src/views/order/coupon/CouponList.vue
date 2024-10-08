@@ -8,7 +8,7 @@
         <h4>등록된 쿠폰 목록</h4>
       </v-col>
       <v-col class="text-right">
-        <v-btn @click="openCouponCreateModal" class="create-btn" style="border-radius: 50px; right: 185px;">
+        <v-btn @click="openCouponCreateModal" class="create-btn" style="border-radius: 50px; right: 200px;">
           쿠폰 생성
         </v-btn>
       </v-col>

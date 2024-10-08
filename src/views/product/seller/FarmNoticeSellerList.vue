@@ -73,7 +73,7 @@ export default {
     methods: {
         async farmNoticeList(page) {
             try {
-                const farmId = localStorage.getItem('farmId');
+                const farmId = localStorage.getItem('farmId')
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farmId}/notice/list`, {
                     params: {
                         page: page - 1,
@@ -88,7 +88,7 @@ export default {
             }
         },
         goToDetail(noticeId) {
-            const farmId = this.$route.params.farmId;
+            const farmId = localStorage.getItem('farmId')
             this.$router.push({
                 name: 'FarmNoticeSellerDetail',
                 params: { farmId: farmId, notice_id: noticeId }
