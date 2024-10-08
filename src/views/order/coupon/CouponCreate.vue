@@ -317,8 +317,8 @@ export default {
   background-color: #BCC07B;
   color: black;
   border-radius: 30px;
-  padding: 10px 40px;
-  font-size: 15px;
+  padding: 10px 30px;
+  font-size: 13px;
   font-weight: bold;
   line-height: 1.5;
 }
@@ -327,8 +327,8 @@ export default {
   background-color: #e0e0e0;
   color: black;
   border-radius: 30px;
-  padding: 10px 40px;
-  font-size: 15px;
+  padding: 10px 30px;
+  font-size: 13px;
   font-weight: bold;
   line-height: 1.5;
 }
