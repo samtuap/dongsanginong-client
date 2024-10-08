@@ -73,11 +73,26 @@ export default {
   updated() {
       this.scrollToBottom();
   },
+  beforeUnmount() {
+    if (this.stompClient && this.stompClient.connected) {
+      console.log("Disconnecting WebSocket connection");
+      this.stompClient.disconnect();
+    }
+  },
   methods: {
     enterChatRoom() {
       if (this.subscription) {
         this.subscription.unsubscribe();
       }
+
+      if (this.stompClient && this.stompClient.connected) {
+            console.log("WebSocket 연결 끊기 시도");
+            this.stompClient.disconnect(() => {
+                console.log('기존 WebSocket 연결 해제됨');
+            }, { sessionId: this.mySessionId });
+        } else {
+            console.log("WebSocket 연결이 이미 끊어졌거나 연결되지 않음");
+        }
 
       this.messages = [];
       const socket = new SockJS(`${process.env.VUE_APP_API_BASE_URL}/live-service/ws`);
@@ -93,6 +108,7 @@ export default {
       this.stompClient.connect(
         headers,
         () => {
+          console.log("WebSocket 연결 성공");
           this.subscription = this.stompClient.subscribe(`/topic/live/${this.liveId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             console.log('Received Message:', receivedMessage);
@@ -127,6 +143,13 @@ export default {
               messageList.scrollTop = messageList.scrollHeight;
           }
    },
+
+   disconnect() {
+      if (this.stompClient && this.stompClient.connected) {
+        console.log("Disconnecting WebSocket connection from parent component");
+        this.stompClient.disconnect();
+      }
+    },
   },
 };
 </script>

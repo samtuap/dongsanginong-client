@@ -23,7 +23,7 @@
       </div>
 
       <div class="chat-section">
-        <ChatBox :liveId="mySessionId" :isPublisher="isPublisher" :title="title" />
+        <ChatBox ref="chatBox" :liveId="mySessionId" :isPublisher="isPublisher" :title="title" />  <!-- ☀️ -->
       </div>
     </div>
 
@@ -74,6 +74,12 @@ export default {
         this.isPublisher = isPublisher;
         this.mySessionId = sessionId;
         this.joinSession(sessionId);    
+    },
+    mounted() { // ☀️
+    window.addEventListener('beforeunload', this.disconnectOnPageLeave);
+    },
+    beforeUnmount() { // ☀️
+    window.removeEventListener('beforeunload', this.disconnectOnPageLeave);
     },
     methods: {
         async joinSession(sessionId) {
@@ -135,6 +141,11 @@ export default {
         cancelExit() {
             this.exitModalVisible = false;
         },
+        disconnectOnPageLeave() { // ☀️
+          if (this.stompClient) {
+              this.stompClient.disconnect();
+          }
+        },
         async leaveSession() {
             if (this.session) {
                 if (this.isPublisher) {
@@ -142,11 +153,23 @@ export default {
                 }
                 this.session.disconnect();
             }
+
+            if (this.stompClient) { // ☀️
+              console.log("WebSocket 연결 끊기 시도");
+              this.stompClient.disconnect(() => {
+                console.log("WebSocket 연결 끊김")
+              }, { sessionId: this.liveId })
+            }
+
             this.session = undefined;
             this.mainStreamManager = undefined;
             this.publisher = undefined;
             this.subscribers = [];
             this.OV = undefined;
+
+            if (this.$refs.chatBox) { // ☀️
+              this.$refs.chatBox.disconnect();
+            }
 
             // 목록으로 나가는데 새로고침 
             window.location.href = '/live/list';
@@ -155,6 +178,7 @@ export default {
     beforeRouteLeave(to, from, next) {
         if (!this.exitModalVisible) {
             this.exitModalVisible = true;
+            this.leaveSession(); // ☀️
             next(false); 
         } else {
             next(); 
