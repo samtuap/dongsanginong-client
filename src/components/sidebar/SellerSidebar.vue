@@ -9,9 +9,9 @@
                     <v-btn class="cat_btn" :to="{path:'/seller/delivery-management'}">주문 및 배송 관리</v-btn><br>
                     <v-btn class="cat_btn" :to="{path:'/seller/sales-detail'}">매출 내역 관리</v-btn><br>
                     <v-btn class="cat_btn" :to="{path: '/seller/product-list'}">상품 관리</v-btn><br>
-                    <v-btn class="cat_btn" :to="{ path: `/seller/${farmId}/notice/list`}">커뮤니티 관리</v-btn><br>
-                    <v-btn class="cat_btn" :to="{ path: `/seller/${farmId}/review/list`}">리뷰 관리</v-btn><br>
-                    <v-btn class="cat_btn" :to="{ path: `/coupons/${farmId}/list`}">쿠폰 관리</v-btn><br>
+                    <v-btn class="cat_btn" :to="{ path: `/seller/notice/list`}">커뮤니티 관리</v-btn><br>
+                    <v-btn class="cat_btn" :to="{ path: `/seller/review/list`}">리뷰 관리</v-btn><br>
+                    <v-btn class="cat_btn" :to="{ path: `/coupons/list`}">쿠폰 관리</v-btn><br>
                 </v-col>
             </v-list-item-group>
         </v-list>
@@ -19,15 +19,7 @@
 </template>
 <script>
 export default {
-    data() {
-        return {
-            farmId: null,   // farmId를 저장할 변수
-        };
-    },
-    created() {
-        // localStorage에서 farmId 값을 불러옴
-        this.farmId = localStorage.getItem('farmId');
-    }
+   
 }
 </script>
 <style scoped>

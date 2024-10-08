@@ -40,8 +40,10 @@
       </v-row>
 
       <!-- 페이지네이션 -->
+      <v-row class="align-center" style="padding-right: 330px; margin-top: 20px;">
       <v-pagination v-model="currentPage" :length="totalPages" @input="paginateReviews"
         class="pagination"></v-pagination>
+      </v-row>
     </div>
   </v-container>
 </template>

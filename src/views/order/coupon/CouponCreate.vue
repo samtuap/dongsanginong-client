@@ -89,7 +89,7 @@
     <v-dialog v-model="alertDialog" max-width="400px">
       <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
         <v-card-text>{{ alertMessage }}</v-card-text>
-        <v-btn @click="alertDialog = false;" class="submit-btn">close</v-btn>
+        <v-btn @click="closeAllModals" class="submit-btn">close</v-btn>
       </v-card>
     </v-dialog>
   </v-dialog>
@@ -138,7 +138,7 @@ export default {
       if (!value) {
         this.resetFormData();
       }
-      this.$emit('update:dialog', value);
+      this.$emit('update:dialog', value); // dialog 값을 상위 컴포넌트로 emit
     },
     openTimePicker() {
       if (this.selectedDate) {
@@ -210,6 +210,13 @@ export default {
         console.error('쿠폰 생성 실패:', error.response?.data || error.message);
         this.showAlert('쿠폰 생성에 실패했습니다.');
       }
+    },
+    closeAllModals() {
+      // 모든 모달 상태를 닫음
+      this.$emit('update:dialog', false); // dialog 값을 상위 컴포넌트로 emit
+      this.datePickerDialog = false;
+      this.timePickerDialog = false;
+      this.alertDialog = false;
     },
   },
 };

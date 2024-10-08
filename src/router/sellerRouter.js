@@ -25,7 +25,7 @@ export const sellerRouter = [
         component: CouponCreate
     },
     {
-        path: '/coupons/:farm_id/list',
+        path: '/coupons/list',
         name: 'CouponList',
         component: CouponList
     },
@@ -60,7 +60,7 @@ export const sellerRouter = [
         component: ProductUpdate
     },
     {
-        path: '/seller/:farmId/notice/list',
+        path: '/seller/notice/list',
         name: 'FarmNoticeSellerList',
         component: FarmNoticeSellerList,
     },
@@ -70,7 +70,7 @@ export const sellerRouter = [
         component: FarmNoticeSellerDetail,
     },
     {
-        path: '/seller/:farmId/review/list',
+        path: '/seller/review/list',
         name: 'SellerReviewList',
         component: SellerReviewList,
     },
