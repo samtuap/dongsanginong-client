@@ -287,21 +287,6 @@ export default {
                 "fcmToken": localStorage.getItem("fcmToken")
             };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-            // DB에 fcm 토큰을 저장
-            try {
-                const res = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
-                console.log(res);
-            } catch (e) {
-                console.log(e);
-            }
->>>>>>> 038caf22184799a79935410e8df1699e2c91d7c6
-
-=======
->>>>>>> 9a4da3d4b92486b11e2e33f1d6d53386fd7413e1
             onMessage(messaging, (payload) => {
 
                 // IndexedDB에 저장
