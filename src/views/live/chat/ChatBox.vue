@@ -4,14 +4,21 @@
       <h3>{{ title }} 채팅방</h3>
       <div class="message-list" ref="messageList">
         <div
-          v-for="message in messages"
+          v-for="(message, index) in messages"
           :key="message.timestamp"
           class="message-item"
+          @click="selectMessage(index)"
         >
           <strong :style="{ color: message.isOwner ? '#d9534f' : '#5bc0de' }">
             {{ message.isOwner ? '👑 ' : '' }}{{ message.name }}:
           </strong>
           {{ message.content }}
+
+          <div v-if="isPublisher && selectedMessageIndex === index" class="dropdown-menu">
+            <button @click="kickUser(message.memberId)" class="dropdown-item">
+              강퇴하기
+            </button>
+          </div>
         </div>
       </div>
 
@@ -30,6 +37,7 @@
 <script>
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';
+import axios from 'axios';
 
 export default {
   props: {
@@ -38,13 +46,13 @@ export default {
       required: true,
     },
     currentSellerId: {
-      type: String, // 개설자의 sellerId를 받음
+      type: String,
       required: true
     },
-    title: {  // 농장 이름을 prop으로 전달받음
+    title: {
       type: String,
       required: true,
-  },
+    },
   },
   data() {
     return {
@@ -56,27 +64,41 @@ export default {
       sellerId: null,
       senderName: null,
       token: null,
-      isPublisher: false,
+      isPublisher: false, // 초기값 false
+      isKicked: false,
+      selectedMessageIndex: null, // 선택한 메시지 인덱스D
+      kickModalVisible: false
     };
   },
   async mounted() {
     this.token = localStorage.getItem('accessToken');
-    this.memberId = localStorage.getItem('memberId');
-    this.sellerId = localStorage.getItem('sellerId');
+    this.memberId = localStorage.getItem('memberId') || null;
+    this.sellerId = localStorage.getItem('sellerId') || null;
     this.senderName = localStorage.getItem('username');
 
     console.log('Token:', this.token);
     console.log('memberId:', this.memberId, 'sellerId:', this.sellerId, 'senderName:', this.senderName, 'isPublisher:', this.isPublisher);
 
-    this.enterChatRoom();
+    await this.checkIfKicked(); // 강퇴 여부 확인
+
+    if (!this.isKicked) {
+      this.enterChatRoom();  // 강퇴되지 않았을 경우에만 방 입장
+    }
+
+    // isPublisher 자동 설정: 현재 사용자가 방의 소유자인지 확인
+    const isPublisherParam = this.$route.query.isPublisher;
+    this.isPublisher = isPublisherParam === 'true';
+    console.log('isPublisher from URL:', this.isPublisher);
   },
   updated() {
-      this.scrollToBottom();
+    this.scrollToBottom();
   },
   beforeUnmount() {
     if (this.stompClient && this.stompClient.connected) {
       console.log("Disconnecting WebSocket connection");
-      this.stompClient.disconnect();
+      this.stompClient.disconnect(() => {
+        console.log("WebSocket disconnected");
+      });
     }
   },
   methods: {
@@ -86,13 +108,13 @@ export default {
       }
 
       if (this.stompClient && this.stompClient.connected) {
-            console.log("WebSocket 연결 끊기 시도");
-            this.stompClient.disconnect(() => {
-                console.log('기존 WebSocket 연결 해제됨');
-            }, { sessionId: this.mySessionId });
-        } else {
-            console.log("WebSocket 연결이 이미 끊어졌거나 연결되지 않음");
-        }
+        console.log("WebSocket 연결 끊기 시도");
+        this.stompClient.disconnect(() => {
+          console.log('기존 WebSocket 연결 해제됨');
+        }, { sessionId: this.mySessionId});
+      } else {
+        console.log("WebSocket 연결이 이미 끊어졌거나 연결되지 않음");
+      }
 
       this.messages = [];
       const socket = new SockJS(`${process.env.VUE_APP_API_BASE_URL}/live-service/ws`);
@@ -100,10 +122,12 @@ export default {
 
       const headers = {
         Authorization: `Bearer ${this.token}`,
-        memberId: this.memberId,
-        sellerId: this.sellerId,
+        memberId: this.memberId || '',
+        sellerId: this.sellerId || '',
         sessionId: this.liveId
       };
+
+      console.log('WebSocket Headers:', headers);
 
       this.stompClient.connect(
         headers,
@@ -114,6 +138,22 @@ export default {
             console.log('Received Message:', receivedMessage);
             this.messages.push(receivedMessage);
           });
+
+          // 강퇴 메시지를 받기 위한 구독
+          this.stompClient.subscribe(`/topic/kick/${this.memberId}`, (message) => {
+    try {
+        const kickMessage = JSON.parse(message.body);
+        console.log("kickMessage", kickMessage);
+        if (kickMessage.memberId === Number(this.memberId)) {
+            this.kickModalVisible = true; // 강퇴 모달을 먼저 띄움
+            setTimeout(() => { // 3초 후에 홈으로 이동
+                this.redirectToHome();
+            }, 3000);
+        }
+    } catch (e) {
+        console.error("Failed to parse kick message:", e);
+    }
+});
         },
         (error) => {
           console.error('WebSocket connection error:', error);
@@ -121,8 +161,32 @@ export default {
       );
     },
 
+    disconnect() {
+      if (this.stompClient && this.stompClient.connected) {
+        this.stompClient.disconnect(() => {
+          console.log("WebSocket disconnected");
+        });
+      }
+    },
+    async checkIfKicked() {
+      if (this.memberId) {
+        try {
+          const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/chat/${this.liveId}/isKicked/${this.memberId}`);
+          this.isKicked = response.data;
+        } catch (error) {
+          console.error('Error checking kick status:', error);
+        }
+      } else {
+        this.isKicked = false;
+      }
+    },
+
+    redirectToHome() {
+      this.$router.push('/');
+    },
+
     sendMessage() {
-      if (this.stompClient && this.chatMessage.trim() !== '') {
+      if (this.stompClient && this.stompClient.connected && this.chatMessage.trim() !== '') {
         const message = {
           memberId: this.memberId,
           sellerId: this.sellerId,
@@ -135,25 +199,42 @@ export default {
 
         this.stompClient.send(`/app/chat/${this.liveId}/sendMessage`, JSON.stringify(message));
         this.chatMessage = '';
+      } else {
+        console.error('WebSocket is not connected yet');
       }
     },
     scrollToBottom() {
       const messageList = this.$refs.messageList;
-          if (messageList) {
-              messageList.scrollTop = messageList.scrollHeight;
-          }
-   },
-
-   disconnect() {
-      if (this.stompClient && this.stompClient.connected) {
-        console.log("Disconnecting WebSocket connection from parent component");
-        this.stompClient.disconnect();
+      if (messageList) {
+        messageList.scrollTop = messageList.scrollHeight;
       }
+    },
+
+    selectMessage(index) {
+      if (this.selectedMessageIndex === index) {
+        this.selectedMessageIndex = null;
+      } else {
+        this.selectedMessageIndex = index;
+      }
+    },
+
+    kickUser(userId) {
+      axios.post(`${process.env.VUE_APP_API_BASE_URL}/live-service/chat/${this.liveId}/kick/${userId}`, null, {
+        headers: {
+          sellerId: Number(this.sellerId),
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+        .then(() => {
+          console.log(`${userId} 강퇴됨`);
+        })
+        .catch(error => {
+          console.error("강퇴 에러:", error);
+        });
     },
   },
 };
 </script>
-
 
 <style scoped>
 .chat-container {
@@ -173,9 +254,9 @@ export default {
 .message-list {
   background-color: #ffffff;
   margin-bottom: 10px;
-  max-height: 550px; /* 고정된 높이 */
+  max-height: 550px;
   height: 532px;
-  overflow-y: auto; /* 스크롤 생성 */
+  overflow-y: auto;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
@@ -183,6 +264,7 @@ export default {
 
 .message-item {
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .chat-input {
@@ -209,5 +291,68 @@ export default {
 
 .chat-input button:hover {
   background-color: #218838;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  padding: 5px 10px;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.kick-modal {
+  background-color: rgb(255, 255, 255);
+  border: none;
+  box-shadow: none;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  width: 300px;
+}
+
+.kick-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+}
+
+.submit-btn {
+  margin-left: 10px;
+  margin-top: 8px;
+  background-color: #BCC07B;
+  color: black;
+  border-radius: 50px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #a8b05b;
 }
 </style>

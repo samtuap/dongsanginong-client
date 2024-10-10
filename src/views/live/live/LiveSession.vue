@@ -1,6 +1,12 @@
 <template>
-    <!-- 🔖 라이브 세션 화면 -->
-    <div class="live-container">
+  <!-- 강퇴 확인 모달 -->
+  <div v-if="kickModalVisible" class="kick-modal-overlay"></div> 
+    <div v-if="kickModalVisible" class="kick-modal">
+      <p>강퇴되었습니다.<br> 이 방에 입장할 수 없습니다.</p>
+      <button @click="redirectToHome" class="submit-btn">홈으로</button>
+    </div>
+    <!-- 🔖 라이브 세션 화면 -->  
+    <div v-if="!kickModalVisible" class="live-container">
       <div class="video-section">
        <div id="session-header" style="display: flex; justify-content: space-between; align-items: center; padding-top: 30px;">
           <h3>{{ title }}</h3>
@@ -60,20 +66,31 @@ export default {
         title: "", 
         OV: undefined,
         mySessionId: "",
+        memberId: "",
+        sellerId: "",
 
         exitModalVisible: false,
-        nextRoute: null
+        nextRoute: null,
+        kickModalVisible: false,
       };
     },
     async created() {
         const { sessionId } = this.$route.params;
         const title = this.$route.query.title;
         const isPublisher = this.$route.query.isPublisher === 'true'; // 방송자인지 시청자인지 구분 
+        this.memberId = localStorage.getItem('memberId') || null;
+        this.sellerId = localStorage.getItem('sellerId') || null;
+        
 
         this.title = title;
         this.isPublisher = isPublisher;
         this.mySessionId = sessionId;
-        this.joinSession(sessionId);    
+
+        await this.checkIfKicked();
+
+        if (!this.kickModalVisible) {
+          this.joinSession(sessionId);
+        }
     },
     mounted() { // ☀️
     window.addEventListener('beforeunload', this.disconnectOnPageLeave);
@@ -174,6 +191,23 @@ export default {
             // 목록으로 나가는데 새로고침 
             window.location.href = '/live/list';
         },
+
+        async checkIfKicked() {
+          console.log('Check if kicked: memberId:', this.memberId);
+          try {
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/chat/${this.mySessionId}/isKicked/${this.memberId}`);
+            console.log("check", response)
+            if (response.data === true) {
+              this.kickModalVisible = true; // 강퇴된 경우 모달 표시
+            }
+          } catch (error) {
+            console.error("강퇴 상태 확인 에러:", error);
+          }
+        },
+
+      redirectToHome() {
+        this.$router.push('/');
+      },
     },
     beforeRouteLeave(to, from, next) {
         if (!this.exitModalVisible) {
@@ -216,5 +250,50 @@ export default {
 .chat-section {
   flex: 1; /* 채팅은 비디오의 절반 정도 공간 차지 */
 }
+.kick-modal {
+  background-color: rgb(255, 255, 255);
+  border: none;
+  box-shadow: none;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  width: 300px;
+}
+
+.kick-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은 배경 */
+  z-index: 9998; /* 모달 바로 아래에 */
+}
+
+.submit-btn {
+  margin-left: 10px;
+  margin-top: 8px;
+  margin-left: -10px;
+  background-color: #BCC07B;
+  color: black;
+  border-radius: 50px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #a8b05b;
+}
+
 </style>
   
