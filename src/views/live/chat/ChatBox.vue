@@ -66,8 +66,7 @@ export default {
       token: null,
       isPublisher: false, // 초기값 false
       isKicked: false,
-      selectedMessageIndex: null, // 선택한 메시지 인덱스D
-      kickModalVisible: false
+      selectedMessageIndex: null, // 선택한 메시지 인덱스
     };
   },
   async mounted() {
@@ -141,19 +140,20 @@ export default {
 
           // 강퇴 메시지를 받기 위한 구독
           this.stompClient.subscribe(`/topic/kick/${this.memberId}`, (message) => {
-    try {
-        const kickMessage = JSON.parse(message.body);
-        console.log("kickMessage", kickMessage);
-        if (kickMessage.memberId === Number(this.memberId)) {
-            this.kickModalVisible = true; // 강퇴 모달을 먼저 띄움
-            setTimeout(() => { // 3초 후에 홈으로 이동
-                this.redirectToHome();
-            }, 3000);
-        }
-    } catch (e) {
-        console.error("Failed to parse kick message:", e);
-    }
-});
+            try {
+              const kickMessage = JSON.parse(message.body);
+              console.log("kickMessage", kickMessage);
+              if (kickMessage.memberId === Number(this.memberId)) {
+                alert(kickMessage.message);
+                this.stompClient.disconnect(() => {
+                  console.log("Kicked user WebSocket disconnected");
+                  this.$router.push("/");
+                });
+              }
+            } catch (e) {
+              console.error("Failed to parse kick message:", e);
+            }
+          });
         },
         (error) => {
           console.error('WebSocket connection error:', error);
@@ -312,47 +312,7 @@ export default {
   width: 100%;
 }
 
-.kick-modal {
-  background-color: rgb(255, 255, 255);
-  border: none;
-  box-shadow: none;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  text-align: center;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  width: 300px;
-}
-
-.kick-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
-}
-
-.submit-btn {
-  margin-left: 10px;
-  margin-top: 8px;
-  background-color: #BCC07B;
-  color: black;
-  border-radius: 50px;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-}
-
-.submit-btn:hover {
-  background-color: #a8b05b;
+.dropdown-item:hover {
+  background-color: #f1f1f1;
 }
 </style>
