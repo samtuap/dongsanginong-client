@@ -172,7 +172,10 @@ export default {
         },
         clickLike(idx, farmId) {
             try {
-                console.log("line 177: idx: {}", idx);
+
+                if(this.likes[Number(idx)] != 0 && this.likes[Number(idx)] != 1) {
+                    return;
+                }
                 axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/favorites/farm/${farmId}`);
 
                 let ret;

@@ -106,7 +106,7 @@
                             class="like-chip"
                             size="small"
                             color="deep_orange"
-                            :class="{ 'selected-like-chip': this.likes.get(farm.id) == 1 || this.likes.get(farm.id) == 2 }"
+                            :class="{ 'selected-like-chip': likes.get(farm.id) == 1 || likes.get(farm.id) == 2 }"
                             @click="clickLike(farm.id)">
                                 💛 {{ likeCount.get(farm.id) }}
                             </v-chip>
@@ -198,14 +198,14 @@ export default {
         }
 
 
-        for (let i = 0; i < this.topFarmList.length; ++i) {
-            if(this.topFarmList[i].isLiked === true) {
-                this.likes.set(this.topFarmList[i].id, 1);
+        for (let i = 0; i < this.farmList.length; ++i) {
+            if(this.farmList[i].isLiked === true) {
+                this.likes.set(this.farmList[i].id, 1);
             } else {
-                this.likes.set(this.topFarmList[i].id, 0);
+                this.likes.set(this.farmList[i].id, 0);
             }
 
-            this.likeCount.set(this.topFarmList[i].id, this.topFarmList[i].favoriteCount);
+            this.likeCount.set(this.farmList[i].id, this.farmList[i].favoriteCount);
         }
 
 
@@ -311,6 +311,11 @@ export default {
         },
         clickLike(farmId) {
             try {
+                if(this.likes.get(farmId) != 0 && this.likes.get(farmId) != 1) {
+                    return;
+                }
+
+                
                 axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/favorites/farm/${farmId}`);
 
                 let ret;
@@ -323,8 +328,6 @@ export default {
                     this.likes.set(farmId, 3);
                     this.likeCount.set(farmId, this.likeCount.get(farmId) - 1);
                     ret = 0;
-                } else {
-                    return;
                 }
 
                 setTimeout(() => {
