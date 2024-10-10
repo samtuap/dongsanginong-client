@@ -13,7 +13,7 @@
                             <div v-for="(farm, index) in paginatedFarms(n)" :key="index" style="margin-left: 50px;"
                                 class="card-outer">
                                 <div style="padding-bottom: 30px;">
-                                    <v-img class="package-img"
+                                    <v-img class="favorite-farm-img"
                                     style="width:190px; height:190px;"
                                     @click="this.$router.push(`/farm/${farm.id}`)"
                                     :src="farm.imageUrl"
@@ -387,6 +387,7 @@ export default {
     background-size: 120%;
     cursor: pointer;
     transition: background-size 0.5s ease;
+
 }
 
 .farm-description {
@@ -398,6 +399,21 @@ export default {
     height: 150px;
     width: auto;
     border-radius: 5px;
+}
+
+.package-img:hover {
+    cursor: pointer;
+}
+
+.favorite-farm-img {
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.favorite-farm-img:hover {
+    cursor: pointer;
 }
 
 .package-images-box {
