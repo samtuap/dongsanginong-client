@@ -135,6 +135,36 @@
             </v-card>
         </v-card>
     </v-dialog>
+
+
+        <!-- 비로그인 회원이 좋아요를 누를 때 뜨는 모달 -->
+        <v-dialog v-model="this.loginModal" max-width="300px">
+            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+                <v-card-text>
+                    로그인이 필요한 서비스입니다.<br>
+                    로그인 하시겠습니까?
+                </v-card-text>
+                <v-row>
+                    <v-btn @click="this.$router.push('/member/sign-in')" class="submit-btn" style="background-color: #BCC07B;">로그인하기</v-btn>
+                    <v-btn @click="this.loginModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
+                </v-row>
+    
+            </v-card>
+        </v-dialog>
+    
+    
+        <!-- 판매자 회원이 좋아요를 누를 때 뜨는 모달 -->
+        <v-dialog v-model="this.sellerModal" max-width="300px">
+            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+                <v-card-text>
+                    판매자 회원은 다른 농장을 즐겨찾기할 수 없습니다. 😢
+                </v-card-text>
+                <v-row>
+                    <v-btn @click="this.loginModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
+                </v-row>
+    
+            </v-card>
+        </v-dialog>
 </template>
 
 <script>
@@ -162,6 +192,8 @@ export default {
             total: [],
             keyword: "",
             selectedCategory: 'all', // 선택된 카테고리를 저장하는 변수 추가
+            loginModal: false,
+            sellerModal: false,
         };
     },
     computed: {

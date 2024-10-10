@@ -123,7 +123,32 @@
 
         <!-- 농장 리스트 끝 -->
 
+        <v-dialog v-model="this.loginModal" max-width="300px">
+            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+                <v-card-text>
+                    로그인이 필요한 서비스입니다.<br>
+                    로그인 하시겠습니까?
+                </v-card-text>
+                <v-row>
+                    <v-btn @click="this.$router.push('/member/sign-in')" class="submit-btn" style="background-color: #BCC07B;">로그인하기</v-btn>
+                    <v-btn @click="this.loginModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
+                </v-row>
 
+            </v-card>
+        </v-dialog>
+
+
+        <v-dialog v-model="this.sellerModal" max-width="300px">
+            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+                <v-card-text>
+                    판매자 회원은 다른 농장을<br>즐겨찾기할 수 없습니다. 😢
+                </v-card-text>
+                <v-row>
+                    <v-btn @click="this.sellerModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
+                </v-row>
+
+            </v-card>
+        </v-dialog>
 
     </v-container>
 </template>
@@ -148,6 +173,8 @@ export default {
             isLastPage: false,
             likes: new Map(), // 0: 안눌려있는 상태, 1: 눌려있는 상태, 2: 눌리고 있는 상태(애니메이션처리)
             likeCount: new Map(),
+            loginModal: false,
+            sellerModal: false
         }
 
     },
@@ -332,6 +359,16 @@ export default {
         clickLike(farmId) {
             try {
                 if (this.likes.get(farmId) != 0 && this.likes.get(farmId) != 1) {
+                    return;
+                }
+
+                if(localStorage.getItem('role') == 'SELLER') {
+                    this.sellerModal = true;
+                    return;
+                }
+
+                if(localStorage.getItem('memberId') == undefined) {
+                    this.loginModal = true;
                     return;
                 }
 
