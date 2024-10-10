@@ -198,7 +198,6 @@ export default {
 
             }
         }
-
     },
     async created() {
         // 테스트용 임시 데이터
@@ -236,8 +235,6 @@ export default {
                 this.likeCount[i] = Number(this.farmList[i].favoriteCount);
             }
 
-            console.log("line 239");
-            console.log(this.likes);
         } catch (e) {
             console.log(e);
         }

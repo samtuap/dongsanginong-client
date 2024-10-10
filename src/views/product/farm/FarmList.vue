@@ -30,9 +30,13 @@
                                     </div>
 
 
-                                    <v-chip class="like-chip" size="small" color="deep_orange">
-                                        <!-- @click="clickLike((4 * (n - 1) + index + 1))"> -->
-                                        💛 {{ farm.favoriteCount }}
+                                    <v-chip
+                                    class="like-chip"
+                                    size="small"
+                                    color="deep_orange"
+                                    :class="{ 'selected-like-chip': this.likes.get(farm.id) == 1 || this.likes.get(farm.id) == 2 }"
+                                    @click="clickLike(farm.id)">
+                                        💛 {{ likeCount.get(farm.id) }}
                                     </v-chip>
 
                                     <!-- <div v-if="likes[(4 * (n - 1) + index + 1)] == true" class="heart-emoji">💛</div> -->
@@ -100,7 +104,7 @@
                         <div style="line-height: 70px;">
                             <v-chip class="like-chip" color="deep_orange" size="small">
                                 <!-- @click="clickLike((4 * (n - 1) + index + 1))"> -->
-                                💛 {{ farm.favoriteCount }}
+                                <!-- 💛 {{ farm.favoriteCount }} -->
                             </v-chip>
                         </div>
                     </div>
@@ -143,6 +147,8 @@ export default {
             sortOptionMap: new Map(),
             isLoading: false,
             isLastPage: false,
+            likes: new Map(), // 0: 안눌려있는 상태, 1: 눌려있는 상태, 2: 눌리고 있는 상태(애니메이션처리)
+            likeCount: new Map(),
         }
 
     },
@@ -156,6 +162,16 @@ export default {
         this.topFarmList = response.data.content;
 
         this.windowCount = parseInt(this.topFarmList.length / 4) + 1;
+
+        for (let i = 0; i < this.topFarmList.length; ++i) {
+            if(this.topFarmList[i].isLiked === true) {
+                this.likes.set(this.topFarmList[i].id, 1);
+            } else {
+                this.likes.set(this.topFarmList[i].id, 0);
+            }
+
+            this.likeCount.set(this.topFarmList[i].id, this.topFarmList[i].favoriteCount);
+        }
 
 
         const listParams = {
@@ -175,6 +191,17 @@ export default {
             const packages = res.data.slice(0, 5);
 
             this.farmList[i] = {...this.farmList[i], "packages": packages};
+        }
+
+
+        for (let i = 0; i < this.topFarmList.length; ++i) {
+            if(this.topFarmList[i].isLiked === true) {
+                this.likes.set(this.topFarmList[i].id, 1);
+            } else {
+                this.likes.set(this.topFarmList[i].id, 0);
+            }
+
+            this.likeCount.set(this.topFarmList[i].id, this.topFarmList[i].favoriteCount);
         }
 
 
@@ -278,6 +305,33 @@ export default {
                 this.loadFarm();
             }
         },
+        clickLike(farmId) {
+            try {
+                axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/favorites/farm/${farmId}`);
+
+                let ret;
+
+                if (this.likes.get(farmId) == 0) {
+                    this.likes.set(farmId, 2);
+                    this.likeCount.set(farmId, this.likeCount.get(farmId) + 1);
+                    ret = 1;
+                } else if (this.likes.get(farmId) == 1) {
+                    this.likes.set(farmId, 3);
+                    this.likeCount.set(farmId, this.likeCount.get(farmId) - 1);
+                    ret = 0;
+                } else {
+                    return;
+                }
+
+                setTimeout(() => {
+                    this.likes.set(farmId, ret); // 1초 후에 liked 상태 정적인 상태로 변경
+                }, 1000);  // 1초 동안 하트 표시
+
+            } catch(e) {
+                console.log(e);
+
+            }
+        }
     }
 }
 </script>
@@ -472,6 +526,10 @@ export default {
 
 .like-chip {
     border-radius: 3px;
+}
+
+.selected-like-chip {
+    background-color: #FFE2A6;
 }
 
 </style>
