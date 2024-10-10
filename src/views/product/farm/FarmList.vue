@@ -11,10 +11,10 @@
                         style="align-items: center;">
                         <v-row class="d-flex" style="align-items: center; padding-top: 20px;">
                             <div v-for="(farm, index) in paginatedFarms(n)" :key="index" style="margin-left: 50px;"
-                                @click="this.$router.push(`/farm/${farm.id}`)"
                                 class="card-outer">
                                 <div style="padding-bottom: 30px;">
-                                    <v-img class="package-img" style="width:190px; height:190px;" :src="farm.imageUrl"
+                                    <v-img class="favorite-farm-img" style="width:190px; height:190px;"
+                                        @click="this.$router.push(`/farm/${farm.id}`)" :src="farm.imageUrl"
                                         alt="Farm 썸네일" cover />
                                 </div>
 
@@ -23,17 +23,20 @@
                                         (n - 1) +
                                         index + 1 }}</div>
                                     <div style="width: 120px;">
-                                        <p v-if="farm.farmName.length < 8" style="font-size: 13px; font-weight: 500;"> {{ farm.farmName }}</p>
-                                        <p v-else style="font-size: 13px; font-weight: 500;"> {{ farm.farmName.substring(0, 8) }}... </p>
+                                        <p v-if="farm.farmName.length < 8" style="font-size: 14px; font-weight: 500;">
+                                            {{ farm.farmName }}</p>
+                                        <p v-else style="font-size: 14px; font-weight: 500;"> {{
+                                            farm.farmName.substring(0, 8) }}... </p>
                                     </div>
 
 
-                                    <v-chip class="like-chip" size="small" color="deep_orange">
-                                        <!-- @click="clickLike((4 * (n - 1) + index + 1))"> -->
-                                        💛 {{ farm.favoriteCount }}
+                                    <v-chip class="like-chip" size="small" color="deep_orange"
+                                        :class="{ 'selected-like-chip': this.likes.get(farm.id) == 1 || this.likes.get(farm.id) == 2 }"
+                                        @click="clickLike(farm.id)">
+                                        💛 {{ likeCount.get(farm.id) }}
                                     </v-chip>
 
-                                    <!-- <div v-if="likes[(4 * (n - 1) + index + 1)] == true" class="heart-emoji">💛</div> -->
+                                    <div v-if="likes.get(farm.id) == 2" class="heart-emoji">💛</div>
                                 </div>
 
                             </div>
@@ -73,33 +76,45 @@
 
             </v-row>
             <v-row>
-                <div v-for="(farm, index) in farmList" :key="index" class="farm-card-outer" @click="this.$router.push(`/farm/${farm.id}`)">
+                <div v-for="(farm, index) in farmList" :key="index" class="farm-card-outer">
 
-                    <div class="farm-info" >
+                    <div class="farm-info">
                         <!-- 사진 영역 -->
-                        <div>
-                            <v-img :src="farm.imageUrl" class="farm-image-circle" cover />
+                        <div class="farm-image-frame">
+                            <v-img :src="farm.imageUrl" class="farm-image-circle"
+                                @click="this.$router.push(`/farm/${farm.id}`)" cover />
                         </div>
                         <!-- 제목 영역 -->
                         <div class="farm-description">
-                            <b style="font-size: large;">{{ farm.farmName }}</b>
+                            <p style="font-size: 15px; font-weight: 600; font-size: 16px;">{{ farm.farmName }}</p>
                         </div>
 
                         <!-- 즐겨찾기 영역 -->
-                        <div style="line-height: 80px;">
-                            <v-chip class="like-chip" color="deep_orange">
-                                <!-- @click="clickLike((4 * (n - 1) + index + 1))"> -->
-                                💛 {{ farm.favoriteCount }}
+                        <div class="order-count-box">
+                            <v-chip class="order-count-chip" size="small">
+                                판매 {{ farm.orderCount }}개
                             </v-chip>
+                        </div>
+
+                        <div style="line-height: 70px;">
+                            <v-chip class="like-chip" size="small" color="deep_orange"
+                                :class="{ 'selected-like-chip': likes.get(farm.id) == 1 || likes.get(farm.id) == 2 }"
+                                @click="clickLike(farm.id)">
+                                💛 {{ likeCount.get(farm.id) }}
+                            </v-chip>
+
+                            <!-- 하트 이모지 애니메이션 -->
+                            <div v-if="likes[(4 * (n - 1) + index)] == 2" class="heart-emoji">💛</div>
                         </div>
                     </div>
 
                     <div class="package-info">
-                        <div style="width: 100%; height: 170px; margin-top: 10px; display: flex; border-radius: 10px; overflow-x: scroll;">
-                            <div v-for="(product, index) in farm.packages" :key="index" style="margin-right: 3px;">
-                                <img :src="product.imageUrl" class="package-img"/>
-                            </div>
 
+                        <div style="margin-top: 10px; display: flex; border-radius: 10px;"
+                                class="package-images-box">
+                            <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
+                                <img :src="product.imageUrl" class="package-img" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,7 +123,32 @@
 
         <!-- 농장 리스트 끝 -->
 
+        <v-dialog v-model="this.loginModal" max-width="300px">
+            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+                <v-card-text>
+                    로그인이 필요한 서비스입니다.<br>
+                    로그인 하시겠습니까?
+                </v-card-text>
+                <v-row>
+                    <v-btn @click="this.$router.push('/member/sign-in')" class="submit-btn" style="background-color: #BCC07B;">로그인하기</v-btn>
+                    <v-btn @click="this.loginModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
+                </v-row>
 
+            </v-card>
+        </v-dialog>
+
+
+        <v-dialog v-model="this.sellerModal" max-width="300px">
+            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+                <v-card-text>
+                    판매자 회원은 다른 농장을<br>즐겨찾기할 수 없습니다. 😢
+                </v-card-text>
+                <v-row>
+                    <v-btn @click="this.sellerModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
+                </v-row>
+
+            </v-card>
+        </v-dialog>
 
     </v-container>
 </template>
@@ -131,6 +171,10 @@ export default {
             sortOptionMap: new Map(),
             isLoading: false,
             isLastPage: false,
+            likes: new Map(), // 0: 안눌려있는 상태, 1: 눌려있는 상태, 2: 눌리고 있는 상태(애니메이션처리)
+            likeCount: new Map(),
+            loginModal: false,
+            sellerModal: false
         }
 
     },
@@ -140,10 +184,20 @@ export default {
             "size": this.pageSize,
             "sort": "favoriteCount,desc"
         }
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/list`, { params });
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth`, { params });
         this.topFarmList = response.data.content;
 
         this.windowCount = parseInt(this.topFarmList.length / 4) + 1;
+
+        for (let i = 0; i < this.topFarmList.length; ++i) {
+            if (this.topFarmList[i].isLiked === true) {
+                this.likes.set(this.topFarmList[i].id, 1);
+            } else {
+                this.likes.set(this.topFarmList[i].id, 0);
+            }
+
+            this.likeCount.set(this.topFarmList[i].id, this.topFarmList[i].favoriteCount);
+        }
 
 
         const listParams = {
@@ -151,18 +205,29 @@ export default {
             "size": this.pageSize,
             "sort": "id,desc"
         }
-        const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/list`, { 'params': listParams });
+        const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth`, { 'params': listParams });
         this.farmList = farmListResponse.data.content;
 
         // 상품 끼워넣기
-        for(let i=0; i<this.farmList.length; i++) {
-            
+        for (let i = 0; i < this.farmList.length; i++) {
+
             const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
             console.log(res);
             const packages = res.data.slice(0, 5);
 
-            this.farmList[i] = {...this.farmList[i], "packages": packages};
+            this.farmList[i] = { ...this.farmList[i], "packages": packages };
+        }
+
+
+        for (let i = 0; i < this.farmList.length; ++i) {
+            if (this.farmList[i].isLiked === true) {
+                this.likes.set(this.farmList[i].id, 1);
+            } else {
+                this.likes.set(this.farmList[i].id, 0);
+            }
+
+            this.likeCount.set(this.farmList[i].id, this.farmList[i].favoriteCount);
         }
 
 
@@ -207,16 +272,28 @@ export default {
 
             const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/search`, { params });
             this.farmList = farmListResponse.data.content;
-            
+
+
+            // 좋아요 수 세팅
+            for (let i = 0; i < this.farmList.length; ++i) {
+                if (this.farmList[i].isLiked === true) {
+                    this.likes.set(this.farmList[i].id, 1);
+                } else {
+                    this.likes.set(this.farmList[i].id, 0);
+                }
+
+                this.likeCount.set(this.farmList[i].id, this.farmList[i].favoriteCount);
+            }
+
 
             // 상품 끼워넣기
-            for(let i=0; i<this.farmList.length; i++) {
+            for (let i = 0; i < this.farmList.length; i++) {
                 const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
                 console.log(res);
                 const packages = res.data.slice(0, 5);
 
-                this.farmList[i] = {...this.farmList[i], "packages": packages};
+                this.farmList[i] = { ...this.farmList[i], "packages": packages };
             }
         },
         async loadFarm() {
@@ -236,20 +313,33 @@ export default {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/search`, { params });
                 // 서버에서 주지 않은 데이터를 추가한 것이다.
                 const additionalData = response.data.content;
+
+
+                // 좋아요 수 세팅
+                for (let i = 0; i < additionalData.length; ++i) {
+                    if (additionalData[i].isLiked === true) {
+                        this.likes.set(additionalData[i].id, 1);
+                    } else {
+                        this.likes.set(additionalData[i].id, 0);
+                    }
+
+                    this.likeCount.set(additionalData[i].id, additionalData[i].favoriteCount);
+                }
+
                 this.farmList = [...this.farmList, ...additionalData]; // 0번 페이지 + 1번 페이지 + ...
                 this.isLastPage = response.data.last; // 라스트 여부
                 if (this.isLastPage) {
                     this.isLastPage = true;
                 }
 
-                            // 상품 끼워넣기
-                for(let i=0; i<this.farmList.length; i++) {
+                // 상품 끼워넣기
+                for (let i = 0; i < this.farmList.length; i++) {
                     const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
                     console.log(res);
-                    const packages = res.data.slice(0, 5);
+                    const packages = res.data.slice(0, 10);
 
-                    this.farmList[i] = {...this.farmList[i], "packages": packages};
+                    this.farmList[i] = { ...this.farmList[i], "packages": packages };
                 }
 
                 this.isLoading = false; // 로딩 끝!
@@ -266,6 +356,46 @@ export default {
                 this.loadFarm();
             }
         },
+        clickLike(farmId) {
+            try {
+                if (this.likes.get(farmId) != 0 && this.likes.get(farmId) != 1) {
+                    return;
+                }
+
+                if(localStorage.getItem('role') == 'SELLER') {
+                    this.sellerModal = true;
+                    return;
+                }
+
+                if(localStorage.getItem('memberId') == undefined) {
+                    this.loginModal = true;
+                    return;
+                }
+
+
+                axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/favorites/farm/${farmId}`);
+
+                let ret;
+
+                if (this.likes.get(farmId) == 0) {
+                    this.likes.set(farmId, 2);
+                    this.likeCount.set(farmId, this.likeCount.get(farmId) + 1);
+                    ret = 1;
+                } else if (this.likes.get(farmId) == 1) {
+                    this.likes.set(farmId, 3);
+                    this.likeCount.set(farmId, this.likeCount.get(farmId) - 1);
+                    ret = 0;
+                }
+
+                setTimeout(() => {
+                    this.likes.set(farmId, ret); // 1초 후에 liked 상태 정적인 상태로 변경
+                }, 1000);  // 1초 동안 하트 표시
+
+            } catch (e) {
+                console.log(e);
+
+            }
+        }
     }
 }
 </script>
@@ -360,25 +490,152 @@ export default {
     display: flex;
 }
 
+
 .farm-image-circle {
     border-radius: 200px;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
+    border: solid 0.5px #D4D4D4;
+    background-position: center;
+    background-size: cover;
+    /* 기본적으로 이미지를 꽉 채움 */
+    transition: background-size 0.5s ease;
+    /* 배율 변경 시 부드러운 트랜지션 효과 */
+}
+
+.farm-image-circle:hover {
+    background-size: 120%;
+    cursor: pointer;
+    transition: background-size 0.5s ease;
+
 }
 
 .farm-description {
-    margin-left: 30px;
-    line-height: 80px;
+    margin-left: 20px;
+    line-height: 70px;
 }
 
 .package-img {
-    height: 170px;
+    height: 200px;
     width: auto;
     border-radius: 5px;
 }
 
 .package-img:hover {
     cursor: pointer;
-    
+}
+
+.favorite-farm-img {
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.favorite-farm-img:hover {
+    cursor: pointer;
+}
+
+.package-images-box {
+    height: 300px;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    border-radius: 10px;
+    overflow-x: scroll;
+    transition: all 0.3s ease;
+    /* 부드러운 트랜지션 효과 */
+}
+
+.product-image-frame {
+    height: 200px;
+    width: auto;
+    border-radius: 5px;
+    margin-right: 6px;
+    /* 영역을 넘어가는 부분을 잘라냄 */
+    transition: transform 0.3s ease;
+    border-radius: 5px;
+    /* 이미지 확대 시 부드러운 트랜지션 */
+}
+
+
+.product-image-frame img {
+    height: 100%;
+    width: auto;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+    /* 이미지 확대 시 부드러운 트랜지션 */
+}
+
+.product-image-frame:hover img {
+    transform: scale(1.03);
+    border-radius: 5px;
+    /* 이미지 확대 */
+}
+
+
+.package-images-box {
+    padding: 3px;
+    -ms-overflow-style: none;
+}
+
+.package-images-box::-webkit-scrollbar {
+    display: none;
+}
+
+.order-count-box {
+    line-height: 70px;
+    width: auto
+}
+
+.order-count-chip {
+    color: rgb(220, 225, 153, 0.5);
+    color: rgb(122, 124, 84);
+    width: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: small;
+    border-radius: 3px;
+}
+
+.like-chip {
+    border-radius: 3px;
+}
+
+.selected-like-chip {
+    background-color: #FFE2A6;
+}
+
+.heart-emoji {
+    position: absolute;
+    transform: translateX(10px);
+    /* 중앙 정렬을 위한 트랜스폼 */
+    font-size: 24px;
+    opacity: 0;
+    /* 애니메이션 전에는 보이지 않도록 설정 */
+    animation: popUp 1s ease-in-out forwards;
+    /* 애니메이션 정의 */
+    margin-left: 35px;
+}
+
+
+@keyframes popUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0);
+        /* 처음에는 원래 위치에서 scale 0으로 시작 */
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50px) scale(1.5);
+        /* 위로 이동하면서 크기 확대 */
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100px) scale(0);
+        /* 더 위로 이동하면서 크기 축소 */
+    }
 }
 </style>
