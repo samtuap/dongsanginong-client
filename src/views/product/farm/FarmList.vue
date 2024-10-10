@@ -152,7 +152,7 @@ export default {
             "size": this.pageSize,
             "sort": "favoriteCount,desc"
         }
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/list`, { params });
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth`, { params });
         this.topFarmList = response.data.content;
 
         this.windowCount = parseInt(this.topFarmList.length / 4) + 1;
@@ -163,7 +163,7 @@ export default {
             "size": this.pageSize,
             "sort": "id,desc"
         }
-        const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/list`, { 'params': listParams });
+        const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth`, { 'params': listParams });
         this.farmList = farmListResponse.data.content;
 
         // 상품 끼워넣기
