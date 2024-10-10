@@ -110,7 +110,7 @@
 
                     <div class="package-info">
 
-                        <div style="width: 100%; height: 170px; margin-top: 10px; display: flex; border-radius: 10px;"
+                        <div style="margin-top: 10px; display: flex; border-radius: 10px;"
                                 class="package-images-box">
                             <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
                                 <img :src="product.imageUrl" class="package-img" />
@@ -479,7 +479,7 @@ export default {
 }
 
 .package-img {
-    height: 150px;
+    height: 200px;
     width: auto;
     border-radius: 5px;
 }
@@ -500,7 +500,7 @@ export default {
 }
 
 .package-images-box {
-    height: 170px;
+    height: 300px;
     width: 100%;
     margin-top: 10px;
     display: flex;
@@ -511,7 +511,7 @@ export default {
 }
 
 .product-image-frame {
-    height: 150px;
+    height: 200px;
     width: auto;
     border-radius: 5px;
     margin-right: 6px;
