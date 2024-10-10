@@ -109,12 +109,12 @@
                     </div>
 
                     <div class="package-info">
-                        <div style="width: 100%; height: 170px; margin-top: 10px; display: flex; border-radius: 10px; overflow-x: scroll;"
-                            class="package-images-box">
+
+                        <div style="width: 100%; height: 170px; margin-top: 10px; display: flex; border-radius: 10px;"
+                                class="package-images-box">
                             <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
                                 <img :src="product.imageUrl" class="package-img" />
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -288,7 +288,7 @@ export default {
                 const additionalData = response.data.content;
 
 
-                            // 좋아요 수 세팅
+                // 좋아요 수 세팅
                 for (let i = 0; i < additionalData.length; ++i) {
                     if (additionalData[i].isLiked === true) {
                         this.likes.set(additionalData[i].id, 1);
@@ -310,7 +310,7 @@ export default {
                     const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
                     console.log(res);
-                    const packages = res.data.slice(0, 5);
+                    const packages = res.data.slice(0, 10);
 
                     this.farmList[i] = { ...this.farmList[i], "packages": packages };
                 }
@@ -505,8 +505,7 @@ export default {
     margin-top: 10px;
     display: flex;
     border-radius: 10px;
-    overflow: hidden;
-    /* 영역을 넘어가는 부분을 잘라냄 */
+    overflow-x: scroll;
     transition: all 0.3s ease;
     /* 부드러운 트랜지션 효과 */
 }
@@ -515,12 +514,13 @@ export default {
     height: 150px;
     width: auto;
     border-radius: 5px;
-    margin-right: 3px;
-    overflow: hidden;
+    margin-right: 6px;
     /* 영역을 넘어가는 부분을 잘라냄 */
     transition: transform 0.3s ease;
+    border-radius: 5px;
     /* 이미지 확대 시 부드러운 트랜지션 */
 }
+
 
 .product-image-frame img {
     height: 100%;
@@ -531,12 +531,14 @@ export default {
 }
 
 .product-image-frame:hover img {
-    transform: scale(1.05);
+    transform: scale(1.03);
+    border-radius: 5px;
     /* 이미지 확대 */
 }
 
 
 .package-images-box {
+    padding: 3px;
     -ms-overflow-style: none;
 }
 
