@@ -1,11 +1,7 @@
 <template>
     <FarmMenuComponent :currentMenu="2"/>
-  
-    <v-container style="max-width: 1200px;"> <!-- max-width를 1200px로 조정 -->
-      <!-- <v-row justify="center" style="margin-bottom: 10px;">
-        <h2>패키지 둘러보기</h2>
-      </v-row> -->
-  
+    <br>
+    <v-container style="max-width: 1200px;"> 
       <!-- 에러 메시지 출력 -->
       <v-row v-if="errorMessage">
         <v-col>

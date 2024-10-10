@@ -1,4 +1,5 @@
 <template>
+    <FarmMenuComponent />
     <v-container>
         <v-row justify="center">
             <v-col cols="12" sm="8" md="6" lg="8">
@@ -101,7 +102,11 @@
 
 <script>
 import axios from 'axios';
+import FarmMenuComponent from '@/components/menubar/FarmMenuComponent.vue';
 export default {
+    components: {
+        FarmMenuComponent
+    },
     data() {
         return {
             title: "",

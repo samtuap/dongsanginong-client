@@ -1,11 +1,8 @@
 <template>
-    <!-- Main Container -->
+    <FarmMenuComponent
+    :currentMenu="1"/>
     <v-container class="text-center">
 
-      
-      <!-- Navigation Links -->
-       <FarmMenuComponent
-       :currentMenu="1"/>
 
     </v-container>
   </template>

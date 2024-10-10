@@ -1,7 +1,7 @@
 <template>
+    <FarmMenuComponent
+    :currentMenu="3" />
     <v-container>
-        <FarmMenuComponent
-        :currentMenu="3" />
         <v-row justify="center">
             <v-col cols="12" sm="8" md="6" lg="8">
                 <v-card v-for="notice in noticeList" :key="notice.id" class="notice-class elevation-0" outlined>
