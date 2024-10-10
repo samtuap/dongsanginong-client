@@ -23,12 +23,11 @@
                             <v-img :src="image" alt="Notice image" height="300"></v-img>
                         </v-carousel-item>
                     </v-carousel>
-                    <br>
                 </v-card>
 
                 <!-- 댓글 조회 -->
                 <br>
-                <h3 style="padding-left: 15px;">댓글 {{ commentCnt }}개</h3>
+                <h3 class="comment-title">댓글 {{ commentCnt }}개</h3>
                 <br>
 
                 <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
@@ -36,7 +35,7 @@
                         <v-card-text>&nbsp;&nbsp;&nbsp;<strong>@{{ comment.name }}</strong>&nbsp;&nbsp;
                             <span style="font-size: 12px;">({{ comment.formattedDate }})</span></v-card-text>
                     </v-row>
-                    <v-card-text>{{ comment.contents }}</v-card-text>
+                    <v-card-text class="centered-comment">{{ comment.contents }}</v-card-text>
                     <hr class="hr-style">
                 </v-card>
 
@@ -219,5 +218,20 @@ export default {
     background-color: #BCC07B;
     color: black;
     border-radius: 50px;
+}
+
+.comment-title {
+    padding-left: 10%;
+    text-align: left;
+}
+
+.comment-class {
+    padding-left: 10%;
+    text-align: left;
+}
+
+.centered-comment {
+    padding-left: 5%;
+    text-align: left;
 }
 </style>

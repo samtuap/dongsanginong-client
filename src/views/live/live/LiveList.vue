@@ -20,17 +20,24 @@
                     :key="live.id" 
                     cols="12" 
                     md="3" 
-                    class="d-flex justify-center">
-                    <v-card variant="text" style="width:235px; height:360px;" @click="joinExistingSession(live.id)">
-                      <div class="viewer-count">{{ live.participantCount - 1}}명 시청 중</div>
-                      <v-img
-                        class="live-image"
-                        width="235"
-                        height="300px"
-                        :src="live.liveImage"
-                        alt="Live 썸네일"
-                        cover
-                      />
+                    class="d-flex justify-center"
+                    style="margin-left: -20px; margin-right: -20px;">
+                    <v-card variant="text" style="width:185px; height:185px;" 
+                    class="live-card-fav"
+                    @click="joinExistingSession(live.id)">
+                      <!-- <div class="viewer-count">{{ live.participantCount - 1}}명 시청 중</div> -->
+                      <div class="progress-border">
+                        <div class="inner-border">
+                          <v-img
+                            class="live-image"
+                            width="100%"
+                            height="100%"
+                            :src="live.liveImage"
+                            alt="live 썸네일"
+                            cover
+                          />
+                        </div>
+                      </div>
                       <v-card-text style="text-align: center;">
                         <span v-if="live.title.length > 10">
                           [ {{ live.farmName }} ] {{ live.title.substring(0, 10) }}...
@@ -69,15 +76,26 @@
                 class="live-card" 
                 md="2" 
                 variant="text" 
-                style="width:200px; height:360; margin: 10px; margin-bottom: 15px;" 
-                @click="joinExistingSession(live.liveId)">
+                style="width:200px; height:340px; margin: 10px; margin-bottom: 15px;" 
+                @click="joinExistingSession(live.liveId)"
+                @mouseenter="playPreview(live)"
+                @mouseleave="stopPreview(live)">
                 <div v-if="live.participantCount !== null && live.participantCount !== undefined" class="viewer-count">
                   {{ live.participantCount - 1}}명 시청 중
                 </div>
-                <!-- //☀️ -->
+                <!-- 프리뷰 라이브 -->
+                <video
+                  v-if="hoveredVideoId === live.liveId"
+                  :ref="'videoPlayer-' + live.liveId"
+                  muted
+                  autoplay
+                  loop
+                  class="live-video-preview"
+                  style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;"
+                ></video>
+                <!-- 썸네일 -->
                 <v-img
-                  class="live-image"
-                  width="180px"
+                  width="100%"
                   height="280px"
                   :src="live.liveImage"
                   alt="live 썸네일" 
@@ -127,6 +145,7 @@
   
 <script>
 import axios from 'axios';
+import { OpenVidu } from "openvidu-browser";
 export default {
     data() {
         return {
@@ -146,6 +165,8 @@ export default {
             isLastPage: false,
             currentPage: 0,
             pageSize: 7,
+            hoveredVideoId: null,
+            session: null,
         };
     },
     async created() {
@@ -162,6 +183,7 @@ export default {
                 }
             });
             this.favoritesLiveList = response.data;
+            console.log(this.favoritesLiveList);
             this.windowCount = Math.ceil(this.favoritesLiveList.length / 4);
             } catch (e) {
             console.log(e.message);
@@ -317,6 +339,61 @@ export default {
                 console.error('세션 ID 가져오기 오류:', error);
             }
         },
+        // 커서 올리면 영상 미리볼 수 있는 화면 출력  
+        async playPreview(live) {
+          try {
+            this.hoveredVideoId = live.liveId;
+            console.log("hoverid : ", this.hoveredVideoId);
+            setTimeout(async () => {
+              const token = await this.getToken(live.sessionId);
+
+              const OV = new OpenVidu();
+              const session = OV.initSession();
+
+              session.on('streamCreated', ({ stream }) => {
+                const videoRef = this.$refs['videoPlayer-' + live.liveId];
+                const videoElement = videoRef ? videoRef[0] : null;
+
+                if (videoElement) {
+                  const subscriber = session.subscribe(stream, undefined);
+                  subscriber.addVideoElement(videoElement);
+                } else {
+                  console.warn('경고: Video element is not yet available for preview.');
+                }
+              });
+
+              console.log("여기2");
+              await session.connect(token, { clientData: 'Preview' }).then(() => {
+                console.log("세션 연결됨 > Current connections: ", session.remoteConnections);
+              }).catch(error => {
+                console.error("세션 연결 실패:", error);
+              });
+              console.log("여기3");
+            }, 1000);
+
+          } catch (error) {
+              console.error('영상 미리보기 오류:', error);
+          }
+        },
+        // 커서 내리면 다시 썸네일 이미지로 복귀 
+        stopPreview(live) {
+          this.hoveredVideoId = null;
+          const videoElement = this.$refs['videoPlayer-' + live.liveId]?.[0];
+          if (videoElement) {
+            videoElement.pause();
+            videoElement.currentTime = 0;
+          } else {
+            console.warn('경고: Video element is not available to stop preview.');
+          }
+      },
+      async getToken(sessionId) {
+        try {
+          const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/live-service/api/sessions/${sessionId}/connections`);
+          return response.data;
+        } catch (error) {
+          console.error('Error fetching token for preview:', error);
+        }
+      }
     }
   }
 </script>
@@ -327,6 +404,9 @@ export default {
     float: right;
     margin-right: 30px;
     font-weight: 700;
+}
+.live-card-fav {
+  border-radius: 50%;
 }
 .live-modal {
     height: 350px;
@@ -353,4 +433,41 @@ export default {
     font-size: 14px;
     z-index: 1; /* 이미지를 덮도록 설정 */
 } /* ☀️ */
+.progress-border {
+  position: relative;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  padding: 3px;
+  background: linear-gradient(90deg, #BCC07B, #ffaf6e); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* animation: rotate-border 5s linear infinite;  */
+}
+/* 사용 안됨 */
+@keyframes rotate-border {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.inner-border {
+  background-color: white; /* This simulates the gap between the border and the image */
+  border-radius: 50%;
+  padding: 5px; /* Adjust to control the gap size */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.live-image {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 </style>
