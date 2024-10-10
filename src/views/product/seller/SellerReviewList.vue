@@ -40,7 +40,7 @@
       </v-row>
 
       <!-- 페이지네이션 -->
-      <v-row class="align-center" style="padding-right: 330px; margin-top: 20px;">
+      <v-row class="align-center" style="padding-right: 230px; margin-top: 20px;">
       <v-pagination v-model="currentPage" :length="totalPages" @input="paginateReviews"
         class="pagination"></v-pagination>
       </v-row>
@@ -107,6 +107,7 @@ export default {
 
 <style scoped>
 .review-container {
+  margin-top: -50px;
   display: flex;
   flex-direction: column;
   align-items: center;

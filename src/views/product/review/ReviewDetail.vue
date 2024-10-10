@@ -1,91 +1,93 @@
 <template>
-  <br><br>
-  <div class="review-detail-container">
-    <!-- 별점과 업데이트 날짜를 표시하는 섹션 -->
-    <v-row class="review-header">
-      <v-col cols="12" class="review-info">
-        <div class="header-content">
-          <!-- 별점 표시 -->
-          <div class="rating">
-            <span v-for="star in 5" :key="star">
-              <v-icon v-if="star <= review.rating" class="star-icon">mdi-star</v-icon>
-              <v-icon v-else class="star-icon">mdi-star-outline</v-icon>
-            </span>
-          </div>
-          <!-- 업데이트 날짜 표시 -->
-          <div class="review-date">
-            {{ formatDate(review.updateAt) }}
-          </div>
-        </div>
-
-        <!-- 리뷰 제목 -->
-        <div class="review-title">
-          <strong>{{ review.title }}</strong>
-        </div>
-
-        <!-- 수정/삭제 버튼: 현재 로그인한 유저와 리뷰 작성자가 같을 경우에만 표시 -->
-        <v-row class="button-row">
-          <v-col v-if="isReviewOwner" cols="12" class="action-buttons">
-            <v-btn @click="openEditDialog" class="edit-btn">수정</v-btn>
-            <v-btn @click="openDeleteConfirmation" class="delete-btn">삭제</v-btn>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-
-    <!-- 리뷰 내용과 이미지가 표시되는 섹션 -->
-    <v-row class="review-content">
-      <v-col cols="12">
-        <!-- 리뷰 내용 -->
-        <p class="review-text">{{ review.contents }}</p>
-        <br><br><br>
-        <!-- 리뷰 이미지들 -->
-        <div class="review-images" v-if="review.imageUrls && review.imageUrls.length">
-          <div class="image-slider-container">
-            <!-- 이미지가 4장 이상일 때 페이지네이션 버튼 표시 -->
-            <button v-if="review.imageUrls.length > imagesPerPage" @click="scrollLeft" class="scroll-button left-button">‹</button>
-            <div ref="imageSlider" class="image-slider">
-              <img
-                v-for="(imageUrl, i) in visibleImages"
-                :key="i"
-                :src="imageUrl"
-                class="review-image"
-                alt="리뷰 이미지"
-              />
+  <SellerSidebar />
+  <v-container class="d-flex justify-center">
+    <v-card class="review-card elevation-0" outlined>
+      <!-- 별점과 업데이트 날짜를 표시하는 섹션 -->
+      <v-row class="review-header">
+        <v-col cols="12" class="review-info">
+          <div class="header-content">
+            <!-- 별점 표시 -->
+            <div class="rating">
+              <span v-for="star in 5" :key="star">
+                <v-icon v-if="star <= review.rating" class="star-icon">mdi-star</v-icon>
+                <v-icon v-else class="star-icon">mdi-star-outline</v-icon>
+              </span>
             </div>
-            <button v-if="review.imageUrls.length > imagesPerPage" @click="scrollRight" class="scroll-button right-button">›</button>
+            <!-- 업데이트 날짜 표시 -->
+            <div class="review-date">
+              {{ formatDate(review.updateAt) }}
+            </div>
           </div>
-        </div>
-      </v-col>
-    </v-row>
 
-    <!-- 삭제 확인 모달 -->
-    <v-dialog v-model="deleteModal" max-width="400">
-      <v-card class="modal">
-        <v-card-title class="modal-title">정말 삭제하시겠습니까?</v-card-title>
-        <v-card-actions class="modal-actions">
-          <v-spacer></v-spacer>
-          <v-btn @click="confirmDelete" class="delete-confirm-btn">삭제</v-btn>
-          <v-btn @click="closeDeleteModal" class="cancel-btn">닫기</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+          <!-- 리뷰 제목 -->
+          <div class="review-title">
+            <strong>{{ review.title }}</strong>
+          </div>
 
-    <!-- 삭제 완료 모달 -->
-    <v-dialog v-model="alertModal" max-width="260px">
-      <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-        <v-card-text>리뷰가 삭제되었습니다.</v-card-text>
-        <v-btn @click="closeAlertModal" class="submit-btn">close</v-btn>
-      </v-card>
-    </v-dialog>
+          <!-- 수정/삭제 버튼: 현재 로그인한 유저와 리뷰 작성자가 같을 경우에만 표시 -->
+          <v-row class="button-row">
+            <v-col v-if="isReviewOwner" cols="12" class="action-buttons">
+              <v-btn @click="openEditDialog" class="edit-btn">수정</v-btn>
+              <v-btn @click="openDeleteConfirmation" class="delete-btn">삭제</v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
 
-    <!-- 리뷰 수정 모달 -->
-    <review-update 
-      :review-id="review.id" 
-      ref="editModal" 
-      @review-updated="fetchReviewDetail"
-    />
-  </div>
+      <!-- 리뷰 내용과 이미지가 표시되는 섹션 -->
+      <v-row class="review-content">
+        <v-col cols="12">
+          <!-- 리뷰 내용 -->
+          <p class="review-text">{{ review.contents }}</p>
+          
+          <!-- 리뷰 이미지들 -->
+          <div class="review-images" v-if="review.imageUrls && review.imageUrls.length">
+            <div class="image-slider-container">
+              <!-- 이미지가 3장 이상일 때 페이지네이션 버튼 표시 -->
+              <button v-if="review.imageUrls.length > imagesPerPage" @click="scrollLeft" class="scroll-button left-button">‹</button>
+              <div ref="imageSlider" class="image-slider">
+                <img
+                  v-for="(imageUrl, i) in visibleImages"
+                  :key="i"
+                  :src="imageUrl"
+                  class="review-image"
+                  alt="리뷰 이미지"
+                />
+              </div>
+              <button v-if="review.imageUrls.length > imagesPerPage" @click="scrollRight" class="scroll-button right-button">›</button>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+
+      <!-- 삭제 확인 모달 -->
+      <v-dialog v-model="deleteModal" max-width="400">
+        <v-card class="modal">
+          <v-card-title class="modal-title">정말 삭제하시겠습니까?</v-card-title>
+          <v-card-actions class="modal-actions">
+            <v-spacer></v-spacer>
+            <v-btn @click="confirmDelete" class="delete-confirm-btn">삭제</v-btn>
+            <v-btn @click="closeDeleteModal" class="cancel-btn">닫기</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- 삭제 완료 모달 -->
+      <v-dialog v-model="alertModal" max-width="260px">
+        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+          <v-card-text>리뷰가 삭제되었습니다.</v-card-text>
+          <v-btn @click="closeAlertModal" class="submit-btn">close</v-btn>
+        </v-card>
+      </v-dialog>
+
+      <!-- 리뷰 수정 모달 -->
+      <review-update 
+        :review-id="review.id" 
+        ref="editModal" 
+        @review-updated="fetchReviewDetail"
+      />
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -99,8 +101,7 @@ export default {
     return {
       review: {},
       currentImageIndex: 0,
-      imagesPerPage: 3,
-      memberId: null, // 현재 로그인한 유저의 memberId
+      imagesPerPage: 2,
       deleteModal: false, // 삭제 확인 모달 상태
       alertModal: false,  // 리뷰 삭제 완료 모달 상태
     };
@@ -189,68 +190,84 @@ export default {
 </script>
 
 <style scoped>
+/* 리뷰 카드 디자인 */
+.review-card {
+  margin-top: 40px;
+  width: 800px;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  padding: 20px 30px;
+}
+
 .review-detail-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-left: 200px;
 }
+
 .review-header {
   display: flex;
   justify-content: space-between;
   width: 100%;
   margin-bottom: 10px;
-  padding-left: 50px;
 }
+
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .rating {
   display: flex;
   align-items: center;
 }
+
 .star-icon {
   color: #FFCC80;
   font-size: 30px;
   padding: 0 5px;
-  border-radius: 50%;
 }
+
 .review-date {
-  position: absolute;
-  left: 1400px;
   font-size: 14px;
   color: #888;
+  margin-left: auto;
 }
+
 .review-title {
   margin-top: 10px;
   font-size: 20px;
   font-weight: bold;
 }
+
 .review-text {
   font-size: 16px;
   line-height: 1.5;
-  padding-left: 50px;
+  margin-top: -20px;
 }
+
 .image-slider-container {
   display: flex;
   align-items: center;
   position: relative;
   width: 100%;
+  margin-top: 20px;
 }
+
 .image-slider {
   display: flex;
   gap: 10px;
   overflow: hidden;
 }
+
 .review-image {
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   object-fit: cover;
   border-radius: 10px;
-  flex-shrink: 0;
 }
+
 .scroll-button {
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
@@ -265,18 +282,24 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .left-button {
-  margin-right: 10px;
+  margin-right: 20px; /* 이미지 왼쪽에서 버튼 떨어뜨림 */
 }
+
 .right-button {
-  margin-left: 10px;
+  margin-left: 20px; /* 이미지 오른쪽에서 버튼 떨어뜨림 */
 }
+
 .action-buttons {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
 }
+
 .edit-btn, .delete-btn {
+  margin-top: -30px;
   background-color: #BCC07B;
   color: black;
   border-radius: 30px;
@@ -284,14 +307,10 @@ export default {
   font-size: 15px;
   font-weight: bold;
   line-height: 1.5;
-  transform: translateX(1060px);
   max-width: 200px;
 }
 
-.edit-btn {
-  margin-right: 10px;
-}
-
+/* 모달 스타일 */
 .modal {
   background-color: rgb(255, 255, 255);
   border: none;
@@ -310,13 +329,7 @@ export default {
   margin-top: 10px;
 }
 
-.delete-confirm-btn {
-  background-color: #BCC07B;
-  color: black;
-  border-radius: 50px;
-  padding: 8px 30px;
-}
-
+.delete-confirm-btn,
 .cancel-btn {
   background-color: #BCC07B;
   color: black;

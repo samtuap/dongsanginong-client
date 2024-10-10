@@ -6,9 +6,7 @@
                 <v-col class="d-flex justify-start">
                     <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
                     <v-btn :to="{ path: '/live/list' }" style="text-transform: none;">Live</v-btn>
-                    <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
-                        v-if="!isSeller">Mypage</v-btn>
-                    <v-btn style="text-transform: none;" v-if="isSeller" @click="checkFarmAndRedirect">MyFarm</v-btn>
+                    <v-btn :to="{ path: '/product' }" style="text-transform: none;">Package</v-btn>
                 </v-col>
                 <v-col class="text-center">
                     <v-btn :to="{ path: '/' }" color="white">
@@ -17,39 +15,40 @@
                 </v-col>
                 <!-- Right-aligned buttons -->
                 <v-col class="d-flex justify-end">
+                    <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
+                        v-if="!isSeller && isLogin">Mypage</v-btn>
+                    <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">MyFarm</v-btn>
                     <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing"
                         :to="{ path: '/member/sign-in' }">Login</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
                         @click="alertModal = true">Logout</v-btn> <!-- Open modal instead of logging out directly -->
 
                     <v-menu>
-                    <template v-slot:activator="{ props }">
-                        <v-btn v-bind="props" color="white" class="reduce-spacing">
-                            <img src="/notifications.png" width=25 alt="Logo" />
-                            <span v-if="notifications.length  > 0" class="notification-mark"></span>
-                        </v-btn>
-                    </template>
-                    <v-list style="background-color: #EAEAEA;">
-                        <v-list-item v-if="notifications.length === 0">
-                            <v-list-item-title>새로운 알림이 없네요!</v-list-item-title>
-                        </v-list-item>
-                        <v-card
-                        v-for="(notification, index) in notifications"
-                        :key="index" style="margin: 5px;"
-                        @click="this.$router.push(`/notifications`)"
-                        >
-                                <v-card-text style="font-weight: bold;">{{ notification.notification.title }}</v-card-text>
-                                <v-card-subtitle style="font-size:small; margin-bottom: 10px;">{{ notification.notification.body.substring(0, 10) }}</v-card-subtitle>
+                        <template v-slot:activator="{ props }">
+                            <v-btn v-bind="props" color="white" class="reduce-spacing">
+                                <img src="/notifications.png" width=25 alt="Logo" />
+                                <span v-if="notifications.length > 0" class="notification-mark"></span>
+                            </v-btn>
+                        </template>
+                        <v-list style="background-color: #EAEAEA;">
+                            <v-list-item v-if="notifications.length === 0">
+                                <v-list-item-title>새로운 알림이 없네요!</v-list-item-title>
+                            </v-list-item>
+                            <v-card v-for="(notification, index) in notifications" :key="index" style="margin: 5px;"
+                                @click="this.$router.push(`/notifications`)">
+                                <v-card-text style="font-weight: bold;">{{ notification.notification.title
+                                    }}</v-card-text>
+                                <v-card-subtitle style="font-size:small; margin-bottom: 10px;">{{
+                                    notification.notification.body.substring(0,
+                                    10) }}</v-card-subtitle>
 
-                        </v-card>
-                        <v-list-item v-if="notifications.length > 0"
-                            @click="markAsRead()"
-                            >✅ 모두 읽음 표시
-                        </v-list-item>
-                    </v-list>
-                </v-menu>
-                    
-                    
+                            </v-card>
+                            <v-list-item v-if="notifications.length > 0" @click="markAsRead()">✅ 모두 읽음 표시
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+
+
                     <v-btn color="white" @click="openSearchModal">
                         <img src="/searchLogo.png" width=17 alt="Logo" />
                     </v-btn>
@@ -90,15 +89,15 @@
             </v-row>
             <v-row style="justify-content: center;">
                 <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;"
-                :class="{ active: selectedCategory === 'all' }" @click="selectedCategory = 'all'">
+                    :class="{ active: selectedCategory === 'all' }" @click="selectedCategory = 'all'">
                     전체
                 </v-btn>
-                <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;" 
-                :class="{ active: selectedCategory === 'farm' }" @click="selectedCategory = 'farm'">
+                <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;"
+                    :class="{ active: selectedCategory === 'farm' }" @click="selectedCategory = 'farm'">
                     농장
                 </v-btn>
-                <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;" 
-                :class="{ active: selectedCategory === 'package' }" @click="selectedCategory = 'package'">
+                <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;"
+                    :class="{ active: selectedCategory === 'package' }" @click="selectedCategory = 'package'">
                     패키지
                 </v-btn>
             </v-row>
@@ -166,7 +165,7 @@ export default {
         };
     },
     computed: {
-      ...mapGetters(['getNotiCount']),
+        ...mapGetters(['getNotiCount']),
     },
     created() {
         const token = localStorage.getItem('accessToken');
@@ -197,22 +196,22 @@ export default {
             .catch((error) => {
                 console.error("Failed to retrieve notifications from IndexedDB:", error);
             });
-        
-            console.log("notifications:");
-            console.log(this.notifications);
 
-            // 주기적으로 IndexedDB 상태 확인 (예: 5초마다)
-            setInterval(() => {
-                this.getNotificationsFromIndexedDB()
-                    .then((notifications) => {
-                        this.notifications = notifications;
-                    })
-                    .catch((error) => {
-                        console.error("Failed to retrieve notifications from IndexedDB:", error);
-                    });
-            }, 5000); // 5초마다 확인
+        console.log("notifications:");
+        console.log(this.notifications);
+
+        // 주기적으로 IndexedDB 상태 확인 (예: 5초마다)
+        setInterval(() => {
+            this.getNotificationsFromIndexedDB()
+                .then((notifications) => {
+                    this.notifications = notifications;
+                })
+                .catch((error) => {
+                    console.error("Failed to retrieve notifications from IndexedDB:", error);
+                });
+        }, 5000); // 5초마다 확인
     },
-    
+
     methods: {
         async checkFarmAndRedirect() {
             try {
@@ -252,7 +251,7 @@ export default {
                 appId: "1:331466655968:web:f9802c140ab1701b63a885",
                 measurementId: "G-WK79L8VKTR"
             };
-            
+
             // Initialize Firebase
             // const firebase = !getApps().length ? initializeApp(firebaseConfig) : getApp();
             const firebase = initializeApp(firebaseConfig);
@@ -285,13 +284,11 @@ export default {
             }
 
             const body = {
-                "fcmToken" : localStorage.getItem("fcmToken")
+                "fcmToken": localStorage.getItem("fcmToken")
             };
 
-
-
             onMessage(messaging, (payload) => {
-        
+
                 // IndexedDB에 저장
                 this.saveNotificationToIndexedDB(payload);
                 // notifications 배열 업데이트
@@ -369,7 +366,7 @@ export default {
                 const db = event.target.result;
                 const transaction = db.transaction("notifications", "readwrite");
                 const store = transaction.objectStore("notifications");
-                
+
                 // 모든 데이터를 삭제
                 const clearRequest = store.clear();
 
@@ -509,11 +506,13 @@ export default {
     height: 10px;
     margin-bottom: 10px;
 }
+
 .search-card {
     border-radius: 10 !important;
     padding: 20px;
     padding-top: 20px;
 }
+
 .search-btn {
     border: none;
     box-shadow: none;
@@ -522,6 +521,7 @@ export default {
     margin-right: 3px;
     margin-left: 3px;
 }
+
 .cat-btn {
     box-shadow: none;
     /* background-color: #ffffff; */
@@ -529,18 +529,23 @@ export default {
     margin-right: 3px;
     margin-left: 3px;
 }
+
 .result-card {
     border: none;
     box-shadow: none;
 }
+
 .list-card {
     border: none;
     box-shadow: none;
     border-radius: 0px;
 }
+
 .cat-btn.active {
     background-color: #e0e0e0 !important;
-    color: #000 !important; /* Change the text color if needed */
-    border-color: #525252 !important; /* Keep the border consistent */
+    color: #000 !important;
+    /* Change the text color if needed */
+    border-color: #525252 !important;
+    /* Keep the border consistent */
 }
 </style>
