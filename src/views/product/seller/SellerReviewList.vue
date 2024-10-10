@@ -135,7 +135,7 @@ export default {
   border-radius: 15px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
   width: 110%;
   max-width: 2000px;
   cursor: pointer;
