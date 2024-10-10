@@ -13,10 +13,8 @@
                             <div v-for="(farm, index) in paginatedFarms(n)" :key="index" style="margin-left: 50px;"
                                 class="card-outer">
                                 <div style="padding-bottom: 30px;">
-                                    <v-img class="favorite-farm-img"
-                                    style="width:190px; height:190px;"
-                                    @click="this.$router.push(`/farm/${farm.id}`)"
-                                    :src="farm.imageUrl"
+                                    <v-img class="favorite-farm-img" style="width:190px; height:190px;"
+                                        @click="this.$router.push(`/farm/${farm.id}`)" :src="farm.imageUrl"
                                         alt="Farm 썸네일" cover />
                                 </div>
 
@@ -25,17 +23,16 @@
                                         (n - 1) +
                                         index + 1 }}</div>
                                     <div style="width: 120px;">
-                                        <p v-if="farm.farmName.length < 8" style="font-size: 14px; font-weight: 500;"> {{ farm.farmName }}</p>
-                                        <p v-else style="font-size: 14px; font-weight: 500;"> {{ farm.farmName.substring(0, 8) }}... </p>
+                                        <p v-if="farm.farmName.length < 8" style="font-size: 14px; font-weight: 500;">
+                                            {{ farm.farmName }}</p>
+                                        <p v-else style="font-size: 14px; font-weight: 500;"> {{
+                                            farm.farmName.substring(0, 8) }}... </p>
                                     </div>
 
 
-                                    <v-chip
-                                    class="like-chip"
-                                    size="small"
-                                    color="deep_orange"
-                                    :class="{ 'selected-like-chip': this.likes.get(farm.id) == 1 || this.likes.get(farm.id) == 2 }"
-                                    @click="clickLike(farm.id)">
+                                    <v-chip class="like-chip" size="small" color="deep_orange"
+                                        :class="{ 'selected-like-chip': this.likes.get(farm.id) == 1 || this.likes.get(farm.id) == 2 }"
+                                        @click="clickLike(farm.id)">
                                         💛 {{ likeCount.get(farm.id) }}
                                     </v-chip>
 
@@ -84,10 +81,8 @@
                     <div class="farm-info">
                         <!-- 사진 영역 -->
                         <div class="farm-image-frame">
-                            <v-img :src="farm.imageUrl"
-                            class="farm-image-circle"
-                            @click="this.$router.push(`/farm/${farm.id}`)"
-                            cover />
+                            <v-img :src="farm.imageUrl" class="farm-image-circle"
+                                @click="this.$router.push(`/farm/${farm.id}`)" cover />
                         </div>
                         <!-- 제목 영역 -->
                         <div class="farm-description">
@@ -95,29 +90,29 @@
                         </div>
 
                         <!-- 즐겨찾기 영역 -->
-                         <div class="order-count-box">
+                        <div class="order-count-box">
                             <v-chip class="order-count-chip" size="small">
-                                판매 {{farm.orderCount}}개
+                                판매 {{ farm.orderCount }}개
                             </v-chip>
-                         </div>
+                        </div>
 
                         <div style="line-height: 70px;">
-                            <v-chip
-                            class="like-chip"
-                            size="small"
-                            color="deep_orange"
-                            :class="{ 'selected-like-chip': likes.get(farm.id) == 1 || likes.get(farm.id) == 2 }"
-                            @click="clickLike(farm.id)">
+                            <v-chip class="like-chip" size="small" color="deep_orange"
+                                :class="{ 'selected-like-chip': likes.get(farm.id) == 1 || likes.get(farm.id) == 2 }"
+                                @click="clickLike(farm.id)">
                                 💛 {{ likeCount.get(farm.id) }}
                             </v-chip>
+
+                            <!-- 하트 이모지 애니메이션 -->
+                            <div v-if="likes[(4 * (n - 1) + index)] == 2" class="heart-emoji">💛</div>
                         </div>
                     </div>
 
                     <div class="package-info">
-                        <div style="width: 100%; height: 170px; margin-top: 10px; display: flex; border-radius: 10px; overflow-x: scroll;" class="package-images-box">
+                        <div style="width: 100%; height: 170px; margin-top: 10px; display: flex; border-radius: 10px; overflow-x: scroll;"
+                            class="package-images-box">
                             <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
-                                <img :src="product.imageUrl" class="package-img"
-                                />
+                                <img :src="product.imageUrl" class="package-img" />
                             </div>
 
                         </div>
@@ -168,7 +163,7 @@ export default {
         this.windowCount = parseInt(this.topFarmList.length / 4) + 1;
 
         for (let i = 0; i < this.topFarmList.length; ++i) {
-            if(this.topFarmList[i].isLiked === true) {
+            if (this.topFarmList[i].isLiked === true) {
                 this.likes.set(this.topFarmList[i].id, 1);
             } else {
                 this.likes.set(this.topFarmList[i].id, 0);
@@ -187,19 +182,19 @@ export default {
         this.farmList = farmListResponse.data.content;
 
         // 상품 끼워넣기
-        for(let i=0; i<this.farmList.length; i++) {
-            
+        for (let i = 0; i < this.farmList.length; i++) {
+
             const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
             console.log(res);
             const packages = res.data.slice(0, 5);
 
-            this.farmList[i] = {...this.farmList[i], "packages": packages};
+            this.farmList[i] = { ...this.farmList[i], "packages": packages };
         }
 
 
         for (let i = 0; i < this.farmList.length; ++i) {
-            if(this.farmList[i].isLiked === true) {
+            if (this.farmList[i].isLiked === true) {
                 this.likes.set(this.farmList[i].id, 1);
             } else {
                 this.likes.set(this.farmList[i].id, 0);
@@ -250,16 +245,28 @@ export default {
 
             const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/search`, { params });
             this.farmList = farmListResponse.data.content;
-            
+
+
+            // 좋아요 수 세팅
+            for (let i = 0; i < this.farmList.length; ++i) {
+                if (this.farmList[i].isLiked === true) {
+                    this.likes.set(this.farmList[i].id, 1);
+                } else {
+                    this.likes.set(this.farmList[i].id, 0);
+                }
+
+                this.likeCount.set(this.farmList[i].id, this.farmList[i].favoriteCount);
+            }
+
 
             // 상품 끼워넣기
-            for(let i=0; i<this.farmList.length; i++) {
+            for (let i = 0; i < this.farmList.length; i++) {
                 const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
                 console.log(res);
                 const packages = res.data.slice(0, 5);
 
-                this.farmList[i] = {...this.farmList[i], "packages": packages};
+                this.farmList[i] = { ...this.farmList[i], "packages": packages };
             }
         },
         async loadFarm() {
@@ -279,6 +286,19 @@ export default {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/search`, { params });
                 // 서버에서 주지 않은 데이터를 추가한 것이다.
                 const additionalData = response.data.content;
+
+
+                            // 좋아요 수 세팅
+                for (let i = 0; i < additionalData.length; ++i) {
+                    if (additionalData[i].isLiked === true) {
+                        this.likes.set(additionalData[i].id, 1);
+                    } else {
+                        this.likes.set(additionalData[i].id, 0);
+                    }
+
+                    this.likeCount.set(additionalData[i].id, additionalData[i].favoriteCount);
+                }
+
                 this.farmList = [...this.farmList, ...additionalData]; // 0번 페이지 + 1번 페이지 + ...
                 this.isLastPage = response.data.last; // 라스트 여부
                 if (this.isLastPage) {
@@ -286,13 +306,13 @@ export default {
                 }
 
                 // 상품 끼워넣기
-                for(let i=0; i<this.farmList.length; i++) {
+                for (let i = 0; i < this.farmList.length; i++) {
                     const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
                     console.log(res);
                     const packages = res.data.slice(0, 5);
 
-                    this.farmList[i] = {...this.farmList[i], "packages": packages};
+                    this.farmList[i] = { ...this.farmList[i], "packages": packages };
                 }
 
                 this.isLoading = false; // 로딩 끝!
@@ -311,11 +331,11 @@ export default {
         },
         clickLike(farmId) {
             try {
-                if(this.likes.get(farmId) != 0 && this.likes.get(farmId) != 1) {
+                if (this.likes.get(farmId) != 0 && this.likes.get(farmId) != 1) {
                     return;
                 }
 
-                
+
                 axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/favorites/farm/${farmId}`);
 
                 let ret;
@@ -334,7 +354,7 @@ export default {
                     this.likes.set(farmId, ret); // 1초 후에 liked 상태 정적인 상태로 변경
                 }, 1000);  // 1초 동안 하트 표시
 
-            } catch(e) {
+            } catch (e) {
                 console.log(e);
 
             }
@@ -440,8 +460,10 @@ export default {
     height: 70px;
     border: solid 0.5px #D4D4D4;
     background-position: center;
-    background-size: cover; /* 기본적으로 이미지를 꽉 채움 */
-    transition: background-size 0.5s ease; /* 배율 변경 시 부드러운 트랜지션 효과 */
+    background-size: cover;
+    /* 기본적으로 이미지를 꽉 채움 */
+    transition: background-size 0.5s ease;
+    /* 배율 변경 시 부드러운 트랜지션 효과 */
 }
 
 .farm-image-circle:hover {
@@ -483,8 +505,10 @@ export default {
     margin-top: 10px;
     display: flex;
     border-radius: 10px;
-    overflow: hidden; /* 영역을 넘어가는 부분을 잘라냄 */
-    transition: all 0.3s ease; /* 부드러운 트랜지션 효과 */
+    overflow: hidden;
+    /* 영역을 넘어가는 부분을 잘라냄 */
+    transition: all 0.3s ease;
+    /* 부드러운 트랜지션 효과 */
 }
 
 .product-image-frame {
@@ -492,28 +516,32 @@ export default {
     width: auto;
     border-radius: 5px;
     margin-right: 3px;
-    overflow: hidden; /* 영역을 넘어가는 부분을 잘라냄 */
-    transition: transform 0.3s ease; /* 이미지 확대 시 부드러운 트랜지션 */
+    overflow: hidden;
+    /* 영역을 넘어가는 부분을 잘라냄 */
+    transition: transform 0.3s ease;
+    /* 이미지 확대 시 부드러운 트랜지션 */
 }
 
 .product-image-frame img {
     height: 100%;
     width: auto;
     border-radius: 5px;
-    transition: transform 0.3s ease; /* 이미지 확대 시 부드러운 트랜지션 */
+    transition: transform 0.3s ease;
+    /* 이미지 확대 시 부드러운 트랜지션 */
 }
 
 .product-image-frame:hover img {
-    transform: scale(1.05); /* 이미지 확대 */
+    transform: scale(1.05);
+    /* 이미지 확대 */
 }
 
 
-.package-images-box{
+.package-images-box {
     -ms-overflow-style: none;
 }
 
-.package-images-box::-webkit-scrollbar{
-   display:none;
+.package-images-box::-webkit-scrollbar {
+    display: none;
 }
 
 .order-count-box {
@@ -571,5 +599,4 @@ export default {
         /* 더 위로 이동하면서 크기 축소 */
     }
 }
-
 </style>
