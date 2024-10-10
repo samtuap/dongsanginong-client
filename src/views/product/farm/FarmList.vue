@@ -39,7 +39,7 @@
                                         💛 {{ likeCount.get(farm.id) }}
                                     </v-chip>
 
-                                    <!-- <div v-if="likes[(4 * (n - 1) + index + 1)] == true" class="heart-emoji">💛</div> -->
+                                    <div v-if="likes.get(farm.id) == 2" class="heart-emoji">💛</div>
                                 </div>
 
                             </div>
@@ -102,9 +102,13 @@
                          </div>
 
                         <div style="line-height: 70px;">
-                            <v-chip class="like-chip" color="deep_orange" size="small">
-                                <!-- @click="clickLike((4 * (n - 1) + index + 1))"> -->
-                                <!-- 💛 {{ farm.favoriteCount }} -->
+                            <v-chip
+                            class="like-chip"
+                            size="small"
+                            color="deep_orange"
+                            :class="{ 'selected-like-chip': this.likes.get(farm.id) == 1 || this.likes.get(farm.id) == 2 }"
+                            @click="clickLike(farm.id)">
+                                💛 {{ likeCount.get(farm.id) }}
                             </v-chip>
                         </div>
                     </div>
@@ -530,6 +534,39 @@ export default {
 
 .selected-like-chip {
     background-color: #FFE2A6;
+}
+
+.heart-emoji {
+    position: absolute;
+    transform: translateX(10px);
+    /* 중앙 정렬을 위한 트랜스폼 */
+    font-size: 24px;
+    opacity: 0;
+    /* 애니메이션 전에는 보이지 않도록 설정 */
+    animation: popUp 1s ease-in-out forwards;
+    /* 애니메이션 정의 */
+    margin-left: 35px;
+}
+
+
+@keyframes popUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0);
+        /* 처음에는 원래 위치에서 scale 0으로 시작 */
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50px) scale(1.5);
+        /* 위로 이동하면서 크기 확대 */
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100px) scale(0);
+        /* 더 위로 이동하면서 크기 축소 */
+    }
 }
 
 </style>
