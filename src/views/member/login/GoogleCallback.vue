@@ -76,7 +76,7 @@ export default {
                     { socialType: 'GOOGLE' },
                     {
                         headers: {
-                            Authorization: `Bearer ${access_token}`
+                            "X-AUTH-TOKEN": `Bearer ${access_token}`
                         }
                     }
                 );
