@@ -86,7 +86,6 @@
             </div>
             <div class="review-date">{{ formatDate(review.updateAt) }}</div>
           </div>
-          <div class="package-name">상품명: {{ review.packageName }}</div>
           <div class="review-title">
             <strong>{{ review.title }}</strong>
           </div>
@@ -445,7 +444,7 @@ export default {
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
   text-align: left;
-  min-height: 250px;
+  min-height: 200px;
 }
 
 .card-header {
