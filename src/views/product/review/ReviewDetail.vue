@@ -1,5 +1,4 @@
 <template>
-  <SellerSidebar />
   <v-container class="d-flex justify-center">
     <v-card class="review-card elevation-0" outlined>
       <!-- 별점과 업데이트 날짜를 표시하는 섹션 -->

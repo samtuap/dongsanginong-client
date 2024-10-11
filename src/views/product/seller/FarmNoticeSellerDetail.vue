@@ -143,8 +143,7 @@ export default {
         },
         closeModal() {
             this.alertModal = false;
-            const farm_id = this.$route.params.farmId;
-            this.$router.push(`/seller/${farm_id}/notice/list`);
+            this.$router.go(-1);
         },
     }
 };
