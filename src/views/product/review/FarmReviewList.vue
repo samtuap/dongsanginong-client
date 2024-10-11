@@ -1,6 +1,5 @@
 <template>
-  <FarmMenuComponent
-        :currentMenu="4" />
+  <FarmMenuComponent :currentMenu="4" />
     <br><br>
     <div class="review-container">
       <h4 class="review-header" >전체 리뷰({{ reviews.length }})</h4>
