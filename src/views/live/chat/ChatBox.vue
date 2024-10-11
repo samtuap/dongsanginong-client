@@ -18,7 +18,7 @@
 
           <div v-if="isPublisher && selectedMessageIndex === index" class="dropdown-menu">
             <!-- memberId 또는 sellerId 중 하나를 선택하여 전달 -->
-            <button @click="kickUser(message.memberId, message.sellerId)" class="dropdown-item">
+            <button @click.stop="kickUser(message.memberId, message.sellerId)" class="dropdown-item">
               강퇴하기
             </button>
           </div>

@@ -35,7 +35,8 @@
           :liveId="mySessionId" 
           :isPublisher="isPublisher" 
           :title="title" 
-          @kicked="handleKicked" 
+          @kicked="handleKicked"
+          @redirectToHome="redirectToHome"
         />  <!-- ☀️ -->
       </div>
     </div>
@@ -224,11 +225,7 @@ export default {
 
     handleKicked() {
       this.kickModalVisible = true;
-      // 모달이 표시된 후 3초 뒤 세션을 종료하고 홈으로 이동
-      setTimeout(() => {
-        this.leaveSession();
-      }, 3000); // 3초 후
-    },
+      },
     },
     beforeRouteLeave(to, from, next) {
         if (!this.exitModalVisible) {
