@@ -1,8 +1,7 @@
 <template>
-<div v-if="streamManager">
-	<ov-video :stream-manager="streamManager"/>
-	<!-- <div><p>{{ clientData }}</p></div> -->
-</div>
+  <div v-if="streamManager" class="user-video">
+    <ov-video :stream-manager="streamManager" class="video-element" />
+  </div>
 </template>
 
 <script>
@@ -34,3 +33,19 @@ export default {
 	},
 };
 </script>
+<style scoped>
+.user-video {
+  width: 110%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-element {
+  width: 110%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+}
+</style>

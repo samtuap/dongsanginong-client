@@ -1,7 +1,7 @@
 <template>
   <div class="chat-container">
     <div class="chat-room">
-      <h3>{{ title }} 채팅방</h3>
+      <div class="title">실시간 채팅 ▽ </div>
       <div class="message-list" ref="messageList">
         <div
           v-for="(message, index) in messages"
@@ -9,11 +9,10 @@
           class="message-item"
           @click="selectMessage(index)"
         >
-          <strong :style="{ color: message.isOwner ? '#d9534f' : '#5bc0de' }">
-            {{ message.isOwner ? '👑 ' : '' }}{{ message.name }}:
-          </strong>
-          {{ message.content }}
-
+          <div style="color: #7a7a7a; font-size: 14px;">
+            {{ message.name }}{{ message.isOwner ? '📍' : '' }} &nbsp;&nbsp;&nbsp;&nbsp; 
+            <span style="color: black;">{{ message.content }}</span>
+          </div>
           <div v-if="isPublisher && selectedMessageIndex === index" class="dropdown-menu">
             <button @click="kickUser(message.memberId)" class="dropdown-item">
               강퇴하기
@@ -241,25 +240,33 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: #f8f9fa;
-  padding: 10px;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
+  height: 87vh;
+  background-color: white;
+  padding-top: 5%;
 }
 
 .chat-room {
-  margin-top: 20px;
+  flex: 1;
+  margin-bottom: 10px;
+  padding-top: 12px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.title {
+  margin-left: 3%;
+  font-size: 15px;
 }
 
 .message-list {
-  background-color: #ffffff;
-  margin-bottom: 10px;
-  max-height: 550px;
-  height: 532px;
+  max-height: calc(100vh - 240px);
+  height: 85%;
   overflow-y: auto;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  background-color: #f7f7f7;
+  padding: 20px;
+  margin-top: 15px;
+  font-size: 14px;
 }
 
 .message-item {
@@ -270,27 +277,31 @@ export default {
 .chat-input {
   display: flex;
   align-items: center;
+  height: 8%;
+  margin-left: 2%;
+  margin-top: 1%;
 }
 
 .chat-input input {
   flex: 1;
   padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  border-radius: 10px;
+  border: none;
   margin-right: 10px;
 }
 
 .chat-input button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px 20px;
+  background-color: white;
+  color: black;
+  border: 1px solid #e0e0e0;
+  padding: 8px 12px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 50px;
+  margin-right: 2%;
 }
 
 .chat-input button:hover {
-  background-color: #218838;
+  background-color: #e0e0e0;
 }
 
 .dropdown-menu {
