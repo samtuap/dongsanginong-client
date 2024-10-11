@@ -3,10 +3,10 @@
         :currentMenu="4" />
     <br><br>
     <div class="review-container">
-      <h4 class="review-header" >전체 리뷰({{ reviews.length }})</h4>
+      <h4 class="review-header" style="margin-left: 15px;">전체 리뷰({{ reviews.length }})</h4>
   
       <!-- 리뷰 목록 -->
-      <v-row v-if="paginatedReviews.length > 0" class="review-row">
+      <v-row v-if="paginatedReviews.length > 0" class="review-row" justify="center">
         <v-col
           v-for="(review, index) in paginatedReviews"
           :key="index"
@@ -34,7 +34,7 @@
             <div class="package-name">
               상품명: {{ review.packageName }}
             </div>
-  
+            <br>
             <div class="review-title">
               <strong>{{ review.title }}</strong>
             </div>
@@ -53,7 +53,7 @@
       </v-row>
   
       <!-- 페이지네이션 -->
-      <v-row class="align-center" style="padding-right: 200px; margin-top: 20px;">
+      <v-row class="align-center">
       <v-pagination
         v-model="currentPage"
         :length="totalPages"
@@ -123,23 +123,23 @@
 
 <style scoped>
 .review-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: -20px;
-  margin-left: 200px; 
 }
 
 .review-header {
   text-align: left;
   width: 100%;
-  max-width: 950px; /* 카드와 동일한 최대 폭으로 설정 */
+  max-width: 950px;
   margin-bottom: 30px;
   padding-left: 0; /* 왼쪽 여백을 없앰 */
 }
 
 .review-row {
-  justify-content: center; /* 리뷰 카드들을 가운데 정렬 */
+  justify-content: center; 
   width: 100%;
 }
 
@@ -149,10 +149,9 @@
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9;
   margin-bottom: 20px;
-  text-align: left; /* 카드 내부 내용 왼쪽 정렬 */
-  width: 80%;
-  max-width: 2000px; /* 카드의 최대 폭 설정 */
-  cursor: pointer; /* 클릭 가능한 커서로 변경 */
+  width: 93%;
+  /* max-width: 800px; */
+  cursor: pointer;
 }
 
 .card-header {
@@ -175,19 +174,19 @@
 }
 
 .review-date {
-  font-size: 14px;
+  font-size: 15px;
   padding: 10px;
   color: #888;
 }
 
 .review-title {
   margin: 10px 0;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 /* 상품 이름을 회색으로 표시 */
 .package-name {
-  font-size: 16px;
+  font-size: 15px;
   color: #888;
 }
 
@@ -204,6 +203,6 @@
 }
 
 .pagination {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 </style>

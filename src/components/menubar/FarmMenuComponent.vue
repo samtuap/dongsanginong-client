@@ -1,21 +1,25 @@
 <template>
-    <v-container style="max-width: 950px;">
+    <v-container style="max-width: 95%;">
         <!-- Header Text -->
-        <v-row justify="center" style="margin-top: 10px; margin-bottom: 10px;">
-            <h3>{{this.farmName}}</h3>
+        <v-row justify="center" style="margin-top: 10px; margin-bottom: 5px;">
+            <h4>{{this.farmName}}</h4> &nbsp;&nbsp;
+            <div style="text-align: center;">
+                <v-chip class="like-chip" size="small" color="deep_orange">
+                    💛 {{ this.favoriteCount }}
+                </v-chip>
+            </div>
         </v-row>
-
         <!-- Image Banner -->
         <v-row justify="center">
-            <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" height="400px" width="1000px" contain></v-img>
+            <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" height="400px" width="100%" contain></v-img>
         </v-row>
-        <br>
         <v-row justify="center" class="mt-5 menubar" style="line-height: 15px;">
             <v-col cols="3" class="text-center">
                 <span
                 @click="this.$router.push(`/farm/${farmId}`)"
                 class="nav-link"
                 :class="{ 'selected-menu': this.currentMenu === 1 }"
+                style="cursor: pointer;"
                 >농장 소개</span>
             </v-col>
             <v-col cols="3" class="text-center">
@@ -23,6 +27,7 @@
                 @click="this.$router.push(`/farm/${farmId}/packages`)"
                 class="nav-link"
                 :class="{ 'selected-menu': this.currentMenu === 2 }"
+                style="cursor: pointer;"
                 >패키지 보기</span>
             </v-col>
             <v-col cols="3" class="text-center">
@@ -30,6 +35,7 @@
                 @click="this.$router.push(`/farm/${farmId}/notice/list`)"
                 class="nav-link"
                 :class="{ 'selected-menu': this.currentMenu === 3 }"
+                style="cursor: pointer;"
                 >농장 공지</span>
             </v-col>
             <v-col cols="3" class="text-center">
@@ -37,8 +43,17 @@
                 @click="this.$router.push(`/farm/${farmId}/reviews`)"
                 class="nav-link"
                 :class="{ 'selected-menu': this.currentMenu === 4 }"
+                style="cursor: pointer;"
                 >상품 후기</span>
             </v-col>
+        </v-row>
+
+        <v-row justify="center" class="menu-border">
+            <div
+                v-if="currentMenu"
+                :style="{ left: (currentMenu - 1) * 25 + '%', width: '25%' }"
+                class="menu-highlight"
+            ></div>
         </v-row>
     </v-container>
 </template>
@@ -54,6 +69,7 @@ export default {
             farmId: 0,
             bannerImage: "",
             farmName: "",
+            favoriteCount: "",
         }
     },
     async created() {
@@ -65,6 +81,7 @@ export default {
             console.log(response);
             this.bannerImage = response.data.bannerImageUrl;
             this.farmName = response.data.farmName;
+            this.favoriteCount = response.data.favoriteCount;
             console.log(this.bannerImage);
         } catch(e) {
             console.log(e);
@@ -78,24 +95,44 @@ export default {
     opacity: 0.7;
 }
 .nav-link:hover {
-    opacity: 1;
-    /* transition: 0.3s ease;  */
-    background-color: #e0e0e0;
-    padding: 5px;
-    border-radius: 10px;
+  opacity: 1;
+  padding: 3px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 50px;
 }
 
 .menubar {
-    border-top: 1.7px solid #b3b3b3;
-    border-bottom: 1.7px solid #b3b3b3;
-    margin-bottom: 10px;
-    margin-top: 30px;
-    height: 40px;
-    font-size: 14px;
+  font-family: "Noto Sans JP", sans-serif;
+  margin-top: 30px;
+  height: 40px;
+  font-size: 14px;
+  color: #3b3b3b;
+  position: relative; 
 }
 
-
 .selected-menu {
-    opacity: 1;
+  opacity: 1;
+  padding: 3px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 50px;
+  font-weight: bold;
+  color: #488c54;
+}
+
+.menu-border {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  background: #e0e0e0;
+}
+
+.menu-highlight {
+  position: absolute;
+  height: 1px;
+  background-color: #488c54;
+  transition: left 0.3s ease, width 0.3s ease;
+  z-index: 2; 
 }
 </style>
