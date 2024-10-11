@@ -83,6 +83,8 @@
   </template>
   
   <script>
+  import axios from 'axios';
+
   export default {
     data() {
       return {
@@ -92,6 +94,10 @@
         pointsUsed: '',
       }
     },
+    async created() {
+        const packageId = this.$route.params.packageId;
+        axios.get(`${process.env.VUE_APP_API_BASE_URL}/package/${packageId}`);
+    }
   }
   </script>
   
