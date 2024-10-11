@@ -4,7 +4,7 @@
             <!-- 로그인 제목 -->
             <img src="/inongLogo.png" width=250px/>
             <h2 class="login-title">로그인</h2>
-            <!-- 카카오 로그인 버튼 -->
+            
             <img :src="require('@/assets/kakao_login.png')" class="sign-in" @click="kakaoLogin" />
             <!-- 구글 로그인 버튼 -->
             <img :src="require('@/assets/google_login.png')" class="sign-in" @click="googleLogin" />

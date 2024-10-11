@@ -19,18 +19,19 @@
             </div>
           </div>
 
-          <!-- 리뷰 제목 -->
-          <div class="review-title">
-            <strong>{{ review.title }}</strong>
-          </div>
-
-          <!-- 삭제 버튼 추가 -->
-      <div class="action-buttons">
-        <v-btn class="delete-btn" @click="openDeleteConfirmation">삭제</v-btn>
-      </div>
+          <v-row>
+            <!-- 리뷰 제목 -->
+            <div class="review-title">
+              <strong>제목 : {{ review.title }}</strong>
+            </div>
+            <!-- 삭제 버튼 추가 -->
+            <div class="action-buttons">
+              <v-btn class="delete-btn" @click="openDeleteConfirmation">삭제</v-btn>
+            </div>
+          </v-row>
         </v-col>
       </v-row>
-
+      <br>
       <!-- 리뷰 내용과 이미지가 표시되는 섹션 -->
       <v-row class="review-content" style="margin-top: -30px;">
         <v-col cols="12">
@@ -56,11 +57,11 @@
           </div>
         </v-col>
       </v-row>
-
+      <br>
       <!-- 삭제 확인 모달 -->
-      <v-dialog v-model="deleteModal" max-width="400">
+      <v-dialog v-model="deleteModal" max-width="300">
         <v-card class="modal">
-          <v-card-title class="modal-title">정말 삭제하시겠습니까?</v-card-title>
+          <v-card-text class="modal-title">정말 삭제하시겠습니까?</v-card-text>
           <v-card-actions class="modal-actions">
             <v-btn @click="confirmDelete" class="delete-confirm-btn">삭제</v-btn>
             <v-btn @click="closeDeleteModal" class="cancel-btn">닫기</v-btn>
@@ -89,7 +90,7 @@ export default {
     return {
       review: {},
       currentImageIndex: 0,
-      imagesPerPage: 2,
+      imagesPerPage: 3,
       deleteModal: false,
       alertModal: false,
     };
@@ -213,12 +214,14 @@ export default {
   font-size: 14px;
   color: #888;
   margin-left: auto;
+  margin-right: -10px;
 }
 
 .review-title {
-  margin-top: 10px;
-  font-size: 20px;
+  margin-top: 23px;
+  font-size: 17px;
   font-weight: bold;
+  margin-left: 15px;
 }
 
 .review-text {
@@ -242,15 +245,14 @@ export default {
 }
 
 .review-image {
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  height: 200px;
   object-fit: cover;
   border-radius: 10px;
 }
 
 .scroll-button {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: black;
   border: none;
   width: 40px;
   height: 40px;
@@ -264,29 +266,27 @@ export default {
 }
 
 .left-button {
-  margin-right: 20px; /* 이미지 왼쪽에서 버튼 떨어뜨림 */
+  margin-right: 10px; 
 }
 
 .right-button {
-  margin-left: 20px; /* 이미지 오른쪽에서 버튼 떨어뜨림 */
+  margin-left: 10px;
 }
 
 .action-buttons {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
+  margin-left: auto;
+  margin-top: 10px;
 }
 
 .delete-btn {
-  margin-top: -30px;
+  margin-top: 10px;
   background-color: #BCC07B;
   color: black;
   border-radius: 30px;
-  padding: 10px 20px;
-  font-size: 15px;
-  font-weight: bold;
-  max-width: 200px;
-  margin-left: auto;
+  padding: 10px;
+  font-size: 14px;
 }
 
 /* 모달 스타일 */
@@ -295,11 +295,11 @@ export default {
   border: none;
   box-shadow: none;
   border-radius: 10px;
+  padding: 10px;
 }
 
 .modal-title {
   text-align: center;
-  font-weight: bold;
   font-size: 16px;
 }
 
@@ -308,19 +308,22 @@ export default {
   margin-top: 10px;
 }
 
-.delete-confirm-btn,
-.cancel-btn {
+.delete-confirm-btn {
   background-color: #BCC07B;
   color: black;
   border-radius: 50px;
-  padding: 8px 30px;
+  padding: 10px;
 }
-
+.cancel-btn {
+  background-color: #e0e0e0;
+  color: black;
+  border-radius: 50px;
+  padding: 10px;
+}
 .submit-btn {
-  margin-left: 10px;
-  margin-top: 8px;
   background-color: #BCC07B;
   color: black;
   border-radius: 50px;
+  padding: 10px;
 }
 </style>
