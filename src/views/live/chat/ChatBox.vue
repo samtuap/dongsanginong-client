@@ -34,6 +34,13 @@
         <button @click="sendMessage">전송</button>
       </div>
     </div>
+
+    <div v-if="kickSuccessModalVisible" class="modal">
+      <div class="modal-content">
+        <p>성공적으로 강퇴되었습니다!</p>
+        <button @click="closeKickSuccessModal">닫기</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -69,6 +76,7 @@ export default {
       token: null,
       isKicked: false,
       selectedMessageIndex: null, // 선택한 메시지 인덱스
+      kickSuccessModalVisible: false,
     };
   },
   async mounted() {
@@ -241,6 +249,7 @@ export default {
       })
         .then(() => {
           console.log(`${userId} 강퇴됨`);
+          this.showKickSuccessModal();
         })
         .catch(error => {
           console.error("강퇴 에러:", error);
@@ -252,6 +261,16 @@ export default {
         event.stopPropagation();
         return;
       }
+    },
+
+    showKickSuccessModal() {
+      this.kickSuccessModalVisible = true;
+      setTimeout(() => {
+        this.kickSuccessModalVisible = false;
+      }, 3000);
+    },
+    closeKickSuccessModal() {
+      this.kickSuccessModalVisible = false;
     }
   },
 };
@@ -339,5 +358,35 @@ export default {
 
 .unclickable {
   pointer-events: none;  /* 개설자는 클릭 이벤트 비활성화 */
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  border-radius: 8px;
+}
+
+.modal-content {
+  text-align: center;
+}
+
+.modal button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #BCC07B;
+  color: black;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.modal button:hover {
+  background-color: #a8b05b;
 }
 </style>
