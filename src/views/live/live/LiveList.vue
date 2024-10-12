@@ -4,28 +4,30 @@
       <template v-if="!session">   
         <!-- 즐겨찾기 농장 중 진행중인 라이브 : seller에게는 나타나지 않음 -->
         <v-card 
-          style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%; border-bottom: 1px solid #D4D4D4;" 
-          rounded="0" 
+          style="border-radius: 15px; padding: 18px; max-width: 1200px; width: 100%;" rounded="0" 
           flat 
           v-if="!isSeller">
-          <v-card-title>✨ Favorites</v-card-title>
-          <v-card-text style="color: gray;">스크랩 된 농장의 라이브 목록입니다.</v-card-text>
+          <div class="favorites-title">
+            <v-card-title style="font-size: 23px;"> <span style="font-weight: bold;">✨Favorites </span>
+              <span style="font-size: 15px; color: grey;">스크랩 된 농장의 라이브 목록입니다.</span>
+            </v-card-title>
+          </div>
+          <br>
           <div style="display: flex; justify-content: center; align-items:center;">
             <v-btn icon="mdi-chevron-left" variant="plain" @click="prev"></v-btn>
             <v-window v-model="onboarding" style="width: 1080px;">
               <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n">
-                <v-row class="d-flex justify-center">
+                <v-row class="d-flex justify-start flex-wrap">
                   <v-col 
                     v-for="live in paginatedLives(n)" 
                     :key="live.id" 
                     cols="12" 
-                    md="3" 
-                    class="d-flex justify-center"
-                    style="margin-left: -20px; margin-right: -20px;">
-                    <v-card variant="text" style="width:185px; height:185px;" 
+                    md="2"
+                    class="d-flex justify-start"
+                    >
+                    <v-card variant="text"  
                     class="live-card-fav"
                     @click="joinExistingSession(live.id)">
-                      <!-- <div class="viewer-count">{{ live.participantCount - 1}}명 시청 중</div> -->
                       <div class="progress-border">
                         <div class="inner-border">
                           <v-img
@@ -38,12 +40,6 @@
                           />
                         </div>
                       </div>
-                      <v-card-text style="text-align: center;">
-                        <span v-if="live.title.length > 10">
-                          [ {{ live.farmName }} ] {{ live.title.substring(0, 10) }}...
-                        </span>
-                        <span v-else>[ {{ live.farmName }} ] {{ live.title }}</span>
-                      </v-card-text>
                     </v-card>
                   </v-col>
                 </v-row>
@@ -51,27 +47,35 @@
             </v-window>
             <v-btn icon="mdi-chevron-right" variant="plain" @click="next"></v-btn>
           </div>
-          <v-card-actions style="justify-content: center;">
-            <v-item-group v-model="onboarding" class="text-center" mandatory>
-              <v-item 
-                v-for="n in windowCount" 
-                :key="`btn-${n}`" 
-                v-slot="{ isSelected, toggle }" 
-                :value="n">
-                <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small" @click="toggle"></v-btn>
-              </v-item>
-            </v-item-group>
-          </v-card-actions>
+          <br>
         </v-card>
-    
+        <div v-if="!isSeller" >
+          <br><br>
+          <div style="border-bottom:1px solid #e0e0e0;"></div>
+          <br>
+        </div>
         <!-- 진행 중인 라이브 목록 (전체) -->
         <v-container style="width: 100%; text-align: center;">
-          <h3>라이브 목록</h3>
+          <div style="font-size: 20px; font-weight: bold; text-align: left; margin-left: 2%;">바로 지금! 라이브 찬스</div>
           <v-btn v-if="isSeller" class="start-btn" @click="openModal">라이브 시작</v-btn>
+          <div style="margin-left: 2%; margin-top: 2%;">
+            <v-row>
+              <v-btn class="cat-btn" @click="setCategory('')">
+                <i class="mdi mdi-view-list" style="font-size: 15px;"></i>전체
+              </v-btn>
+              <v-btn class="cat-btn" @click="setCategory('과일')">
+                <i class="mdi mdi-food-apple" style="font-size: 15px;"></i>과일
+              </v-btn>
+              <v-btn class="cat-btn" @click="setCategory('야채')">
+                <i class="mdi mdi-mushroom" style="font-size: 15px;"></i>야채
+              </v-btn>
+            </v-row>
+          </div>
+          <br>
           <v-container class="d-flex custom-card-container">
-            <v-row style="justify-content: center;">
+            <v-row class="justify-start">
               <v-card 
-                v-for="live in liveList" 
+                v-for="live in filteredLiveList" 
                 :key="live.liveId" 
                 class="live-card" 
                 md="2" 
@@ -133,6 +137,13 @@
               accept="image/*"
               @change="onThumbnailImageUpload"
             />
+            <v-select
+              v-model="category"
+              :items="['과일', '야채']"
+              label="카테고리를 선택하세요"
+              hide-details
+              solo-inverted
+            ></v-select>
             <v-row class="modal-action">
               <v-btn class="modal-btn" @click="startLive" style="background-color: #BCC07B;">시작</v-btn>
               <v-btn class="modal-btn" @click="cancelLive" style="background-color: #e0e0e0;">취소</v-btn>
@@ -162,6 +173,8 @@ export default {
             file: null,
             farmName: "",
             profileImageUrl: "",
+            category: "",
+            filteredLiveList: [],
 
             isLoading: false,
             isLastPage: false,
@@ -200,12 +213,21 @@ export default {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/active`, {params});
             console.log("전체 : ", response.data.content);
             this.liveList = response.data.content;
+            this.filteredLiveList = this.liveList;  // 필터링 목록 초기화  
         } catch(e) {
             console.log(e);
         }
         window.addEventListener('scroll', this.scrollPagination);
     },
     methods: {
+        setCategory(category) {             
+          this.category = category;             
+          if (this.category === "") {                      
+            this.filteredLiveList = this.liveList;             
+          } else {                            
+            this.filteredLiveList = this.liveList.filter((live) => live.category === this.category);             
+          }         
+        }, 
         // 썸넬 이미지 등록 
         async handleImageUpload(blob) {
             const accessToken = localStorage.getItem('accessToken');
@@ -294,13 +316,15 @@ export default {
             this.startLiveDialog = false;
             this.title = "";
             this.liveImage = "";
+            this.category = "";
         },
         // 방송자: 라이브 시작
         async startLive() {
-            if (this.title && this.liveImage) {
+            if (this.title && this.liveImage && this.category) {
                 const liveData = {
                     title: this.title,
-                    liveImage: this.liveImage
+                    liveImage: this.liveImage,
+                    category: this.category
                 };
                 try {
                     const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/live-service/api/sessions`, liveData, {
@@ -355,6 +379,7 @@ export default {
             console.log("hoverid : ", this.hoveredVideoId);
             setTimeout(async () => {
               const token = await this.getToken(live.sessionId);
+              console.log(">>>>>>>>>token : ", token)
 
               const OV = new OpenVidu();
               const session = OV.initSession();
@@ -362,7 +387,7 @@ export default {
               session.on('streamCreated', ({ stream }) => {
                 const videoRef = this.$refs['videoPlayer-' + live.liveId];
                 const videoElement = videoRef ? videoRef[0] : null;
-
+                console.log(">>>>>>>>>video element: ", videoElement)
                 if (videoElement) {
                   const subscriber = session.subscribe(stream, undefined);
                   subscriber.addVideoElement(videoElement);
@@ -407,6 +432,9 @@ export default {
   }
 </script>
 <style scoped>
+.favorites-title {
+  /* border-bottom: 3px solid #BCC07B; */
+}
 .start-btn {
     background-color: #BCC07B; 
     border-radius: 50px;
@@ -416,6 +444,8 @@ export default {
 }
 .live-card-fav {
   border-radius: 50%;
+  margin: 0%;
+  padding: 0%;
 }
 .live-modal {
     height: 350px;
@@ -445,8 +475,8 @@ export default {
 .progress-border {
   position: relative;
   border-radius: 50%;
-  width: 100%;
-  height: 100%;
+  width: 150px;
+  height: 150px;
   padding: 3px;
   background: linear-gradient(90deg, #BCC07B, #ffaf6e); 
   display: flex;
@@ -475,8 +505,15 @@ export default {
 }
 .live-image {
   border-radius: 50%;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   object-fit: cover;
+}
+.cat-btn {
+  padding: 3px 10px;
+  margin: 2px 3px;
+  border-radius: 50px;
+  box-shadow: none;
+  border: 1px solid #cfcfcf;
 }
 </style>

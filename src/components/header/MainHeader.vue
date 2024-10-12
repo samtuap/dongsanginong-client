@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar app dark dense height="70">
+    <v-app-bar app dark dense height="75">
         <v-container class="bar" fluid>
             <v-row no-gutters class="flex-nowrap justify-space-between">
                 <!-- Left-aligned buttons -->

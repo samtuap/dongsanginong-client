@@ -297,7 +297,7 @@ export default {
 .video-section {
   flex: 2; 
   margin-top: 1.7%;
-  margin-left: 5%;
+  margin-left: 4%;
 }
 .chat-section {
   flex: 1;
