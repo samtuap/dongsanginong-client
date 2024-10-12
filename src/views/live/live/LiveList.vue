@@ -7,7 +7,7 @@
           style="border-radius: 15px; padding: 18px; max-width: 1200px; width: 100%;" rounded="0" 
           flat 
           v-if="!isSeller">
-          <div class="favorites-title">
+          <div>
             <v-card-title style="font-size: 23px;"> <span style="font-weight: bold;">✨Favorites </span>
               <span style="font-size: 15px; color: grey;">스크랩 된 농장의 라이브 목록입니다.</span>
             </v-card-title>
@@ -117,11 +117,11 @@
         </v-container>
     
         <!-- 라이브 시작 모달창 : seller가 title과 썸네일 사진을 추가함 -->
-        <v-dialog v-model="startLiveDialog" max-width="600px">
+        <v-dialog v-model="startLiveDialog" max-width="600px"  @click:outside="cancelLive">
           <v-card class="live-modal">
             <v-card-text style="display: flex; align-items: center; justify-content: center">
               <img src="/live.png" width=40 alt="Logo" style="padding-bottom:2px;" />
-              <strong>라이브 시작하기</strong>
+              <h3>라이브 시작하기</h3>
             </v-card-text>
             <v-text-field
               v-model="title"
@@ -132,18 +132,20 @@
               class="live-input"
               prepend-inner-icon="mdi-emoticon-happy-outline"
             ></v-text-field>
-            <v-file-input
-              label="썸네일 이미지를 추가하세요."
-              accept="image/*"
-              @change="onThumbnailImageUpload"
-            />
             <v-select
               v-model="category"
               :items="['과일', '야채']"
               label="카테고리를 선택하세요"
               hide-details
               solo-inverted
+              style="margin-top: 5px;"
             ></v-select>
+            <v-file-input
+              label="썸네일 이미지를 추가하세요."
+              accept="image/*"
+              @change="onThumbnailImageUpload"
+              style="margin-top: 5px;"
+            />
             <v-row class="modal-action">
               <v-btn class="modal-btn" @click="startLive" style="background-color: #BCC07B;">시작</v-btn>
               <v-btn class="modal-btn" @click="cancelLive" style="background-color: #e0e0e0;">취소</v-btn>
@@ -432,9 +434,6 @@ export default {
   }
 </script>
 <style scoped>
-.favorites-title {
-  /* border-bottom: 3px solid #BCC07B; */
-}
 .start-btn {
     background-color: #BCC07B; 
     border-radius: 50px;
@@ -448,14 +447,15 @@ export default {
   padding: 0%;
 }
 .live-modal {
-    height: 350px;
+    height: 400px;
     padding: 15px;
 }
 .modal-action {
     display: flex;
     justify-content: flex-end;
-    margin-top: 20px;
+    /* margin-top: 10px; */
     margin-right: 10px;
+    padding-bottom: 5px;
 }
 .modal-btn {
     border-radius: 50px;
