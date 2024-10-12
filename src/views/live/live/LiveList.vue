@@ -160,6 +160,8 @@ export default {
             title: "",
             liveImage: "",
             file: null,
+            farmName: "",
+            profileImageUrl: "",
 
             isLoading: false,
             isLastPage: false,
@@ -313,7 +315,11 @@ export default {
                     // 세션 시작 후 LiveStream.vue로 이동
                     this.$router.push({
                         path: `/live/${response.data.sessionId}`,
-                        query: { title: this.title, isPublisher: true }
+                        query: { title: this.title, 
+                                 isPublisher: true,
+                                 farmName: response.data.farmName,
+                                 profileImageUrl: response.data.profileImageUrl
+                         }
                     });
                 } catch (error) {
                     console.error('라이브 시작 오류:', error);
@@ -333,7 +339,10 @@ export default {
                 // 세션 접속 후 LiveStream.vue로 이동
                 this.$router.push({
                     path: `/live/${response.data.sessionId}`,
-                    query: { title: response.data.title, isPublisher: false }
+                    query: { title: response.data.title, 
+                             isPublisher: false,
+                             farmName: response.data.farmName,
+                             profileImageUrl: response.data.profileImageUrl }
                 });
             } catch (error) {
                 console.error('세션 ID 가져오기 오류:', error);

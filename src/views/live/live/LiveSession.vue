@@ -9,24 +9,46 @@
     <!-- 🔖 라이브 세션 화면 -->  
     <div v-if="!kickModalVisible" class="live-container">
       <div class="video-section">
-       <div id="session-header" style="display: flex; justify-content: space-between; align-items: center; padding-top: 30px;">
-          <h3>{{ title }}</h3>
-          <v-btn class="live-btn" v-if="isPublisher" @click="showExitModal">라이브 종료</v-btn>
-          <v-btn class="live-btn" v-if="!isPublisher" @click="showExitModal">나가기</v-btn>
+        <div id="main-video" class="video-style" v-if="isPublisher">
+          <user-video :stream-manager="mainStreamManager" />
+          <div id="session-header" style="position: relative;">
+            <v-row style="margin-top: 1%; margin-left: 1px;" class="farm-info">
+              <div class="farm-image-frame">
+                <v-img :src="profileImageUrl" class="farm-image-circle" cover />
+              </div>
+              <div class="farm-text">
+                <span class="farm-name">{{ farmName }}</span>
+                <span class="title">{{ title }}</span>
+              </div>
+              <v-btn class="live-btn" v-if="isPublisher" @click="showExitModal" style="position: absolute; left: 102%; top: 30%; transform: translateY(-50%);">
+                <i class="mdi mdi-phone-hangup"></i>
+              </v-btn>
+            </v-row>
+          </div>
         </div>
-
-      <div id="main-video" class="video-style" v-if="isPublisher">
-        <user-video :stream-manager="mainStreamManager" />
-      </div>
-  
-      <div id="video-container" class="video-style" v-if="!isPublisher">
-        <user-video :stream-manager="publisher" @click="updateMainVideoStreamManager(publisher)" />
-        <user-video 
-          v-for="sub in subscribers" 
-          :key="sub.stream.connection.connectionId" 
-          :stream-manager="sub" 
-          @click="updateMainVideoStreamManager(sub)" />
-        </div>
+    
+        <div id="video-container" class="video-style" v-if="!isPublisher">
+          <user-video :stream-manager="publisher" @click="updateMainVideoStreamManager(publisher)" />
+          <user-video 
+            v-for="sub in subscribers" 
+            :key="sub.stream.connection.connectionId" 
+            :stream-manager="sub" 
+            @click="updateMainVideoStreamManager(sub)" />
+            <div id="session-header" style="position: relative;">
+              <v-row style="margin-top: 1%; margin-left: 1px;" class="farm-info">
+                <div class="farm-image-frame">
+                  <v-img :src="profileImageUrl" class="farm-image-circle" cover />
+                </div>
+                <div class="farm-text">
+                  <span class="farm-name">{{ farmName }}</span>
+                  <span class="title">{{ title }}</span>
+                </div>
+                <v-btn class="live-btn" v-if="!isPublisher" @click="showExitModal" style="position: absolute; left: 102%; top: 30%; transform: translateY(-50%);">
+                  <i class="mdi mdi-phone-hangup"></i>
+                </v-btn>
+              </v-row>
+            </div>
+          </div>
       </div>
 
       <div class="chat-section">
@@ -77,6 +99,8 @@ export default {
         mySessionId: "",
         memberId: "",
         sellerId: "",
+        farmName: "",
+        profileImageUrl: "",
 
         exitModalVisible: false,
         nextRoute: null,
@@ -86,12 +110,16 @@ export default {
     async created() {
         const { sessionId } = this.$route.params;
         const title = this.$route.query.title;
+        const farmName = this.$route.query.farmName;
+        const profileImageUrl = this.$route.query.profileImageUrl;
         const isPublisher = this.$route.query.isPublisher === 'true'; // 방송자인지 시청자인지 구분 
         this.memberId = localStorage.getItem('memberId') || null;
         this.sellerId = localStorage.getItem('sellerId') || null;
         
 
         this.title = title;
+        this.farmName = farmName;
+        this.profileImageUrl = profileImageUrl;
         this.isPublisher = isPublisher;
         this.mySessionId = sessionId;
 
@@ -238,15 +266,20 @@ export default {
     },
 };
 </script>
+
 <style scoped>
+#session-header {
+  position: relative;
+}
 .live-btn {
-    background-color: #BCC07B; 
-    border-radius: 50px;
-    margin-right: 8%;
+  background-color: rgb(221, 65, 65);
+  color: white;
+  border-radius: 50px;
+  box-shadow: none;
+  font-size: 16px;
 }
 .video-style {
-    width: 100%;
-    margin-bottom: 20px;
+    width: 100vh;
 }
 .modal-btn {
     border-radius: 50px;
@@ -258,15 +291,17 @@ export default {
 .live-container {
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  height: 100%;
+  width: 98%;
+  height: 100vh;
 }
 .video-section {
-  flex: 2; /* 비디오가 더 많은 공간을 차지하도록 설정 */
-  margin-right: 10px;
+  flex: 2; 
+  margin-top: 2.5%;
+  margin-left: 7%;
 }
 .chat-section {
-  flex: 1; /* 채팅은 비디오의 절반 정도 공간 차지 */
+  flex: 1;
+  margin-right: 5%;
 }
 .kick-modal {
   background-color: rgb(255, 255, 255);
@@ -311,6 +346,36 @@ export default {
 .submit-btn:hover {
   background-color: #a8b05b;
 }
-
+.title {
+  margin-top: 1%;
+  font-size: 16px;
+}
+.farm-image-circle {
+    border-radius: 200px;
+    width: 70px;
+    height: 70px;
+    border: solid 0.5px #D4D4D4;
+    background-position: center;
+    background-size: cover;
+    transition: background-size 0.5s ease;
+    margin-left: 1%;
+}
+.farm-info {
+  display: flex;
+  align-items: center;
+}
+.farm-image-frame {
+  margin-right: 10px;
+}
+.farm-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.farm-name {
+  margin: 0;
+  font-size: 15px;
+  color: #858585;
+}
 </style>
   
