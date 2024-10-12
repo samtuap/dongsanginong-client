@@ -22,7 +22,7 @@
           class="d-flex justify-center"
           style="margin:9px; padding: 0px;"
         >
-          <v-card elevation="0" class="v-card" style="width: 400px; height: 400px; padding: 0px;">
+          <v-card elevation="0" class="v-card" style="width: 400px; height: 400px; padding: 0px;" @click="goToPackageDetail(packageProduct.packageId)">
             <v-img
               :src="packageProduct.imageUrl"
               alt="Package Image"
@@ -102,6 +102,10 @@ export default {
       if (this.currentPage > 1) {
         this.currentPage--;
       }
+    },
+    // 패키지 디테일 페이지로 이동하는 메서드
+    goToPackageDetail(packageId) {
+      this.$router.push({ name: 'FarmPackageDetail', params: { packageId } });
     }
   }
 };

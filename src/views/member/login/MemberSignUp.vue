@@ -85,7 +85,7 @@ export default {
                 const token = localStorage.getItem("token"); // 저장된 액세스 토큰 가져오기
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-up`, memberData, {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        "X-AUTH-TOKEN": `Bearer ${token}`
                     }
                 });
                 localStorage.clear();
