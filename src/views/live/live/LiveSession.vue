@@ -1,4 +1,5 @@
 <template>
+  <div>
   <!-- 강퇴 확인 모달 -->
   <div v-if="kickModalVisible" class="kick-modal-overlay"></div> 
     <div v-if="kickModalVisible" class="kick-modal">
@@ -29,7 +30,14 @@
       </div>
 
       <div class="chat-section">
-        <ChatBox ref="chatBox" :liveId="mySessionId" :isPublisher="isPublisher" :title="title" />  <!-- ☀️ -->
+        <ChatBox 
+          ref="chatBox" 
+          :liveId="mySessionId" 
+          :isPublisher="isPublisher" 
+          :title="title" 
+          @kicked="handleKicked"
+          @redirectToHome="redirectToHome"
+        />  <!-- ☀️ -->
       </div>
     </div>
 
@@ -43,6 +51,7 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
+  </div>
   </template>
   
 <script>
@@ -195,10 +204,15 @@ export default {
         async checkIfKicked() {
           console.log('Check if kicked: memberId:', this.memberId);
           try {
-            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/chat/${this.mySessionId}/isKicked/${this.memberId}`);
+        const userId = this.memberId || this.sellerId;
+        if (userId) {
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/chat/${this.mySessionId}/isKicked/${userId}`);
             console.log("check", response)
             if (response.data === true) {
               this.kickModalVisible = true; // 강퇴된 경우 모달 표시
+          }
+        } else {
+          this.kickModalVisible = false;
             }
           } catch (error) {
             console.error("강퇴 상태 확인 에러:", error);
@@ -207,6 +221,10 @@ export default {
 
       redirectToHome() {
         this.$router.push('/');
+      },
+
+    handleKicked() {
+      this.kickModalVisible = true;
       },
     },
     beforeRouteLeave(to, from, next) {
@@ -282,7 +300,6 @@ export default {
 .submit-btn {
   margin-left: 10px;
   margin-top: 8px;
-  margin-left: -10px;
   background-color: #BCC07B;
   color: black;
   border-radius: 50px;
