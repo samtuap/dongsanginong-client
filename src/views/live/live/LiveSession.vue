@@ -296,12 +296,12 @@ export default {
 }
 .video-section {
   flex: 2; 
-  margin-top: 2.5%;
-  margin-left: 7%;
+  margin-top: 1.7%;
+  margin-left: 5%;
 }
 .chat-section {
   flex: 1;
-  margin-right: 5%;
+  margin-right: 3%;
 }
 .kick-modal {
   background-color: rgb(255, 255, 255);
