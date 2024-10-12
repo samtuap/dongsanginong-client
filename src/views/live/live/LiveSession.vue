@@ -10,7 +10,7 @@
       <div class="video-section">
         <div id="main-video" class="video-style" v-if="isPublisher">
           <user-video :stream-manager="mainStreamManager" />
-          <div id="session-header">
+          <div id="session-header" style="position: relative;">
             <v-row style="margin-top: 1%; margin-left: 1px;" class="farm-info">
               <div class="farm-image-frame">
                 <v-img :src="profileImageUrl" class="farm-image-circle" cover />
@@ -19,6 +19,9 @@
                 <span class="farm-name">{{ farmName }}</span>
                 <span class="title">{{ title }}</span>
               </div>
+              <v-btn class="live-btn" v-if="isPublisher" @click="showExitModal" style="position: absolute; left: 102%; top: 30%; transform: translateY(-50%);">
+                <i class="mdi mdi-phone-hangup"></i>
+              </v-btn>
             </v-row>
           </div>
         </div>
@@ -30,26 +33,25 @@
             :key="sub.stream.connection.connectionId" 
             :stream-manager="sub" 
             @click="updateMainVideoStreamManager(sub)" />
-            <div id="session-header" >
-            <v-row style="margin-top: 1%; margin-left: 1px;" class="farm-info">
-              <div class="farm-image-frame">
-                <v-img :src="profileImageUrl" class="farm-image-circle" cover />
-              </div>
-              <div class="farm-text">
-                <span class="farm-name">{{ farmName }}</span>
-                <span class="title">{{ title }}</span>
-              </div>
-            </v-row>
-          </div>
+            <div id="session-header" style="position: relative;">
+              <v-row style="margin-top: 1%; margin-left: 1px;" class="farm-info">
+                <div class="farm-image-frame">
+                  <v-img :src="profileImageUrl" class="farm-image-circle" cover />
+                </div>
+                <div class="farm-text">
+                  <span class="farm-name">{{ farmName }}</span>
+                  <span class="title">{{ title }}</span>
+                </div>
+                <v-btn class="live-btn" v-if="!isPublisher" @click="showExitModal" style="position: absolute; left: 102%; top: 30%; transform: translateY(-50%);">
+                  <i class="mdi mdi-phone-hangup"></i>
+                </v-btn>
+              </v-row>
+            </div>
           </div>
       </div>
       <v-col>
         <div class="chat-section">
           <ChatBox ref="chatBox" :liveId="mySessionId" :isPublisher="isPublisher" :title="title" />
-        </div>
-        <div id="session-header" class="session-header">
-          <v-btn class="live-btn" v-if="isPublisher" @click="showExitModal" style="margin-left: auto; margin-right: 11%;"><strong>라이브 종료</strong></v-btn>
-          <v-btn class="live-btn" v-if="!isPublisher" @click="showExitModal" style="margin-left: auto; margin-right: 11%;"><strong>나가기</strong></v-btn>
         </div>
       </v-col>
     </div>
@@ -247,17 +249,17 @@ export default {
     },
 };
 </script>
+
 <style scoped>
-.session-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+#session-header {
+  position: relative;
 }
 .live-btn {
-    background-color: #BCC07B; 
-    box-shadow: none;
-    border-radius: 50px;
-    width: 94%; 
+  background-color: rgb(221, 65, 65);
+  color: white;
+  border-radius: 50px;
+  box-shadow: none;
+  font-size: 16px;
 }
 .video-style {
     width: 100vh;
