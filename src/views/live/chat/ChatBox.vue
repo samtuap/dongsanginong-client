@@ -27,7 +27,9 @@
           @keyup.enter="sendMessage"
           placeholder="메시지를 입력하세요"
         />
-        <button @click="sendMessage">전송</button>
+        <button class="send-btn" @click="sendMessage">
+          <i class="mdi mdi-send"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -293,7 +295,7 @@ export default {
 .chat-input button {
   background-color: white;
   color: black;
-  border: 1px solid #e0e0e0;
+  /* border: 1px solid #e0e0e0; */
   padding: 8px 12px;
   cursor: pointer;
   border-radius: 50px;
@@ -303,7 +305,9 @@ export default {
 .chat-input button:hover {
   background-color: #e0e0e0;
 }
-
+.send-btn {
+  font-size: 22px; 
+}
 .dropdown-menu {
   position: absolute;
   background-color: #ffffff;
