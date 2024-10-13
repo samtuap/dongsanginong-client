@@ -50,8 +50,8 @@
           <br>
         </v-card>
         <div v-if="!isSeller" >
-          <br><br>
-          <div style="border-bottom:1px solid #e0e0e0;"></div>
+          <br>
+          <div class="hr-style"></div>
           <br>
         </div>
         <!-- 진행 중인 라이브 목록 (전체) -->
@@ -515,5 +515,8 @@ export default {
   border-radius: 50px;
   box-shadow: none;
   border: 1px solid #cfcfcf;
+}
+.hr-style {
+  border-bottom: 3px solid #efefef; border-radius: 3px;
 }
 </style>

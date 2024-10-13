@@ -11,9 +11,9 @@
     <v-container>
         <!-- 제목 -->
         <v-col cols="12">
-            <h2 class="text-center">
+            <div class="text-center" style="font-size: 23px; font-weight: bold;">
                 🏆 패키지 실시간 인기 랭킹 🏆
-            </h2>
+            </div>
             <p class="text-center" style="color: grey; font-size: 16px;">가장 인기있는 상품만 모아보세요!</p>
         </v-col>
 
@@ -74,9 +74,9 @@
     <v-container class="farm-container">
         <!-- 제목 -->
         <v-col cols="12">
-            <h2 class="text-center">
+            <div class="text-center" style="font-size: 23px; font-weight: bold;">
                 🏠 실시간 인기 농장 🏠
-            </h2>
+            </div>
             <p class="text-center" style="color: grey; font-size: 16px;">즐겨찾기 수가 많은 농장들입니다.</p>
         </v-col>
         <br>
