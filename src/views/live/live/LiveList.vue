@@ -60,13 +60,13 @@
           <v-btn v-if="isSeller" class="start-btn" @click="openModal">라이브 시작</v-btn>
           <div style="margin-left: 2%; margin-top: 2%;">
             <v-row>
-              <v-btn class="cat-btn" @click="setCategory('')">
+              <v-btn class="cat-btn" :class="{'active-cat-btn': category === ''}" @click="setCategory('')">
                 <i class="mdi mdi-view-list" style="font-size: 15px;"></i>전체
               </v-btn>
-              <v-btn class="cat-btn" @click="setCategory('과일')">
+              <v-btn class="cat-btn" :class="{'active-cat-btn': category === '과일'}" @click="setCategory('과일')">
                 <i class="mdi mdi-food-apple" style="font-size: 15px;"></i>과일
               </v-btn>
-              <v-btn class="cat-btn" @click="setCategory('야채')">
+              <v-btn class="cat-btn" :class="{'active-cat-btn': category === '야채'}" @click="setCategory('야채')">
                 <i class="mdi mdi-mushroom" style="font-size: 15px;"></i>야채
               </v-btn>
             </v-row>
@@ -117,7 +117,7 @@
         </v-container>
     
         <!-- 라이브 시작 모달창 : seller가 title과 썸네일 사진을 추가함 -->
-        <v-dialog v-model="startLiveDialog" max-width="600px"  @click:outside="cancelLive">
+        <v-dialog v-model="startLiveDialog" max-width="500px"  @click:outside="cancelLive">
           <v-card class="live-modal">
             <v-card-text style="display: flex; align-items: center; justify-content: center">
               <img src="/live.png" width=40 alt="Logo" style="padding-bottom:2px;" />
@@ -139,6 +139,7 @@
               hide-details
               solo-inverted
               style="margin-top: 5px;"
+              prepend-inner-icon="mdi-emoticon-happy-outline"
             ></v-select>
             <v-file-input
               label="썸네일 이미지를 추가하세요."
@@ -152,6 +153,17 @@
             </v-row>
           </v-card>
         </v-dialog>
+
+        <!-- 농장 생성 라우팅 모달 -->
+        <v-dialog v-model="createFarmModal" max-width="280px">
+          <v-card class="farm-card">
+            <v-card-text>농장이 존재하지 않습니다.</v-card-text>
+            <v-card-actions class="justify-center" style="margin-top: -10px;">
+              <v-btn class="farm-btn" @click="routeToCreateFarm">확인</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
       </template>
     </v-container>
 </template>
@@ -168,6 +180,7 @@ export default {
             windowCount: 3,
             liveList: [],
             startLiveDialog: false,
+            createFarmModal: false,
 
             isPublisher: false, // 방송자 여부 
             title: "",
@@ -311,8 +324,27 @@ export default {
             }
         },
         // 라이브 시작하기 위해 title, 썸네일 추가하는 모달창
-        openModal() {
-            this.startLiveDialog = true;
+        async openModal() {
+            try {
+              const sellerId = localStorage.getItem('sellerId');          
+              const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/seller/${sellerId}`);
+              console.log(">>>>>>>>>>>>>> response : ", response.data);
+
+              // 성공시 모달 open 
+              this.startLiveDialog = true;
+            } catch (error) {
+              if (error.response && error.response.status === 404) {
+                console.log('해당 id의 농장이 존재하지 않습니다. 농장 생성을 먼저 해주세요.');
+                this.createFarmModal = true;
+                // this.$router.push({ path: '/farm/farm-create' });
+              } else {
+                console.error('Farm 확인 중 오류 발생:', error);
+              }
+            }
+        },
+        routeToCreateFarm() {
+          this.createFarmModal = false;
+          this.$router.push({ path: '/farm/farm-create' });
         },
         cancelLive() {
             this.startLiveDialog = false;
@@ -448,7 +480,7 @@ export default {
 }
 .live-modal {
     height: 400px;
-    padding: 15px;
+    padding: 18px;
 }
 .modal-action {
     display: flex;
@@ -516,7 +548,21 @@ export default {
   box-shadow: none;
   border: 1px solid #cfcfcf;
 }
+.active-cat-btn {
+  background-color: #d0d0d0;
+}
 .hr-style {
   border-bottom: 3px solid #efefef; border-radius: 3px;
+}
+.farm-card {
+  text-align: center;
+  padding: 8px;
+  border-radius: 10px;
+}
+.farm-btn {
+  background-color: #BCC07B;
+  border-radius: 50px;
+  box-shadow: none;
+  width:230px;
 }
 </style>

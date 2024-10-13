@@ -1,7 +1,7 @@
 <template>
   <div class="chat-container">
     <div class="chat-room">
-      <div class="title">실시간 채팅 ▽ </div>
+      <div class="title">실시간 채팅</div>
       <div class="message-list" ref="messageList">
         <div
           v-for="(message, index) in messages"
@@ -288,7 +288,7 @@ export default {
 .chat-room {
   flex: 1;
   margin-bottom: 10px;
-  padding-top: 12px;
+  padding-top: 14px;
   border: 1px solid #e0e0e0;
   background-color: white;
   border-radius: 10px;
