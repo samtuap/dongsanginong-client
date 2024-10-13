@@ -29,10 +29,10 @@
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
         <div class="member-info">
-            <div class="header">
+            <v-row class="header" @click="this.$router.push('/')">
                 <h2>마이 페이지</h2>
                 <hr class="horizontal-divider" />
-            </div>
+            </v-row >
 
             <div class="info-container">
                 <div class="label">

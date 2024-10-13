@@ -1,7 +1,7 @@
 import PaymentView from "@/views/order/payment/PaymentView.vue";
 export const orderRouter = [
   {
-    path: "/package/:productId/payment",
+    path: "/package/:packageId/payment",
     name: "PaymentView",
     component: PaymentView
   }
