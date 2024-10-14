@@ -1,18 +1,34 @@
 <template>
     <v-container style="max-width: 95%;">
         <!-- Header Text -->
-        <v-row justify="center" style="margin-top: 10px; margin-bottom: 5px;">
+        <!-- <v-row justify="center" style="margin-top: 10px; margin-bottom: 5px;">
             <h4>{{this.farmName}}</h4> &nbsp;&nbsp;
             <div style="text-align: center;">
                 <v-chip class="like-chip" size="small" color="deep_orange">
                     💛 {{ this.favoriteCount }}
                 </v-chip>
             </div>
-        </v-row>
+        </v-row> -->
         <!-- Image Banner -->
         <v-row justify="center">
-            <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" height="400px" width="100%" contain></v-img>
+            <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" style="margin-top: 10px; height:400px; width:100%;" contain></v-img>
         </v-row>
+        <!-- 프로필 이미지 및 농장명 -->
+         <v-row>
+            <div id="session-header" style="position: relative;">
+            <v-row class="farm-info">
+              <div class="farm-image-frame">
+                <v-img :src="profileImageUrl" class="farm-image-circle" cover />
+              </div>
+              <div class="farm-text" style="margin-top: -100px; margin-left: 120px; text-align: start;">
+                <span class="farm-name" style="margin-left: 10px;">{{ this.farmName }}</span><br>
+                <span style="font-size: 14px; color: grey; margin-left: 10px;"> 스크랩 수 {{ this.favoriteCount }}</span><br>
+                <span style="font-size: 14px; color: grey; margin-left: 10px;"> {{ this.farmIntro }}</span>
+              </div>
+            </v-row>
+          </div>
+         </v-row>
+
         <v-row justify="center" class="mt-5 menubar" style="line-height: 15px;">
             <v-col cols="3" class="text-center">
                 <span
@@ -70,6 +86,8 @@ export default {
             bannerImage: "",
             farmName: "",
             favoriteCount: "",
+            profileImageUrl: "",
+            farmIntro: "",
         }
     },
     async created() {
@@ -82,6 +100,9 @@ export default {
             this.bannerImage = response.data.bannerImageUrl;
             this.farmName = response.data.farmName;
             this.favoriteCount = response.data.favoriteCount;
+            this.profileImageUrl = response.data.profileImageUrl;
+            this.farmIntro = response.data.farmIntro;
+
             console.log(this.bannerImage);
         } catch(e) {
             console.log(e);
@@ -104,7 +125,7 @@ export default {
 
 .menubar {
   font-family: "Noto Sans JP", sans-serif;
-  margin-top: 30px;
+  /* margin-top: 30px; */
   height: 40px;
   font-size: 14px;
   color: #3b3b3b;
@@ -134,5 +155,29 @@ export default {
   background-color: #488c54;
   transition: left 0.3s ease, width 0.3s ease;
   z-index: 2; 
+}
+.farm-image-circle {
+    border-radius: 200px;
+    width: 200px;
+    height: 200px;
+    border: solid 0.5px #D4D4D4;
+    background-position: center;
+    background-size: cover;
+    transition: background-size 0.5s ease;
+    bottom: 85px;
+    left: 120px; 
+}
+.farm-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: -60px;
+}
+.farm-image-frame {
+  margin-right: 10px;
+}
+.farm-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
 }
 </style>

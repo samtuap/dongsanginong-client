@@ -4,7 +4,7 @@
         <v-row justify="center">
             <v-col cols="12" sm="8" md="6" lg="8">
                 <v-card class="notice-class elevation-0" outlined>
-                    <v-card-title style="font-size: 17px;"> {{ title }} </v-card-title>
+                    <v-card-title style="font-size: 17px; font-weight: bold;"> {{ title }} </v-card-title>
                     <v-card-text>{{ content }}</v-card-text>
 
                     <v-carousel
@@ -19,6 +19,7 @@
                         <v-img :src="image" alt="Notice image" height="300"></v-img>
                         </v-carousel-item>
                     </v-carousel>
+                    <br>
                 </v-card>
                 <br>
                 <h3 style="padding-left: 15px;">댓글 {{ commentCnt }}개</h3>
@@ -40,13 +41,19 @@
                 <!-- 댓글 조회 -->
                 <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
                     <v-row>
-                        <v-card-text>&nbsp;&nbsp;&nbsp;<strong>@{{ comment.name }}</strong>&nbsp;&nbsp;
-                            <span style="font-size: 12px;">({{ comment.formattedDate }})</span></v-card-text>
+                        <v-card-text style="font-size: 14px; color: black;">
+                            <!-- 농장 주인이 본인 글에 댓글 다는 경우 -->
+                            <span v-if="comment.sellerId === ownSeller" style="background-color: #e0e0e0; border-radius: 50px; padding: 5px;">
+                                @{{ comment.name }}
+                            </span>
+                            <!-- 그 외의 고객들이 댓글 다는 경우 -->
+                            <span v-else>&nbsp;@{{ comment.name }}</span>
+                            <span style="font-size: 13px; color: grey;">&nbsp;&nbsp;{{ comment.formattedDate }}</span></v-card-text>
                         <v-btn v-if="comment.memberId == userId" color="white" style="box-shadow: none; border: none; margin-bottom: 10px; font-size: 12px;" @click="openOptions(comment)">
                             <img src="/plus.png" width=13 alt="Logo" /> 
                         </v-btn>
                     </v-row>
-                    <v-card-text>{{ comment.contents }}</v-card-text>
+                    <v-card-text style="font-size: 16px;">{{ comment.contents }}</v-card-text>
                     <hr class="hr-style">
                     <br>
 
@@ -115,6 +122,7 @@ export default {
             commentCnt: 0,
             commentList: [],
             comment: "",
+            ownSeller: "",
 
             currentPage: 1, // 페이지 1번부터 시작 
             pageSize: 15, // 한 페이지에 15개씩 출력 
@@ -151,12 +159,15 @@ export default {
                 const farm_id = this.$route.params.farmId;
                 const notice_id = this.$route.params.notice_id;
                 const memberId = localStorage.getItem('memberId');
+                const sellerId = localStorage.getItem('sellerId');
+
                 const commentData = {
                     contents: this.comment
                 };
                 await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/${farm_id}/notice/${notice_id}/comment/create`, commentData, {
                     headers: {
-                        myId: memberId
+                        myId: memberId,
+                        sellerId: sellerId
                     }
                 });
 
@@ -179,6 +190,7 @@ export default {
                 this.content = response.data.content;
                 this.commentCnt = response.data.commentCnt;
                 this.images = response.data.noticeImages;
+                this.ownSeller = response.data.sellerId;
 
                 const response2 = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farm_id}/notice/${notice_id}/comment`, {
                     params: {
@@ -232,11 +244,7 @@ export default {
         },
         async deleteComment(commentId) { // 댓글 삭제 
             try {
-                await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/comment/${commentId}/delete`, {
-                    headers: {
-                        myId: this.userId
-                    }
-                });
+                await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/comment/${commentId}/delete`);
                 this.farmNoticeDetail(this.currentPage);
                 this.dialog = false;
                 this.alertModal = true;
@@ -264,6 +272,7 @@ export default {
 }
 .comment-class {
     padding-left: 12px;
+    margin-top: -5px;
 }
 .comment-input {
     padding-left: 25px;
@@ -278,7 +287,7 @@ export default {
 .hr-style {
   border: none;
   border-top: 0.9px solid lightgray; 
-  margin-top: 10px;
+  margin-top: 3px;
 }
 .modal-btn {
     border: none;
