@@ -41,8 +41,14 @@
                 <!-- 댓글 조회 -->
                 <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
                     <v-row>
-                        <v-card-text style="font-size: 14px; color: black;">&nbsp;&nbsp;@{{ comment.name }}&nbsp;
-                            <span style="font-size: 13px;">({{ comment.formattedDate }})</span></v-card-text>
+                        <v-card-text style="font-size: 14px; color: black;">
+                            <!-- 농장 주인이 본인 글에 댓글 다는 경우 -->
+                            <span v-if="comment.sellerId === ownSeller" style="background-color: #e0e0e0; border-radius: 50px; padding: 5px;">
+                                @{{ comment.name }}
+                            </span>
+                            <!-- 그 외의 고객들이 댓글 다는 경우 -->
+                            <span v-else>&nbsp;@{{ comment.name }}</span>
+                            <span style="font-size: 13px; color: grey;">&nbsp;&nbsp;{{ comment.formattedDate }}</span></v-card-text>
                         <v-btn v-if="comment.memberId == userId" color="white" style="box-shadow: none; border: none; margin-bottom: 10px; font-size: 12px;" @click="openOptions(comment)">
                             <img src="/plus.png" width=13 alt="Logo" /> 
                         </v-btn>
@@ -116,6 +122,7 @@ export default {
             commentCnt: 0,
             commentList: [],
             comment: "",
+            ownSeller: "",
 
             currentPage: 1, // 페이지 1번부터 시작 
             pageSize: 15, // 한 페이지에 15개씩 출력 
@@ -183,6 +190,7 @@ export default {
                 this.content = response.data.content;
                 this.commentCnt = response.data.commentCnt;
                 this.images = response.data.noticeImages;
+                this.ownSeller = response.data.sellerId;
 
                 const response2 = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth/${farm_id}/notice/${notice_id}/comment`, {
                     params: {
