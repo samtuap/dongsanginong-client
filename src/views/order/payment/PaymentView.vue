@@ -259,14 +259,11 @@ export default {
             const packageId = this.$route.params.packageId;
             const packageRes = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/detail/${packageId}`);
             this.packageProduct = packageRes.data;
-            console.log(this.packageProduct);
 
             const packageImageRes = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/info/${packageId}`);
             this.packageProductImageUrl = packageImageRes.data.imageUrls[0];
-            console.log(this.packageProductImageUrl);
 
             const paymentMethodRes = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/subscription/payment/method`);
-            console.log(paymentMethodRes);
             this.paymentMethod = paymentMethodRes.data.paymentMethodType;
             this.paymentMethodValue = paymentMethodRes.data.paymentMethodValue;
             this.billingKey = paymentMethodRes.data.billingKey;
@@ -274,7 +271,6 @@ export default {
             // 멤버 정보 불러오기 (배송지를 위함)
             const memberRes = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/member-info`);
             this.member = memberRes.data;
-            console.log(this.member);
             this.memberAddress = this.member.address;
             this.memberAddressDetail = this.member.addressDetail;
             this.memberName = this.member.name;
