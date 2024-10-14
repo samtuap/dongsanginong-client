@@ -1,41 +1,44 @@
 <template>
     <!-- 완료 모달 -->
     <v-dialog v-model="alertModal" max-width="300px">
-        <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+        <v-card class="modal"
+            style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
             <v-card-text>{{ modalMessage }}</v-card-text>
             <v-btn @click="handleAlertClose" class="submit-btn">확인</v-btn>
         </v-card>
     </v-dialog>
 
-    <div class="seller-page" style="padding-left: 200px;">
-        <sellerSidebar />
-        <div class="seller-info">
-            <h2>비밀번호 수정</h2>
+    <v-container fluid>
+        <SellerSidebar />
+        <h3 style="padding: 10px; padding-left: 70px;">비밀번호 수정</h3>
+
+        <v-row class="info-container" style="margin-top:30px; padding-left: 70px;">
             <hr class="horizontal-divider" />
-
-            <div class="info-container">
-                <div class="label" style="padding-bottom: 20px;">
-                    <label>현재 비밀번호</label>
-                    <label>새 비밀번호</label>
-                </div>
-
-                <div class="divider"></div>
-
+            <v-col cols="12" sm="8" md="6" lg="12">
                 <div class="value">
-                    <input type="password" v-model="currentPassword" placeholder="현재 비밀번호를 입력하세요." class="form-input" />
-                    <input type="password" v-model="newPassword" placeholder="새 비밀번호를 입력하세요." class="form-input" />
-                </div>
-            </div>
+                    <div class="label">
+                        <label style="font-size: 17px;">현재 비밀번호</label>
+                        <br />
+                        <input type="password" v-model="currentPassword" placeholder="현재 비밀번호를 입력하세요." class="form-input" />
+                    </div>
 
-            <hr class="horizontal-divider" />
-
-            <div class="footer">
-                <div class="update-container">
-                    <button class="update-button" @click="handleUpdatePassword">비밀번호 수정하기</button>
+                    <div class="label">
+                        <label style="font-size: 17px;">새 비밀번호</label>
+                        <br />
+                        <input type="password" v-model="newPassword" placeholder="새 비밀번호를 입력하세요." class="form-input" />
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+
+                <hr class="horizontal-divider" />
+
+                <div class="footer">
+                    <div class="update-container">
+                        <button class="update-button" @click="handleUpdatePassword">비밀번호 수정하기</button>
+                    </div>
+                </div>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
@@ -85,10 +88,6 @@ export default {
 </script>
 
 <style scoped>
-h2 {
-    margin-bottom: 10px;
-}
-
 .modal {
     position: fixed;
     top: -100px;
@@ -143,63 +142,26 @@ h2 {
     border-radius: 50px;
 }
 
-.seller-page {
-    margin-left: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-    flex-direction: column;
-}
-
-.seller-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 40px;
-    width: 1000px;
-    height: 650px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    margin-right: 500px;
-}
-
 .info-container {
-    display: grid;
-    grid-template-columns: 4fr auto 6fr;
-    gap: 20px;
-    align-items: center;
-    width: 100%;
-    flex-grow: 1;
-}
-
-.label {
-    font-weight: 900;
-    font-size: large;
     display: flex;
-    color: #4a4a4a;
     flex-direction: column;
-    height: 100%;
-    text-align: left;
-    justify-content: space-evenly;
-    align-items: flex-start;
-    padding-left: 130px;
-    width: fit-content;
+    width: 800px;
+    padding-left: 30px;
 }
 
 .value {
     display: flex;
     flex-direction: column;
-    height: 78%;
     justify-content: space-evenly;
-    text-align: left;
-    padding-left: 80px;
-    padding-right: 70px;
 }
 
-.value p {
-    margin: 0;
+.label {
+    
+    font-size: large;
+    color: #4a4a4a;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px; /* Space between labels */
 }
 
 .divider {
