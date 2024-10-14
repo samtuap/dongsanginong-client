@@ -391,12 +391,13 @@ export default {
                     }
                 }
                 const paymentResponse = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/order/first`, body);
-                console.log(paymentResponse);
+                // console.log(paymentResponse);
+                this.$router.push(`/order/${paymentResponse.data.orderId}`);
             } catch (e) {
                 console.log(e);
             }
 
-            this.$router.push("/payment");
+            
         }
 
     }
