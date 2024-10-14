@@ -63,8 +63,8 @@
       </div>
     </div>
 
-    <!-- 라이브 종료(publisher) 확인 모달창 -->
-    <v-dialog v-model="exitModalVisible" max-width="350px">
+    <!-- 라이브 종료(publisher) 확인 모달창 - 방송자 -->
+    <v-dialog v-if="isPublisher" v-model="exitModalVisible" max-width="350px">
         <v-card class="end-modal">
             <v-card-text style="text-align: center;">라이브를 정말 종료하시겠습니까?</v-card-text>
             <v-card-actions>
@@ -72,6 +72,27 @@
                 <v-btn class="modal-btn" @click="cancelExit" style="background-color: #e0e0e0;">취소</v-btn>
             </v-card-actions>
         </v-card>
+    </v-dialog>
+    
+    <!-- 라이브 종료(publisher) 확인 모달창 - 시청자 -->
+    <v-dialog v-if="!isPublisher" v-model="exitModalVisible" max-width="350px">
+        <v-card class="end-modal">
+            <v-card-text style="text-align: center;">라이브 시청을 그만하시겠습니까?</v-card-text>
+            <v-card-actions>
+                <v-btn class="modal-btn" @click="confirmExit" style="background-color: #BCC07B;">종료</v-btn>
+                <v-btn class="modal-btn" @click="cancelExit" style="background-color: #e0e0e0;">취소</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- 시청자 => 방송 종료됨을 알려주는 모달창 -->
+    <v-dialog v-model="streamEndedModalVisible" max-width="320px">
+      <v-card class="end-modal">
+        <v-card-text style="text-align: center; font-weight: bold;">방송이 종료되었습니다.</v-card-text>
+        <v-card-actions class="justify-center" style="margin-top: -10px;">
+          <v-btn @click="confirmStreamEnd" style="background-color: #BCC07B; width: 280px; border-radius: 50px;">확인</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </div>
   </template>
@@ -105,6 +126,7 @@ export default {
         exitModalVisible: false,
         nextRoute: null,
         kickModalVisible: false,
+        streamEndedModalVisible: false,
       };
     },
     async created() {
@@ -148,10 +170,14 @@ export default {
             });
 
             this.session.on("streamDestroyed", ({ stream }) => {
-            const index = this.subscribers.indexOf(stream.streamManager);
-            if (index >= 0) {
-                this.subscribers.splice(index, 1);
-            }
+              const index = this.subscribers.indexOf(stream.streamManager);
+              if (index >= 0) {
+                  this.subscribers.splice(index, 1);
+              }
+              // 방송자 스트림이 종료되었을 때 시청자에게 모달 표시
+              if (!this.isPublisher) {
+                this.streamEndedModalVisible = true;
+              }
             });
             
             // 백엔드에서 토큰 받아와서 세션에 연결
@@ -199,6 +225,11 @@ export default {
           if (this.stompClient) {
               this.stompClient.disconnect();
           }
+        },
+        // 방송 종료 확인 모달의 확인 버튼 클릭 시 처리
+        confirmStreamEnd() {
+          this.streamEndedModalVisible = false;
+          this.leaveSession();
         },
         async leaveSession() {
             if (this.session) {
@@ -297,7 +328,7 @@ export default {
 .video-section {
   flex: 2; 
   margin-top: 1.7%;
-  margin-left: 5%;
+  margin-left: 4%;
 }
 .chat-section {
   flex: 1;

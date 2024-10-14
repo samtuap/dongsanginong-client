@@ -1,5 +1,5 @@
 <template>
-    <v-carousel cycle :show-arrows="false" delimiter-icon="mdi-square" delimiter-color="light_green" height="500"
+    <v-carousel cycle :show-arrows="false" delimiter-icon="mdi-square" delimiter-color="light_green" height="520"
         interval="5000" hide-delimiter-background> <!--5초마다 슬라이드-->
         <v-carousel-item v-for="(image, index) in images" :key="index" style="overflow: hidden;">
             <img :src="image.src" :alt="image.alt" class="banner-img" />
@@ -7,16 +7,18 @@
     </v-carousel>
 
     <!-- 인기 패키지 -->
+     <br>
     <v-container>
         <!-- 제목 -->
         <v-col cols="12">
-            <h3 class="text-center">
+            <div class="text-center" style="font-size: 23px; font-weight: bold;">
                 🏆 패키지 실시간 인기 랭킹 🏆
-            </h3>
-            <p class="text-center">가장 인기있는 상품만 모아보세요!</p>
+            </div>
+            <p class="text-center" style="color: grey; font-size: 16px;">가장 인기있는 상품만 모아보세요!</p>
         </v-col>
 
         <!-- 상품 슬라이드 -->
+         <br>
         <v-window v-model="onboarding" style="width: 1080px; margin: auto;">
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
             <v-window-item v-for="n in packageWindowCount" :key="`window-${n}`" :value="n">
@@ -49,7 +51,7 @@
                 </div>
             </v-window-item>
         </v-window>
-        <v-card-actions style="justify-content: center;">
+        <v-card-actions style="justify-content: center; margin-top: -20px;">
             <v-item-group v-model="onboarding" class="text-center" mandatory>
                 <v-item v-for="n in packageWindowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
                     <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
@@ -58,7 +60,7 @@
             </v-item-group>
         </v-card-actions>
         <!-- 전체보기 버튼 -->
-        <v-col cols="12" class="text-center">
+        <v-col cols="12" class="text-center" style="margin-top: -20px;">
             <v-btn color="#FFFFFF" @click="this.$router.push('package')" style="border-radius: 50px;">
                 🥦 패키지 전체보기
             </v-btn>
@@ -68,14 +70,16 @@
 
 
     <!-- 인기 농장 -->
+     <br>
     <v-container class="farm-container">
         <!-- 제목 -->
         <v-col cols="12">
-            <h3 class="text-center">
+            <div class="text-center" style="font-size: 23px; font-weight: bold;">
                 🏠 실시간 인기 농장 🏠
-            </h3>
-            <p class="text-center">즐겨찾기 수가 많은 농장들입니다.</p>
+            </div>
+            <p class="text-center" style="color: grey; font-size: 16px;">즐겨찾기 수가 많은 농장들입니다.</p>
         </v-col>
+        <br>
         <v-window v-model="farmOnboarding" style="width: 1080px; margin: auto;">
             <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
             <v-window-item v-for="n in farmWindowCount" :key="`window-${n}`" :value="n">
@@ -113,7 +117,7 @@
                 </div>
             </v-window-item>
         </v-window>
-        <v-card-actions style="justify-content: center;">
+        <v-card-actions style="justify-content: center;  margin-top: -20px;">
             <v-item-group v-model="farmOnboarding" class="text-center" mandatory>
                 <v-item v-for="n in farmWindowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
                     <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
@@ -122,7 +126,7 @@
             </v-item-group>
         </v-card-actions>
         <!-- 전체보기 버튼 -->
-        <v-col cols="12" class="text-center">
+        <v-col cols="12" class="text-center" style="margin-top: -20px;">
             <v-btn color="#FFFFFF" @click="this.$router.push('/farm')" style="border-radius: 50px;">
                 🌾 농장 둘러보기
             </v-btn>
