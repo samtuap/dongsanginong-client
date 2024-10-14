@@ -47,7 +47,7 @@ export const memberRouter = [
     component: MemberAddressUpdate,
   },
   {
-    path: '/coupons//downloaded-coupons',
+    path: '/coupons/downloaded-coupons',
     name: 'MemberCouponList',
     component: MemberCouponList,
   },

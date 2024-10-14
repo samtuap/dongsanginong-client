@@ -415,6 +415,8 @@ export default {
               const token = await this.getToken(live.sessionId);
               console.log(">>>>>>>>>token : ", token)
 
+              console.log(">>>>>>>>> token: " + token + " >>>>>>>>>> sessiongId" + live.sessionId);
+
               const OV = new OpenVidu();
               const session = OV.initSession();
 

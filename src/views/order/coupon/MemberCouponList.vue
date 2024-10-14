@@ -84,7 +84,7 @@ export default {
     methods: {
         async getCouponList() {
             try {
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/coupons/downloaded-coupons`, {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/coupon/downloaded-coupon`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('accessToken')}`
                     }
