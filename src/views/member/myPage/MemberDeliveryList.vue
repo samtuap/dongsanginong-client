@@ -2,7 +2,7 @@
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
         <div class="delivery-list">
-            <h2>결제 내역 조회</h2>
+            <h2>배송 내역 조회</h2>
             <hr class="horizontal-divider" />
             <div class="table-wrapper">
                 <table>
@@ -132,7 +132,7 @@ export default {
                 this.totalPages = Math.ceil(filteredDeliveries.length / this.itemsPerPage) || 1;
                 this.currentPage = page;
             } catch (error) {
-                console.error("결제 리스트를 불러오는 중 오류가 발생했습니다.", error);
+                console.error("배송 리스트를 불러오는 중 오류가 발생했습니다.", error);
             }
         },
         formatDate(dateTime) {
