@@ -19,6 +19,7 @@
                         <v-img :src="image" alt="Notice image" height="300"></v-img>
                         </v-carousel-item>
                     </v-carousel>
+                    <br>
                 </v-card>
                 <br>
                 <h3 style="padding-left: 15px;">댓글 {{ commentCnt }}개</h3>
@@ -40,13 +41,13 @@
                 <!-- 댓글 조회 -->
                 <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
                     <v-row>
-                        <v-card-text>&nbsp;&nbsp;&nbsp;<strong>@{{ comment.name }}</strong>&nbsp;&nbsp;
-                            <span style="font-size: 12px;">({{ comment.formattedDate }})</span></v-card-text>
+                        <v-card-text style="font-size: 14px; color: grey;">&nbsp;&nbsp;@{{ comment.name }}&nbsp;
+                            <span style="font-size: 13px;">({{ comment.formattedDate }})</span></v-card-text>
                         <v-btn v-if="comment.memberId == userId" color="white" style="box-shadow: none; border: none; margin-bottom: 10px; font-size: 12px;" @click="openOptions(comment)">
                             <img src="/plus.png" width=13 alt="Logo" /> 
                         </v-btn>
                     </v-row>
-                    <v-card-text>{{ comment.contents }}</v-card-text>
+                    <v-card-text style="font-size: 15px;">{{ comment.contents }}</v-card-text>
                     <hr class="hr-style">
                     <br>
 
@@ -151,12 +152,15 @@ export default {
                 const farm_id = this.$route.params.farmId;
                 const notice_id = this.$route.params.notice_id;
                 const memberId = localStorage.getItem('memberId');
+                const sellerId = localStorage.getItem('sellerId');
+
                 const commentData = {
                     contents: this.comment
                 };
                 await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/${farm_id}/notice/${notice_id}/comment/create`, commentData, {
                     headers: {
-                        myId: memberId
+                        myId: memberId,
+                        sellerId: sellerId
                     }
                 });
 
@@ -264,6 +268,7 @@ export default {
 }
 .comment-class {
     padding-left: 12px;
+    margin-top: -5px;
 }
 .comment-input {
     padding-left: 25px;
@@ -278,7 +283,7 @@ export default {
 .hr-style {
   border: none;
   border-top: 0.9px solid lightgray; 
-  margin-top: 10px;
+  margin-top: 3px;
 }
 .modal-btn {
     border: none;

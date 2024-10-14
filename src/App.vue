@@ -49,8 +49,10 @@ export default {
  src: url('//fastly.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.eot');
  src: url('//fastly.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.eot?#iefix') format('embedded-opentype'), url('//fastly.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.woff') format('woff'), url('//fastly.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.ttf') format('truetype');
 }
+/* 나눔 스퀘어 */
+@import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
 .font-style {
-  font-family: 'NanumSquareRound';
+  font-family: 'https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css';
 }
 </style>
 
