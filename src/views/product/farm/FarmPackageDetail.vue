@@ -244,7 +244,7 @@ export default {
 
   methods: {
     subscribe() {
-      // 정기구독 신청 처리 로직
+      this.$router.push(`/product/${this.packageProduct.id}/payment`)
     },
     formatDate(date) {
       if (!date) return '';
