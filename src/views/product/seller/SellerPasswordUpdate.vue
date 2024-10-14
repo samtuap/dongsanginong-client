@@ -12,16 +12,19 @@
         <SellerSidebar />
         <h3 style="padding: 10px; padding-left: 70px;">비밀번호 수정</h3>
 
-        <v-row class="info-container" style="margin-top:70px; padding-left: 70px;">
+        <v-row class="info-container" style="margin-top:30px; padding-left: 70px;">
+            <hr class="horizontal-divider" />
             <v-col cols="12" sm="8" md="6" lg="12">
                 <div class="value">
                     <div class="label">
-                        <label>현재 비밀번호</label>
+                        <label style="font-size: 17px;">현재 비밀번호</label>
+                        <br />
                         <input type="password" v-model="currentPassword" placeholder="현재 비밀번호를 입력하세요." class="form-input" />
                     </div>
 
                     <div class="label">
-                        <label>새 비밀번호</label>
+                        <label style="font-size: 17px;">새 비밀번호</label>
+                        <br />
                         <input type="password" v-model="newPassword" placeholder="새 비밀번호를 입력하세요." class="form-input" />
                     </div>
                 </div>
@@ -153,7 +156,7 @@ export default {
 }
 
 .label {
-    font-weight: 900;
+    
     font-size: large;
     color: #4a4a4a;
     display: flex;

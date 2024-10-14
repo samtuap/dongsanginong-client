@@ -9,30 +9,40 @@
                 @click="triggerBannerUpload" />
             <input type="file" @change="onBannerImageUpload" class="image-input" ref="bannerInput" />
 
-            <div class="upload-button banner-upload-button" @click="triggerBannerUpload">+</div>
-
-            <div class="profile-upload-wrapper">
-                <img :src="profileImageUrl || defaultProfile" class="profile-image" @click="triggerProfileUpload" />
-                <input type="file" @change="onProfileImageUpload" class="image-input" ref="profileInput" />
-                <div class="upload-button profile-upload-button" @click="triggerProfileUpload">+</div>
+            <!-- 수정하기 버튼을 눌렀을 때만 보이도록 설정 -->
+            <div class="upload-button banner-upload-button" @click="triggerBannerUpload" v-if="isEditing">+</div>
+            <div class="profile-name-wrapper">
+                <div class="profile-upload-wrapper">
+                    <img :src="profileImageUrl || defaultProfile" class="profile-image" @click="triggerProfileUpload" />
+                    <input type="file" @change="onProfileImageUpload" class="image-input" ref="profileInput" />
+                    <!-- 수정하기 버튼을 눌렀을 때만 보이도록 설정 -->
+                    <div class="upload-button profile-upload-button" @click="triggerProfileUpload" v-if="isEditing">+
+                    </div>
+                </div>
+                <div class="farm-name">
+                    <h3 v-if="!isEditing">{{ farmName }}</h3>
+                </div>
             </div>
         </div><br>
 
-        <input type="text" v-model="farmName" placeholder="농장 이름을 입력해주세요." class="farm-name-input" /><br>
+        <!-- 수정하기 버튼을 눌렀을 때만 input 보이기 -->
+        <input type="text" v-model="farmName" placeholder="농장 이름을 입력해주세요." class="farm-name-input"
+            v-if="isEditing" /><br>
 
         <div class="selected-category-space">
-            <h4 class="left-align">선택된 카테고리</h4><br />
+            <h4 class="left-align" v-if="isEditing">선택된 카테고리</h4><br />
             <div class="selected-categories">
                 <span v-for="categoryId in selectedCategories" :key="categoryId" class="category-chip">
                     {{ getCategoryName(categoryId) }}
-                    <button @click="removeCategory(categoryId)">
+                    <!-- 수정하기 버튼을 눌렀을 때만 X 버튼 보이기 -->
+                    <button v-if="isEditing" @click="removeCategory(categoryId)">
                         <span style="font-size: 12px;">X</span></button>
                 </span>
             </div>
         </div>
         <br />
 
-        <div class="category-selection">
+        <div class="category-selection" v-if="isEditing">
             <h4 class="left-align">농장 카테고리 선택</h4><br />
             <div class="category-list">
                 <button v-for="category in categories" :key="category.id" @click="selectCategory(category.id)"
@@ -44,11 +54,14 @@
         <br />
 
         <div class="farm-intro">
-            <h4 class="left-align">농장 설명을 적어주세요.</h4><br />
-            <textarea v-model="farmIntro" class="intro-textarea"></textarea>
+            <h4 class="left-align" v-if="isEditing">농장 설명을 적어주세요.</h4><br />
+            <!-- 수정하기 버튼을 눌렀을 때만 textarea 보이기 -->
+            <textarea v-model="farmIntro" class="intro-textarea" v-if="isEditing"></textarea>
+            <p v-if="!isEditing">{{ farmIntro }}</p>
         </div>
 
-        <button @click="submitFarm" class="submit-button">저장</button>
+        <button @click="submitFarm" class="submit-button" v-if="isEditing">저장</button>
+        <button @click="editFarm" v-else>수정하기</button>
     </div>
 
     <v-dialog v-model="alertModal" max-width="260px">
@@ -69,21 +82,22 @@ export default {
     },
     data() {
         return {
+            isEditing: false, // 수정 모드 여부
             farmName: '',
             farmIntro: '',
-            bannerImageUrl: '', // 업로드된 배너 이미지 URL
-            profileImageUrl: '', // 업로드된 프로필 이미지 URL
-            projectImageFile: null, // 업로드할 이미지 파일
-            categories: [], // 카테고리 목록
-            selectedCategories: [], // 선택한 카테고리
-            defaultBanner: '/baseBannerImage.png', // 기본 배너 이미지
-            defaultProfile: '', // 기본 프로필 이미지
+            bannerImageUrl: '',
+            profileImageUrl: '',
+            projectImageFile: null,
+            categories: [],
+            selectedCategories: [],
+            defaultBanner: '/baseBannerImage.png',
+            defaultProfile: '',
             alertModal: false,
         };
     },
     created() {
         this.loadCategories();
-        this.loadFarmInfo(); // Load existing farm info on creation
+        this.loadFarmInfo();
     },
     methods: {
         async loadFarmInfo() {
@@ -107,6 +121,10 @@ export default {
             } catch (error) {
                 console.error('카테고리 불러오기 실패:', error);
             }
+        },
+
+        editFarm() {
+            this.isEditing = true; // 수정 모드 활성화
         },
 
         selectCategory(categoryId) {
@@ -151,9 +169,9 @@ export default {
             const urlContentType = getUrl.headers.get("content-type");
             let getUrlResult;
             if (urlContentType && urlContentType.includes("application/json")) {
-                getUrlResult = await getUrl.json(); // JSON으로 파싱
+                getUrlResult = await getUrl.json();
             } else {
-                getUrlResult = await getUrl.text(); // 텍스트로 파싱
+                getUrlResult = await getUrl.text();
             }
 
             const awsUrl = {
@@ -161,13 +179,12 @@ export default {
                 auth: `?${getUrlResult.split("?")[1]}`,
             };
 
-            // 파일을 S3에 업로드
             const options = {
-                method: "PUT", // PUT 메서드 사용
+                method: "PUT",
                 headers: {
-                    "Content-Type": blob.type, // Blob의 MIME 타입 설정
+                    "Content-Type": blob.type,
                 },
-                body: blob, // 업로드할 파일 데이터
+                body: blob,
             };
             await fetch(awsUrl.data + awsUrl.auth, options);
 
@@ -198,10 +215,10 @@ export default {
                     profileImageUrl: this.profileImageUrl,
                     categoryId: this.selectedCategories,
                 };
-                console.log(farmData.categoryId)
 
                 await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/update`, farmData);
-                this.alertModal = true; // Show modal on success
+                this.alertModal = true;
+                this.isEditing = false; // 수정 완료 후 수정 모드 종료
             } catch (error) {
                 console.error('농장 수정 실패:', error);
                 alert(error.response?.data?.message || "농장 수정 중 문제가 발생했습니다.");
@@ -210,6 +227,7 @@ export default {
     }
 };
 </script>
+
 
 <style scoped>
 .farm-create-page {
@@ -237,6 +255,10 @@ export default {
     object-fit: cover;
     position: relative;
     border: 1px solid #ccc;
+}
+
+.profile-name-wrapper {
+    display: flex;
 }
 
 .profile-upload-wrapper {
@@ -289,6 +311,10 @@ export default {
     right: 44px;
 }
 
+.farm-name {
+    display: flex;
+    text-align: left;
+}
 
 .farm-name-input {
     width: calc(100% - 150px);
