@@ -4,7 +4,7 @@
         <v-row justify="center">
             <v-col cols="12" sm="8" md="6" lg="8">
                 <v-card class="notice-class elevation-0" outlined>
-                    <v-card-title style="font-size: 17px;"> {{ title }} </v-card-title>
+                    <v-card-title style="font-size: 17px; font-weight: bold;"> {{ title }} </v-card-title>
                     <v-card-text>{{ content }}</v-card-text>
 
                     <v-carousel
@@ -41,13 +41,13 @@
                 <!-- 댓글 조회 -->
                 <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
                     <v-row>
-                        <v-card-text style="font-size: 14px; color: grey;">&nbsp;&nbsp;@{{ comment.name }}&nbsp;
+                        <v-card-text style="font-size: 14px; color: black;">&nbsp;&nbsp;@{{ comment.name }}&nbsp;
                             <span style="font-size: 13px;">({{ comment.formattedDate }})</span></v-card-text>
                         <v-btn v-if="comment.memberId == userId" color="white" style="box-shadow: none; border: none; margin-bottom: 10px; font-size: 12px;" @click="openOptions(comment)">
                             <img src="/plus.png" width=13 alt="Logo" /> 
                         </v-btn>
                     </v-row>
-                    <v-card-text style="font-size: 15px;">{{ comment.contents }}</v-card-text>
+                    <v-card-text style="font-size: 16px;">{{ comment.contents }}</v-card-text>
                     <hr class="hr-style">
                     <br>
 
@@ -236,11 +236,7 @@ export default {
         },
         async deleteComment(commentId) { // 댓글 삭제 
             try {
-                await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/comment/${commentId}/delete`, {
-                    headers: {
-                        myId: this.userId
-                    }
-                });
+                await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/comment/${commentId}/delete`);
                 this.farmNoticeDetail(this.currentPage);
                 this.dialog = false;
                 this.alertModal = true;
