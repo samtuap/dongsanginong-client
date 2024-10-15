@@ -100,7 +100,7 @@
                 </div>
                 <!-- 프리뷰 라이브 -->
                 <video
-                  v-if="live.isPreviewing || hoveredVideoId === live.liveId"
+                  v-if="live.isPreviewing"
                   :ref="'videoPlayer-' + live.liveId"
                   muted
                   autoplay
@@ -206,7 +206,6 @@ export default {
             isLastPage: false,
             currentPage: 0,
             pageSize: 7,
-            hoveredVideoId: null,
             session: null,
         };
     },
@@ -450,41 +449,34 @@ export default {
         },
         // 커서 올리면 영상 미리볼 수 있는 화면 출력  
         async playPreview(live) {
+          console.log(">>>>>>>" + live.liveId + "번째 라이브 시작");
           try {
             live.isPreviewing = true;
             await this.$nextTick();
 
-            this.hoveredVideoId = live.liveId;
-            console.log("hoverid : ", this.hoveredVideoId);
-            setTimeout(async () => {
-              const token = await this.getToken(live.sessionId);
-              console.log(">>>>>>>>>token : ", token)
+            const token = await this.getToken(live.sessionId);
+            console.log(">>>>>>>>> token: " + token + " >>>>>>>>>> sessiongId" + live.sessionId);
 
-              console.log(">>>>>>>>> token: " + token + " >>>>>>>>>> sessiongId" + live.sessionId);
+            const OV = new OpenVidu();
+            const session = OV.initSession();
+            session.on('streamCreated', ({ stream }) => {
+              const videoRef = this.$refs['videoPlayer-' + live.liveId];
+              const videoElement = videoRef ? videoRef[0] : null;
+              console.log(">>>>>>>>>video element: ", videoElement)
 
-              const OV = new OpenVidu();
-              const session = OV.initSession();
+              if (videoElement) {
+                const subscriber = session.subscribe(stream, undefined);
+                subscriber.addVideoElement(videoElement);
+              } else {
+                console.warn('경고: Video element is not yet available for preview.');
+              }
+            });
 
-              session.on('streamCreated', ({ stream }) => {
-                const videoRef = this.$refs['videoPlayer-' + live.liveId];
-                const videoElement = videoRef ? videoRef[0] : null;
-                console.log(">>>>>>>>>video element: ", videoElement)
-                if (videoElement) {
-                  const subscriber = session.subscribe(stream, undefined);
-                  subscriber.addVideoElement(videoElement);
-                } else {
-                  console.warn('경고: Video element is not yet available for preview.');
-                }
-              });
-
-              console.log("여기2");
-              await session.connect(token, { clientData: 'Preview' }).then(() => {
-                console.log("세션 연결됨 > Current connections: ", session.remoteConnections);
-              }).catch(error => {
-                console.error("세션 연결 실패:", error);
-              });
-              console.log("여기3");
-            }, 1000);
+            await session.connect(token, { clientData: 'Preview' }).then(() => {
+              console.log("세션 연결됨 > Current connections: ", session.remoteConnections);
+            }).catch(error => {
+              console.error("세션 연결 실패:", error);
+            });
 
           } catch (error) {
               console.error('영상 미리보기 오류:', error);
