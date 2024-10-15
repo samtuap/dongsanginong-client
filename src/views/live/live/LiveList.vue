@@ -94,15 +94,13 @@
                 md="2" 
                 variant="text" 
                 style="width:200px; height:340px; margin: 10px; margin-bottom: 15px;" 
-                @click="joinExistingSession(live.liveId)"
-                @mouseenter="playPreview(live)"
-                @mouseleave="stopPreview(live)">
+                @click="joinExistingSession(live.liveId)">
                 <div v-if="live.participantCount !== null && live.participantCount !== undefined" class="viewer-count">
                   {{ live.participantCount - 1}}명 시청 중
                 </div>
                 <!-- 프리뷰 라이브 -->
                 <video
-                  v-if="hoveredVideoId === live.liveId"
+                  v-if="live.isPreviewing || hoveredVideoId === live.liveId"
                   :ref="'videoPlayer-' + live.liveId"
                   muted
                   autoplay
@@ -227,6 +225,11 @@ export default {
             });
             this.favoritesLiveList = response.data;
             console.log(this.favoritesLiveList);
+
+            setTimeout(() => {
+              this.playPreviewAll();
+            }, 1000); // 1.5초 뒤에 프리뷰 출력
+
             this.windowCount = Math.ceil(this.favoritesLiveList.length / 4);
             } catch (e) {
             console.log(e.message);
@@ -241,6 +244,11 @@ export default {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/active`, {params});
             console.log("전체 : ", response.data.content);
             this.liveList = response.data.content;
+
+            this.liveList.forEach(live => {
+              Object.assign(live, { isPreviewing: false });
+            }); // ispreviewing 필드 live에 추가 
+
             this.filteredLiveList = this.liveList;  // 필터링 목록 초기화  
         } catch(e) {
             console.log(e);
@@ -248,13 +256,23 @@ export default {
         window.addEventListener('scroll', this.scrollPagination);
     },
     methods: {
-        setCategory(category) {             
+        setCategory(category) {     
+          // 카테고리 변경할 때 프리뷰 끊기 
+          this.filteredLiveList.forEach(live => {
+            live.isPreviewing = false;
+            console.log(">>>>>" + live.liveId + "번째 라이브 중지");
+          });
+
           this.category = category;             
           if (this.category === "") {                      
             this.filteredLiveList = this.liveList;             
           } else {                            
             this.filteredLiveList = this.liveList.filter((live) => live.category === this.category);             
-          }         
+          }
+          
+          setTimeout(() => {
+            this.playPreviewAll();
+          }, 1000); // 1.5초 뒤에 프리뷰 출력
         }, 
         // 썸넬 이미지 등록 
         async handleImageUpload(blob) {
@@ -322,6 +340,11 @@ export default {
                 };
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/active`, { params });
                 const additionalData = response.data.content;
+
+                additionalData.forEach(live => {
+                  Object.assign(live, { isPreviewing: false });
+                }); // ispreviewing 필드 live에 추가 
+
                 this.liveList = [...this.liveList, ...additionalData];
                 this.isLastPage = response.data.last; // 라스트 여부
                 this.isLoading = false; // 로딩 끝!
@@ -419,9 +442,18 @@ export default {
                 console.error('세션 ID 가져오기 오류:', error);
             }
         },
+        // 목록 뿌려지자마자 1.5초 뒤에 전체 프리뷰 뿌려짐 
+        async playPreviewAll() {
+          for (const live of this.filteredLiveList) {
+            this.playPreview(live);
+          }
+        },
         // 커서 올리면 영상 미리볼 수 있는 화면 출력  
         async playPreview(live) {
           try {
+            live.isPreviewing = true;
+            await this.$nextTick();
+
             this.hoveredVideoId = live.liveId;
             console.log("hoverid : ", this.hoveredVideoId);
             setTimeout(async () => {
@@ -456,17 +488,6 @@ export default {
 
           } catch (error) {
               console.error('영상 미리보기 오류:', error);
-          }
-        },
-        // 커서 내리면 다시 썸네일 이미지로 복귀 
-        stopPreview(live) {
-          this.hoveredVideoId = null;
-          const videoElement = this.$refs['videoPlayer-' + live.liveId]?.[0];
-          if (videoElement) {
-            videoElement.pause();
-            videoElement.currentTime = 0;
-          } else {
-            console.warn('경고: Video element is not available to stop preview.');
           }
       },
       async getToken(sessionId) {
