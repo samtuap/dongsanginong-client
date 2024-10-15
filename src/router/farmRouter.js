@@ -3,7 +3,7 @@ import FarmList from "@/views/product/farm/FarmList.vue";
 import FarmDetailDescription from "@/views/product/farm/FarmDetailDescription.vue";
 import FarmPackageList from "@/views/product/farm/FarmPackageList.vue";
 import FarmInfoUpdate from "@/views/product/farm/FarmInfoUpdate.vue";
-import FarmPackageDetail from "@/views/product/farm/FarmPackageDetail.vue"
+
 
 export const farmRouter = [
     {
@@ -31,11 +31,5 @@ export const farmRouter = [
         name: 'FarmInfoUpdate',
         component: FarmInfoUpdate
     },
-    {
-        path: '/packages/:packageId/detail',
-        name: 'FarmPackageDetail',
-        component: FarmPackageDetail
-    },
-    
 ]
 

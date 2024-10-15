@@ -113,7 +113,7 @@
                         <div style="margin-top: 10px; display: flex; border-radius: 10px;"
                                 class="package-images-box">
                             <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
-                                <img :src="product.imageUrl" class="package-img" />
+                                <img :src="product.imageUrl" class="package-img" @click="this.$router.push(`/product/${product.packageId}`)"/>
                             </div>
                         </div>
                     </div>
