@@ -120,36 +120,27 @@ export default {
             return parseInt(value).toLocaleString('ko-KR') + ' 원';
         },
         async getdeliveryList(page = 1) {
-    try {
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/order/delivery/list`, {
-            params: {
-                page: page - 1,
-                size: this.itemsPerPage,
-            }
-        });
-        console.log(response);
-        this.deliveries = [];
-
-        response.data.content.forEach(order => {
-            order.deliveryAt.forEach((deliveryAt, index) => {
-                this.deliveries.push({
-                    id: order.orderId,
-                    packageName: order.packageName,
-                    farmName: order.farmName,
-                    deliveryAt: deliveryAt,
-                    deliveryStatus: order.deliveryStatus[index],
+            try {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/delivery/list`, {
+                    params: {
+                        page: page - 1,
+                        size: this.itemsPerPage,
+                    }
                 });
-            });
-        });
 
-        const filteredDeliveries = this.deliveries.filter(delivery => delivery.deliveryStatus !== null && delivery.deliveryAt !== null);
-        this.totalPages = Math.ceil(filteredDeliveries.length / this.itemsPerPage) || 1;
-        this.currentPage = page;
-    } catch (error) {
-        console.error("배송 리스트를 불러오는 중 오류가 발생했습니다.", error);
-    }
-}
-,
+                this.deliveries = response.data.content.map(delivery => ({
+                    id: delivery.deliveryId,
+                    packageName: delivery.packageName,
+                    farmName: delivery.farmName,
+                    deliveryAt: delivery.deliveryAt,
+                    deliveryStatus: delivery.deliveryStatus,
+                }));
+                this.totalPages = response.data.totalPages || 1;
+                this.currentPage = page;
+            } catch (error) {
+                console.error("배송 리스트를 불러오는 중 오류가 발생했습니다.", error);
+            }
+        },
         formatDate(dateTime) {
             return dateTime.split('T')[0];
         },
