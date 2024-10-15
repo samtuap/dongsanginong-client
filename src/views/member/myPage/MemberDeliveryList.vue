@@ -135,8 +135,6 @@ export default {
                     deliveryAt: delivery.deliveryAt,
                     deliveryStatus: delivery.deliveryStatus,
                 }));
-
-                // Update total pages and current page
                 this.totalPages = response.data.totalPages || 1;
                 this.currentPage = page;
             } catch (error) {
