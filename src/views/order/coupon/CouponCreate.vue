@@ -33,6 +33,28 @@
             </div>
           </div>
 
+          <!-- 수량 선택 -->
+          <div class="form-group">
+            <label class="form-label">수량</label>
+            <div class="quantity-input">
+              <v-radio-group v-model="isUnlimitedQuantity" @change="updateQuantity">
+                <v-radio label="무제한" value="unlimited"></v-radio>
+                <v-radio label="수량 제한" value="limited"></v-radio>
+              </v-radio-group>
+              <div v-if="isUnlimitedQuantity === 'limited'">
+                <input
+                  type="number"
+                  v-model="coupon.quantity"
+                  class="input-field short-input"
+                  min="1"
+                  required
+                  placeholder="수량 입력"
+                />
+                <span class="percent-sign">개</span>
+              </div>
+            </div>
+          </div>
+
           <!-- 쿠폰 소멸 일자 선택 -->
           <div class="form-group">
             <label for="expiration" class="form-label">쿠폰 소멸 일자</label>
@@ -110,16 +132,18 @@ export default {
       coupon: {
         couponName: '',
         discountPercentage: 0,
-        expirationDate: '', // YYYY-MM-DD 형식
-        expirationTime: '', // HH:mm 형식
+        expirationDate: '',
+        expirationTime: '',
+        quantity: 0, // 수량 필드 추가
       },
-      selectedDate: null, // 선택된 날짜
-      selectedTime: '12:00', // 선택된 시간
-      formattedExpiration: '', // 화면에 표시할 날짜 및 시간 형식
-      datePickerDialog: false, // 날짜 선택 모달 상태
-      timePickerDialog: false, // 시간 선택 모달 상태
-      alertDialog: false, // 알림 모달 상태
-      alertMessage: '', // 알림 메시지
+      isUnlimitedQuantity: 'limited', // 수량 제한 여부를 위한 값
+      selectedDate: null,
+      selectedTime: '12:00',
+      formattedExpiration: '',
+      datePickerDialog: false,
+      timePickerDialog: false,
+      alertDialog: false,
+      alertMessage: '',
     };
   },
   methods: {
@@ -129,7 +153,9 @@ export default {
         discountPercentage: 0,
         expirationDate: '',
         expirationTime: '',
+        quantity: 0, // 초기화
       };
+      this.isUnlimitedQuantity = 'limited'; // 무제한 수량 선택 초기화
       this.selectedDate = null;
       this.selectedTime = '12:00';
       this.formattedExpiration = '';
@@ -138,7 +164,7 @@ export default {
       if (!value) {
         this.resetFormData();
       }
-      this.$emit('update:dialog', value); // dialog 값을 상위 컴포넌트로 emit
+      this.$emit('update:dialog', value);
     },
     openTimePicker() {
       if (this.selectedDate) {
@@ -165,6 +191,13 @@ export default {
       this.alertMessage = message;
       this.alertDialog = true;
     },
+    updateQuantity() {
+      if (this.isUnlimitedQuantity === 'unlimited') {
+        this.coupon.quantity = -1; // 무제한일 경우 -1로 설정
+      } else {
+        this.coupon.quantity = 1; // 기본값 설정
+      }
+    },
     validateAndCreateCoupon() {
       if (!this.coupon.couponName) {
         this.showAlert('쿠폰 이름을 입력하세요.');
@@ -181,6 +214,11 @@ export default {
         return;
       }
 
+      if (this.isUnlimitedQuantity === 'limited' && this.coupon.quantity <= 0) {
+        this.showAlert('수량을 입력하세요.');
+        return;
+      }
+
       this.createCoupon();
     },
     async createCoupon() {
@@ -189,6 +227,7 @@ export default {
         discountPercentage: this.coupon.discountPercentage,
         expirationDate: this.coupon.expirationDate,
         expirationTime: this.coupon.expirationTime,
+        quantity: this.coupon.quantity, // 수량 추가
       };
 
       const token = localStorage.getItem('Bearer Token');

@@ -1,4 +1,5 @@
 <template>
+  <FarmMenuComponent :currentMenu="4" />
   <v-container class="d-flex justify-center">
     <v-card class="review-card elevation-0" outlined>
       <!-- 별점과 업데이트 날짜를 표시하는 섹션 -->
@@ -91,10 +92,12 @@
 
 <script>
 import ReviewUpdate from '@/views/product/review/ReviewUpdate.vue';
+import FarmMenuComponent from '@/components/menubar/FarmMenuComponent.vue';
 
 export default {
   components: {
     ReviewUpdate, // ReviewUpdate 컴포넌트 등록
+    FarmMenuComponent
   },
   data() {
     return {
@@ -236,14 +239,15 @@ export default {
 
 .review-title {
   margin-top: 10px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
+  margin-bottom: 30px;
 }
 
 .review-text {
   font-size: 16px;
   line-height: 1.5;
-  margin-top: -20px;
+  margin-top: 20px;
 }
 
 .image-slider-container {
@@ -293,18 +297,28 @@ export default {
 .action-buttons {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: -35px;
   justify-content: flex-end;
 }
 
-.edit-btn, .delete-btn {
+.edit-btn {
   margin-top: -30px;
   background-color: #BCC07B;
   color: black;
   border-radius: 30px;
   padding: 10px 20px;
-  font-size: 15px;
-  font-weight: bold;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 200px;
+}
+
+.delete-btn{
+  margin-top: -30px;
+  background-color: #e0e0e0;
+  color: black;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 13px;
   line-height: 1.5;
   max-width: 200px;
 }

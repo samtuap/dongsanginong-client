@@ -14,7 +14,7 @@
 
                     <!-- 별점 -->
                     <div class="rating-section">
-                        <v-rating v-model="review.rating" background-color="grey lighten-2" color="yellow" large
+                        <v-rating v-model="review.rating" background-color="grey lighten-2" color="#FFCC80"
                             length="5" rounded />
                     </div>
 
@@ -64,7 +64,7 @@
                     <v-btn @click="validateAndSubmit" class="custom-button">
                         수정
                     </v-btn>
-                    <v-btn @click="closeModalAndReset" class="custom-cancel-button"> <!-- 닫기 버튼 클릭 시 입력값 초기화 -->
+                    <v-btn @click="closeModalAndReset" class="custom-cancel-button">
                         닫기
                     </v-btn>
                 </v-card-actions>
@@ -119,7 +119,7 @@ export default {
             alertModal: false,
             alertMessage: '',
             successModal: false,
-            errorModal: false,  // 실패 모달 추가
+            errorModal: false,
         };
     },
     methods: {
@@ -135,6 +135,10 @@ export default {
         removeFile(index) {
             this.selectedFiles.splice(index, 1);
             this.filePreviews.splice(index, 1);
+            // review.imageUrls에서도 삭제
+            if (index < this.review.imageUrls.length) {
+                this.review.imageUrls.splice(index, 1); // 기존 이미지 배열에서 삭제
+            }
         },
         async uploadFiles() {
             const uploadedImageUrls = [];
@@ -142,7 +146,7 @@ export default {
                 const imageUrl = await this.uploadImage(file);
                 uploadedImageUrls.push(imageUrl);
             }
-            this.review.imageUrls = uploadedImageUrls;
+            this.review.imageUrls = [...this.review.imageUrls, ...uploadedImageUrls];
         },
         async uploadImage(blob) {
             const accessToken = localStorage.getItem('accessToken');
@@ -180,34 +184,37 @@ export default {
         async createReview() {
             await this.uploadFiles();
 
+            const remainingImageUrls = this.filePreviews.map(preview => preview.url);
+
             const requestData = {
                 title: this.review.title,
                 contents: this.review.contents,
                 rating: this.review.rating,
-                imageUrls: this.review.imageUrls,
+                imageUrls: remainingImageUrls,
             };
 
             const accessToken = localStorage.getItem('accessToken');
+            const reviewId = Number(this.reviewId);
             try {
-                await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/${this.$route.params.reviewId}/update`, {
+                await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/${reviewId}/update`, {
                     method: 'PUT',
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json', 
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(requestData),
                 });
-                this.successModal = true; // 성공 시 성공 모달 열기
+                this.successModal = true;
             } catch (error) {
                 console.error('리뷰 수정 실패:', error);
                 this.alertMessage = '리뷰 수정 중 오류가 발생했습니다.';
-                this.errorModal = true; // 실패 시 실패 모달 열기
+                this.errorModal = true;
             }
         },
         validateAndSubmit() {
             if (!this.review.rating || !this.review.title || !this.review.contents) {
                 this.alertMessage = "모든 필드를 입력해 주세요.";
-                this.alertModal = true; // 에러 모달 열기
+                this.alertModal = true;
             } else {
                 this.createReview();
             }
@@ -215,7 +222,8 @@ export default {
         closeModals() {
             this.successModal = false;
             this.errorModal = false;
-            this.dialog = false; // 모든 모달 닫기
+            this.dialog = false;
+            window.location.reload()
         },
         closeModalAndReset() {
             this.review.rating = 0;
@@ -223,13 +231,13 @@ export default {
             this.review.contents = '';
             this.selectedFiles = [];
             this.filePreviews = [];
-            this.dialog = false; // 모달 닫기
+            this.dialog = false;
         },
         async openEditDialog() {
             this.dialog = true;
             try {
                 const token = localStorage.getItem('accessToken');
-                const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/no-auth/detail/${this.$route.params.reviewId}`, {
+                const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/no-auth/detail/${this.reviewId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -243,7 +251,7 @@ export default {
             } catch (error) {
                 console.error('리뷰 정보 불러오기 실패:', error);
                 this.alertMessage = '리뷰 정보를 불러오는 중 오류가 발생했습니다.';
-                this.alertModal = true; // 에러 모달 열기
+                this.alertModal = true;
             }
         }
     },
@@ -251,6 +259,10 @@ export default {
 </script>
 
 <style scoped>
+.rating-section .v-icon {
+    font-size: 40px; /* 별 아이콘의 크기를 40px로 설정 */
+}
+
 .review-form {
     display: flex;
     flex-direction: column;
@@ -335,8 +347,7 @@ textarea.custom-input {
     color: black;
     border-radius: 30px;
     padding: 10px 40px;
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 13px;
     line-height: 1.5;
 }
 
@@ -345,8 +356,7 @@ textarea.custom-input {
     color: black;
     border-radius: 30px;
     padding: 10px 40px;
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 13px;
     line-height: 1.5;
 }
 

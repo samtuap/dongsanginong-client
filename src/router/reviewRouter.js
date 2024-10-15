@@ -15,7 +15,7 @@ export const reviewRouter = [
         component: FarmReviewList
     },
     {
-        path: '/reviews/:reviewId/detail',
+        path: '/reviews/:farmId/detail/:reviewId',
         name: 'ReviewDetail',
         component: ReviewDetail
     },

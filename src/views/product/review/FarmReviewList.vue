@@ -2,7 +2,7 @@
   <FarmMenuComponent :currentMenu="4" />
     <br><br>
     <div class="review-container">
-      <h4 class="review-header" style="margin-left: 15px;">전체 리뷰({{ reviews.length }})</h4>
+      <h4 class="review-header" style="margin-left: 30px;">전체 리뷰({{ reviews.length }})</h4>
   
       <!-- 리뷰 목록 -->
       <v-row v-if="paginatedReviews.length > 0" class="review-row" justify="center">
@@ -85,6 +85,11 @@
     mounted() {
       this.fetchReviews();
     },
+    watch: {
+      currentPage() {
+        this.paginateReviews();
+      }
+    },
     methods: {
       async fetchReviews() {
         const farmId = this.$route.params.farmId;
@@ -151,6 +156,7 @@
   width: 93%;
   /* max-width: 800px; */
   cursor: pointer;
+  margin-left: 4%;
 }
 
 .card-header {

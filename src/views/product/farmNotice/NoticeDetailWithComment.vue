@@ -1,5 +1,5 @@
 <template>
-    <FarmMenuComponent />
+    <FarmMenuComponent :currentMenu="3"/>
     <v-container>
         <v-row justify="center">
             <v-col cols="12" sm="8" md="6" lg="8">
