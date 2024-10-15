@@ -21,9 +21,6 @@
             {{ packageProduct.packageName }} - [배송주기] {{ packageProduct.deliveryCycle }}일
           </v-card-title>
           <v-card-subtitle>
-            <v-chip color="red" text-color="white" small>
-              PRICE
-            </v-chip>
             <div class="price">
               <span class="original-price">
                 <strong>{{ packageProduct.price ? packageProduct.price.toLocaleString() : '' }} 원</strong>
@@ -37,7 +34,7 @@
               은 꾸준히 오랜기간 먹는 음식을 믿을 수 있는 생산자의 먹거리로 제안합니다.
               매번 재구매하실 필요 없이 정해진 주기로 배송해드립니다.
             </span>
-            <hr class="custom-hr" />
+            <hr class="custom-hr" /><br>
           </v-card-text>
         </v-card>
       </v-col>
@@ -90,7 +87,8 @@
             <strong>{{ review.title }}</strong>
           </div>
           <!-- 첫 번째 리뷰 이미지, 이미지가 없으면 빈 div로 공간 확보 -->
-          <v-img v-if="review.imageUrls && review.imageUrls.length > 0" :src="review.imageUrls[0]" class="review-image-list" />
+          <v-img v-if="review.imageUrls && review.imageUrls.length > 0" :src="review.imageUrls[0]"
+            class="review-image-list" />
           <div v-else class="review-image empty-image"></div>
         </v-card>
       </v-col>
@@ -99,7 +97,7 @@
     <!-- 리뷰 디테일 모달 -->
     <v-dialog v-model="reviewModal" max-width="800px" @click:outside="closeReviewModal">
       <v-card class="review-card elevation-0" outlined v-if="selectedReview">
-        <v-row class="review-header">
+        <v-row>
           <v-col cols="12" class="review-info">
             <div class="header-content">
               <!-- 별점 표시 -->
@@ -123,7 +121,7 @@
             <!-- 수정/삭제 버튼: 현재 로그인한 유저와 리뷰 작성자가 같을 경우에만 표시 -->
             <v-row class="button-row">
               <v-col v-if="isReviewOwner" cols="12" class="action-buttons">
-                <v-btn @click="openEditDialog" class="edit-btn">수정</v-btn>
+                <v-btn @click="openEditDialog()" class="edit-btn">수정</v-btn>
                 <v-btn @click="openDeleteConfirmation" class="delete-btn">삭제</v-btn>
               </v-col>
             </v-row>
@@ -131,22 +129,19 @@
         </v-row>
 
         <!-- 리뷰 내용과 이미지 -->
-        <v-row class="review-content justify-center"> 
+        <v-row class="review-content justify-center">
           <v-col cols="12" class="d-flexjustify-center">
             <p class="review-text">{{ selectedReview.contents }}</p>
             <div v-if="selectedReview.imageUrls && selectedReview.imageUrls.length">
               <div class="image-slider-container">
-                <button v-if="selectedReview.imageUrls.length > imagesPerPage" @click="scrollLeft" class="scroll-button left-button">‹</button>
+                <button v-if="selectedReview.imageUrls.length > imagesPerPage" @click="scrollLeft"
+                  class="scroll-button left-button">‹</button>
                 <div ref="imageSlider" class="image-slider">
-                  <img
-                    v-for="(imageUrl, i) in visibleImages"
-                    :key="i"
-                    :src="imageUrl"
-                    class="review-image-detail"
-                    alt="리뷰 이미지"
-                  />
+                  <img v-for="(imageUrl, i) in visibleImages" :key="i" :src="imageUrl" class="review-image-detail"
+                    alt="리뷰 이미지" />
                 </div>
-                <button v-if="selectedReview.imageUrls.length > imagesPerPage" @click="scrollRight" class="scroll-button right-button">›</button>
+                <button v-if="selectedReview.imageUrls.length > imagesPerPage" @click="scrollRight"
+                  class="scroll-button right-button">›</button>
               </div>
             </div>
           </v-col>
@@ -165,13 +160,17 @@
         </v-dialog>
 
         <!-- 리뷰 수정 모달 -->
-        <review-update :review-id="selectedReview.id" ref="editModal" @review-updated="fetchReviewDetail" />
+        <review-update v-if="selectedReview && selectedReview.id" :review-id="selectedReview.id" ref="editModal" @review-updated="fetchReviewDetail" />
+
       </v-card>
     </v-dialog>
 
     <!-- 페이지네이션 -->
     <v-row justify="center" align="center">
-      <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+      <v-col cols="12" class="text-center">
+        <!-- 현재 페이지와 총 페이지 수를 보여줌 -->
+        <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -189,6 +188,7 @@ export default {
       reviewModal: false,
       packageProduct: {},
       reviews: [],
+      review: {},
       selectedReview: null, // 선택한 리뷰
       currentPage: 1,
       pageSize: 3,
@@ -225,7 +225,7 @@ export default {
         `${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/detail/${packageId}`
       );
       const productData = productResponse.data;
-      
+
       // delivery_cycle -> deliveryCycle로 변환
       this.packageProduct = {
         ...productData,
@@ -254,23 +254,26 @@ export default {
       try {
         // 선택된 리뷰의 상세 정보를 가져오는 함수 호출
         await this.fetchReviewDetail(reviewId);
-        this.reviewModal = true; // 리뷰 디테일 모달을 표시
+        console.log("Selected Review ID:", this.selectedReview.id);
+        this.reviewModal = true; // 리뷰 디테일 모달을 표시 
       } catch (error) {
         console.error("리뷰 디테일을 불러오는 중 오류 발생:", error);
       }
     },
     async fetchReviewDetail(reviewId) {
       try {
-        const response = await fetch(
-          `${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/no-auth/detail/${reviewId}`
-        );
+        const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/no-auth/detail/${reviewId}`);
         if (response.ok) {
-          this.selectedReview = await response.json(); // 선택된 리뷰의 정보를 저장
+          const data = await response.json();
+          this.selectedReview = data;  // 선택된 리뷰의 정보를 저장
+          console.log("Fetched review data:", data);
         } else {
           console.error("리뷰 디테일을 불러오는 중 오류 발생:", response.status);
+          this.selectedReview = null;
         }
       } catch (error) {
         console.error("리뷰 디테일을 불러오는 중 오류 발생:", error);
+        this.selectedReview = null;
       }
     },
     closeReviewModal() {
@@ -285,8 +288,14 @@ export default {
       this.currentImageIndex = Math.min(this.currentImageIndex + this.imagesPerPage, maxIndex);
     },
     openEditDialog() {
-      this.$refs.editModal.openEditDialog();
-    },
+  if (this.selectedReview && this.selectedReview.id) {
+    console.log("Opening Edit Dialog for Review ID:", this.selectedReview.id);
+    this.$refs.editModal.openEditDialog();
+  } else {
+    console.error("No selected review found!");
+  }
+},
+
     openDeleteConfirmation() {
       this.deleteModal = true;
     },
@@ -297,7 +306,7 @@ export default {
       const accessToken = localStorage.getItem('accessToken');
       try {
         await axios.delete(
-          `${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/${this.selectedReview.id}/delete`, 
+          `${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/${this.selectedReview.id}/delete`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -316,6 +325,16 @@ export default {
 </script>
 
 <style scoped>
+.review-header {
+  text-align: left;
+  width: 100%;
+  max-width: 950px;
+  margin-bottom: 30px;
+  margin-top: 60px;
+  padding-left: 0;
+  /* 왼쪽 여백을 없앰 */
+}
+
 /* 리뷰 리스트에서 사용하는 이미지 크기 */
 .review-image-list {
   width: 100px;
@@ -354,11 +373,12 @@ export default {
 }
 
 .price {
-  margin-top: 12px;
+  margin-top: 0px;
+  margin-left: -10px;
 }
 
 .original-price {
-  font-size: 22px;
+  font-size: 18px;
   color: black;
   margin-left: 10px;
 }
@@ -386,34 +406,39 @@ export default {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 5px;
+  margin-left: -15px;
 }
 
 .payment-title {
   font-size: 16px;
   font-weight: bold;
+  margin-left: -15px;
 }
 
 .package-description {
   font-size: 13px;
   line-height: 1.8;
-  background-color: #f7f7f7;
+  background-color: #E9F5E9;
   padding: 15px;
+  padding-bottom: 30px;
   border-radius: 8px;
   margin-bottom: 10%;
+  min-height: 150px;
 }
 
 .payment-info {
   font-size: 13px;
   line-height: 1.8;
   color: #666;
+  margin-left: -15px;
 }
 
 .subscription-btn {
   background-color: #bcc07b;
   color: black;
-  font-weight: bold;
   padding: 10px 20px;
   border-radius: 30px;
+  margin-top: 6%;
 }
 
 .right-aligned {
@@ -430,8 +455,8 @@ export default {
 
 .custom-hr {
   border: none;
-  border-top: 2px solid #ccc;
-  margin: 10px 0;
+  border-top: 1px solid #ccc;
+  margin: 15px 0;
 }
 
 .review-item {
@@ -477,6 +502,7 @@ export default {
 .review-title {
   margin: 10px 0;
   font-size: 16px;
+  margin-bottom: 20px;
 }
 
 .empty-image {
@@ -501,19 +527,17 @@ export default {
   border-radius: 30px;
   padding: 10px 20px;
   font-size: 13px;
-  font-weight: bold;
   line-height: 1.5;
   max-width: 200px;
 }
 
-.delete-btn{
+.delete-btn {
   margin-top: -30px;
   background-color: #e0e0e0;
   color: black;
   border-radius: 30px;
   padding: 10px 20px;
   font-size: 13px;
-  font-weight: bold;
   line-height: 1.5;
   max-width: 200px;
 }
@@ -534,11 +558,13 @@ export default {
 }
 
 .left-button {
-  margin-right: 20px; /* 이미지 왼쪽에서 버튼 떨어뜨림 */
+  margin-right: 20px;
+  /* 이미지 왼쪽에서 버튼 떨어뜨림 */
 }
 
 .right-button {
-  margin-left: 20px; /* 이미지 오른쪽에서 버튼 떨어뜨림 */
+  margin-left: 20px;
+  /* 이미지 오른쪽에서 버튼 떨어뜨림 */
 }
 
 .image-slider {
@@ -554,6 +580,4 @@ export default {
   width: 100%;
   margin-top: 20px;
 }
-
-
 </style>
