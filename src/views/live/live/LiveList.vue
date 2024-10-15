@@ -69,6 +69,19 @@
               <v-btn class="cat-btn" :class="{'active-cat-btn': category === '야채'}" @click="setCategory('야채')">
                 <i class="mdi mdi-mushroom" style="font-size: 15px;"></i>야채
               </v-btn>
+              <v-btn class="cat-btn" :class="{'active-cat-btn': category === '견과/쌀'}" @click="setCategory('견과/쌀')">
+                <i class="mdi mdi-food-croissant" style="font-size: 15px;"></i>견과/쌀
+              </v-btn>
+              <v-btn class="cat-btn" :class="{'active-cat-btn': category === '육류'}" @click="setCategory('육류')">
+                <i class="mdi mdi-food-drumstick" style="font-size: 15px;"></i>육류
+              </v-btn>
+              <v-btn class="cat-btn" :class="{'active-cat-btn': category === '계란'}" @click="setCategory('계란')">
+                <i class="mdi mdi-egg" style="font-size: 15px;"></i>계란
+              </v-btn>
+              <v-btn class="cat-btn" :class="{'active-cat-btn': category === '유제품'}" @click="setCategory('유제품')">
+                <i class="mdi mdi-cup-water" style="font-size: 15px;"></i>유제품
+              </v-btn>
+              
             </v-row>
           </div>
           <br>
@@ -81,15 +94,13 @@
                 md="2" 
                 variant="text" 
                 style="width:200px; height:340px; margin: 10px; margin-bottom: 15px;" 
-                @click="joinExistingSession(live.liveId)"
-                @mouseenter="playPreview(live)"
-                @mouseleave="stopPreview(live)">
+                @click="joinExistingSession(live.liveId)">
                 <div v-if="live.participantCount !== null && live.participantCount !== undefined" class="viewer-count">
                   {{ live.participantCount - 1}}명 시청 중
                 </div>
                 <!-- 프리뷰 라이브 -->
                 <video
-                  v-if="hoveredVideoId === live.liveId"
+                  v-if="live.isPreviewing"
                   :ref="'videoPlayer-' + live.liveId"
                   muted
                   autoplay
@@ -134,7 +145,7 @@
             ></v-text-field>
             <v-select
               v-model="category"
-              :items="['과일', '야채']"
+              :items="['과일', '야채', '견과/쌀', '육류', '계란', '유제품']"
               label="카테고리를 선택하세요"
               hide-details
               solo-inverted
@@ -195,7 +206,6 @@ export default {
             isLastPage: false,
             currentPage: 0,
             pageSize: 7,
-            hoveredVideoId: null,
             session: null,
         };
     },
@@ -214,6 +224,11 @@ export default {
             });
             this.favoritesLiveList = response.data;
             console.log(this.favoritesLiveList);
+
+            setTimeout(() => {
+              this.playPreviewAll();
+            }, 1000); // 1.5초 뒤에 프리뷰 출력
+
             this.windowCount = Math.ceil(this.favoritesLiveList.length / 4);
             } catch (e) {
             console.log(e.message);
@@ -228,6 +243,11 @@ export default {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/active`, {params});
             console.log("전체 : ", response.data.content);
             this.liveList = response.data.content;
+
+            this.liveList.forEach(live => {
+              Object.assign(live, { isPreviewing: false });
+            }); // ispreviewing 필드 live에 추가 
+
             this.filteredLiveList = this.liveList;  // 필터링 목록 초기화  
         } catch(e) {
             console.log(e);
@@ -235,13 +255,23 @@ export default {
         window.addEventListener('scroll', this.scrollPagination);
     },
     methods: {
-        setCategory(category) {             
+        setCategory(category) {     
+          // 카테고리 변경할 때 프리뷰 끊기 
+          this.filteredLiveList.forEach(live => {
+            live.isPreviewing = false;
+            console.log(">>>>>" + live.liveId + "번째 라이브 중지");
+          });
+
           this.category = category;             
           if (this.category === "") {                      
             this.filteredLiveList = this.liveList;             
           } else {                            
             this.filteredLiveList = this.liveList.filter((live) => live.category === this.category);             
-          }         
+          }
+          
+          setTimeout(() => {
+            this.playPreviewAll();
+          }, 1000); // 1.5초 뒤에 프리뷰 출력
         }, 
         // 썸넬 이미지 등록 
         async handleImageUpload(blob) {
@@ -309,6 +339,11 @@ export default {
                 };
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/active`, { params });
                 const additionalData = response.data.content;
+
+                additionalData.forEach(live => {
+                  Object.assign(live, { isPreviewing: false });
+                }); // ispreviewing 필드 live에 추가 
+
                 this.liveList = [...this.liveList, ...additionalData];
                 this.isLastPage = response.data.last; // 라스트 여부
                 this.isLoading = false; // 로딩 끝!
@@ -406,54 +441,45 @@ export default {
                 console.error('세션 ID 가져오기 오류:', error);
             }
         },
+        // 목록 뿌려지자마자 1.5초 뒤에 전체 프리뷰 뿌려짐 
+        async playPreviewAll() {
+          for (const live of this.filteredLiveList) {
+            this.playPreview(live);
+          }
+        },
         // 커서 올리면 영상 미리볼 수 있는 화면 출력  
         async playPreview(live) {
+          console.log(">>>>>>>" + live.liveId + "번째 라이브 시작");
           try {
-            this.hoveredVideoId = live.liveId;
-            console.log("hoverid : ", this.hoveredVideoId);
-            setTimeout(async () => {
-              const token = await this.getToken(live.sessionId);
-              console.log(">>>>>>>>>token : ", token)
+            live.isPreviewing = true;
+            await this.$nextTick();
 
-              console.log(">>>>>>>>> token: " + token + " >>>>>>>>>> sessiongId" + live.sessionId);
+            const token = await this.getToken(live.sessionId);
+            console.log(">>>>>>>>> token: " + token + " >>>>>>>>>> sessiongId" + live.sessionId);
 
-              const OV = new OpenVidu();
-              const session = OV.initSession();
+            const OV = new OpenVidu();
+            const session = OV.initSession();
+            session.on('streamCreated', ({ stream }) => {
+              const videoRef = this.$refs['videoPlayer-' + live.liveId];
+              const videoElement = videoRef ? videoRef[0] : null;
+              console.log(">>>>>>>>>video element: ", videoElement)
 
-              session.on('streamCreated', ({ stream }) => {
-                const videoRef = this.$refs['videoPlayer-' + live.liveId];
-                const videoElement = videoRef ? videoRef[0] : null;
-                console.log(">>>>>>>>>video element: ", videoElement)
-                if (videoElement) {
-                  const subscriber = session.subscribe(stream, undefined);
-                  subscriber.addVideoElement(videoElement);
-                } else {
-                  console.warn('경고: Video element is not yet available for preview.');
-                }
-              });
+              if (videoElement) {
+                const subscriber = session.subscribe(stream, undefined);
+                subscriber.addVideoElement(videoElement);
+              } else {
+                console.warn('경고: Video element is not yet available for preview.');
+              }
+            });
 
-              console.log("여기2");
-              await session.connect(token, { clientData: 'Preview' }).then(() => {
-                console.log("세션 연결됨 > Current connections: ", session.remoteConnections);
-              }).catch(error => {
-                console.error("세션 연결 실패:", error);
-              });
-              console.log("여기3");
-            }, 1000);
+            await session.connect(token, { clientData: 'Preview' }).then(() => {
+              console.log("세션 연결됨 > Current connections: ", session.remoteConnections);
+            }).catch(error => {
+              console.error("세션 연결 실패:", error);
+            });
 
           } catch (error) {
               console.error('영상 미리보기 오류:', error);
-          }
-        },
-        // 커서 내리면 다시 썸네일 이미지로 복귀 
-        stopPreview(live) {
-          this.hoveredVideoId = null;
-          const videoElement = this.$refs['videoPlayer-' + live.liveId]?.[0];
-          if (videoElement) {
-            videoElement.pause();
-            videoElement.currentTime = 0;
-          } else {
-            console.warn('경고: Video element is not available to stop preview.');
           }
       },
       async getToken(sessionId) {

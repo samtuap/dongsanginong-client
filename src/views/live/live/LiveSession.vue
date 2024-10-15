@@ -382,21 +382,22 @@ export default {
   font-size: 16px;
 }
 .farm-image-circle {
-    border-radius: 200px;
-    width: 70px;
-    height: 70px;
-    border: solid 0.5px #D4D4D4;
-    background-position: center;
-    background-size: cover;
-    transition: background-size 0.5s ease;
-    margin-left: 1%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .farm-info {
   display: flex;
   align-items: center;
 }
 .farm-image-frame {
-  margin-right: 10px;
+  position: relative;
+  width: 70px;
+  height: 70px;
 }
 .farm-text {
   display: flex;
