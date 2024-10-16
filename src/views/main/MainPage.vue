@@ -9,62 +9,13 @@
     <!-- 인기 패키지 -->
      <br>
     <v-container>
-        <!-- 제목 -->
-        <v-col cols="12">
+        <div style="margin-bottom: 40px; margin-top: 20px;">
             <div class="text-center" style="font-size: 23px; font-weight: bold;">
-                🏆 패키지 실시간 인기 랭킹 🏆
+                🥦 Best Packages 🥦
             </div>
-            <p class="text-center" style="color: grey; font-size: 16px;">가장 인기있는 상품만 모아보세요!</p>
-        </v-col>
-
-        <!-- 상품 슬라이드 -->
-         <br>
-        <v-window v-model="onboarding" style="width: 1080px; margin: auto;">
-            <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
-            <v-window-item v-for="n in packageWindowCount" :key="`window-${n}`" :value="n">
-                <div class="d-flex">
-                    <div v-for="(packageProduct, index) in paginatedPackages(n)" :key="index" style="margin-left: 50px;"
-                        class="card-outer">
-                        <div style="padding-bottom: 30px;">
-                            <div class="package-img-box">
-                                <v-img class="package-img" :src="packageProduct.imageUrl"
-                                    @click="this.$router.push(`/package/${packageProduct.id}`)" alt="Farm 썸네일" cover />
-                            </div>
-                        </div>
-                        <div style="display: flex; width: 190px;">
-                            <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">{{ 4 * (n - 1) +
-                                index + 1 }}</div>
-                            <!-- 패키지 이름 -->
-                            <p v-if="packageProduct.packageName.length > 50" style="font-size: 13px; font-weight: 500;">
-                                {{
-                                    packageProduct.packageName.substring(0, 50) }}... </p>
-                            <p v-else style="font-size: 15px; font-weight: 500;"> {{ packageProduct.packageName }}</p>
-                        </div>
-
-                        <div style="width: 190px;">
-                            <p style="font-weight: 500; opacity: 0.5; font-size: small; margin-left: 27px;">{{
-                                packageProduct.price }}
-                                <span style="color: black; "> 원</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </v-window-item>
-        </v-window>
-        <v-card-actions style="justify-content: center; margin-top: -20px;">
-            <v-item-group v-model="onboarding" class="text-center" mandatory>
-                <v-item v-for="n in packageWindowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
-                    <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
-                        @click="toggle"></v-btn>
-                </v-item>
-            </v-item-group>
-        </v-card-actions>
-        <!-- 전체보기 버튼 -->
-        <v-col cols="12" class="text-center" style="margin-top: -20px;">
-            <v-btn color="#FFFFFF" @click="this.$router.push('package')" style="border-radius: 50px;">
-                🥦 패키지 전체보기
-            </v-btn>
-        </v-col>
+            <p class="text-center" style="color: grey; font-size: 16px;">가장 많이 팔린 패키지를 주문해보세요. :)</p>
+        </div>
+        <TopPackagesSlide />
     </v-container>
     <!-- 인기 패키지 끝 -->
 
@@ -170,14 +121,16 @@
 
 </template>
 <script>
+import TopPackagesSlide from '@/components/slide/TopPackagesSlide.vue';
 import axios from 'axios';
 
 export default {
+    components: {
+        TopPackagesSlide,
+    },
     data() {
         return {
             images: [],
-            items: [],
-            packageWindowCount: 0,
             farmWindowCount: 0,
             onboarding: 1,
             scrollPosition: 0,
@@ -188,13 +141,6 @@ export default {
         }
     },
     methods: {
-        paginatedPackages(page) {
-            // 페이지에 따라 프로젝트를 반환하도록 수정
-            const packagesPerPage = 4;
-            const start = (page - 1) * packagesPerPage;
-            const end = start + packagesPerPage;
-            return this.items.slice(start, end);
-        },
         paginatedFarm(page) {
             // 페이지에 따라 프로젝트를 반환하도록 수정
             const farmsPerPage = 4;
@@ -250,9 +196,7 @@ export default {
             // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/local/desktop+wallpaper.jpeg", "alt": "배너사진5", "link": "/event2" }
         ];
 
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
-        this.items = response.data;
-        this.packageWindowCount = parseInt(this.items.length / 4) + 1;
+
 
         const params = {
             "page": 0,

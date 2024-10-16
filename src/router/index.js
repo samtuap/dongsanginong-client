@@ -10,6 +10,7 @@ import { reviewRouter } from "./reviewRouter";
 import { receiptRouter } from "./receiptRouter";
 import { productRouter } from "./productRouter";
 import { orderRouter } from "./orderRouter";
+import TestMainPage from "@/views/main/TestMainPage.vue";
 
 
 const routes = [
@@ -17,6 +18,11 @@ const routes = [
     path: "/",
     name: "home",
     component: MainPage,
+  },
+  { // TODO: 삭제 필요
+    path: "/test",
+    name: "test",
+    component: TestMainPage
   },
   {
     path: "/about",
