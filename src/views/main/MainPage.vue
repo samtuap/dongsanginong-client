@@ -243,9 +243,9 @@ export default {
     async created() {
         // 테스트용 임시 데이터
         this.images = [
-            { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/0dac11a7-7643-4fd0-a591-e6fb84ed7796inong1", "alt": "배너사진1", "link": "/event1" },
-            { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/7b389588-8eda-4eee-9502-703efca9d648inong2", "alt": "배너사진2", "link": "/event2" },
-            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/local/_+(3).jpeg", "alt": "배너사진3", "link": "/event2" },
+            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/0dac11a7-7643-4fd0-a591-e6fb84ed7796inong1", "alt": "배너사진1", "link": "/event1" },
+            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/7b389588-8eda-4eee-9502-703efca9d648inong2", "alt": "배너사진2", "link": "/event2" },
+            { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/a591fdfe-4151-4b7f-932a-d5afff886ae5banner2", "alt": "배너사진3", "link": "/event2" },
             // { "src:": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/local/desktop+wallpaper.jpeg", "alt": "배너사진4", "link": "/event2" },
             // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/local/desktop+wallpaper.jpeg", "alt": "배너사진5", "link": "/event2" }
         ];

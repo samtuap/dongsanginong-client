@@ -14,7 +14,7 @@
                                 class="card-outer">
                                 <div style="padding-bottom: 30px;">
                                     <v-img class="favorite-farm-img" style="width:190px; height:190px;"
-                                        @click="this.$router.push(`/farm/${farm.id}`)" :src="farm.imageUrl"
+                                        @click="this.$router.push(`/farm/${farm.id}/packages`)" :src="farm.imageUrl"
                                         alt="Farm 썸네일" cover />
                                 </div>
 

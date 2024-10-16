@@ -1,14 +1,5 @@
 <template>
     <v-container style="max-width: 95%;">
-        <!-- Header Text -->
-        <!-- <v-row justify="center" style="margin-top: 10px; margin-bottom: 5px;">
-            <h4>{{this.farmName}}</h4> &nbsp;&nbsp;
-            <div style="text-align: center;">
-                <v-chip class="like-chip" size="small" color="deep_orange">
-                    💛 {{ this.favoriteCount }}
-                </v-chip>
-            </div>
-        </v-row> -->
         <!-- Image Banner -->
         <v-row justify="center">
             <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" style="margin-top: 10px; height:400px; width:100%;" contain></v-img>
@@ -32,25 +23,17 @@
         <v-row justify="center" class="mt-5 menubar" style="line-height: 15px;">
             <v-col cols="3" class="text-center">
                 <span
-                @click="this.$router.push(`/farm/${farmId}`)"
-                class="nav-link"
-                :class="{ 'selected-menu': this.currentMenu === 1 }"
-                style="cursor: pointer;"
-                >농장 소개</span>
-            </v-col>
-            <v-col cols="3" class="text-center">
-                <span
                 @click="this.$router.push(`/farm/${farmId}/packages`)"
                 class="nav-link"
-                :class="{ 'selected-menu': this.currentMenu === 2 }"
-                style="cursor: pointer;"
+                :class="{ 'selected-menu': this.currentMenu === 1 }"
+                style="cursor: pointer; margin-right: 66%;"
                 >패키지 보기</span>
             </v-col>
             <v-col cols="3" class="text-center">
                 <span
                 @click="this.$router.push(`/farm/${farmId}/notice/list`)"
                 class="nav-link"
-                :class="{ 'selected-menu': this.currentMenu === 3 }"
+                :class="{ 'selected-menu': this.currentMenu === 2 }"
                 style="cursor: pointer;"
                 >농장 공지</span>
             </v-col>
@@ -58,8 +41,8 @@
                 <span
                 @click="this.$router.push(`/farm/${farmId}/reviews`)"
                 class="nav-link"
-                :class="{ 'selected-menu': this.currentMenu === 4 }"
-                style="cursor: pointer;"
+                :class="{ 'selected-menu': this.currentMenu === 3 }"
+                style="cursor: pointer; margin-left: 60%;"
                 >상품 후기</span>
             </v-col>
         </v-row>
@@ -67,7 +50,7 @@
         <v-row justify="center" class="menu-border">
             <div
                 v-if="currentMenu"
-                :style="{ left: (currentMenu - 1) * 25 + '%', width: '25%' }"
+                :style="{ left: (currentMenu - 1) * 33.33 + '%', width: '33.33%' }"
                 class="menu-highlight"
             ></div>
         </v-row>

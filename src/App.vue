@@ -52,7 +52,7 @@ export default {
 /* 나눔 스퀘어 */
 @import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
 .font-style {
-  font-family: 'https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css';
+  font-family: 'NanumBarunGothic';
 }
 </style>
 

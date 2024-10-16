@@ -1,19 +1,18 @@
 <template>
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
+        <h3 style="margin-right: 74%;">결제 내역 조회</h3><br>
         <div class="payment-list">
-            <h2>결제 내역 조회</h2>
-            <hr class="horizontal-divider" />
             <div class="table-wrapper">
                 <table>
                     <thead>
-                        <tr>
-                            <th>주문 상품</th>
-                            <th>주문 농장</th>
-                            <th>결제일</th>
-                            <th>결제 수단</th>
-                            <th>결제 금액</th>
-                            <th>결제 영수증</th>
+                        <tr style="font-size: 15px;">
+                            <th style="font-weight: 400; color: black;">주문 상품</th>
+                            <th style="font-weight: 400; color: black;">주문 농장</th>
+                            <th style="font-weight: 400; color: black;">결제일</th>
+                            <th style="font-weight: 400; color: black;">결제 수단</th>
+                            <th style="font-weight: 400; color: black;">결제 금액</th>
+                            <th style="font-weight: 400; color: black;">결제 영수증</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,7 +104,7 @@ export default {
 
 <style scoped>
 .member-page {
-    margin-left: 200px;
+    background-color: #F3F3F3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -121,12 +120,11 @@ h2 {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 40px;
-    width: 1000px;
+    padding: 10px 40px;
+    width: 905px;
     min-height: 650px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    margin-left: 20%;
+    background-color: white;
 }
 
 .table-wrapper {
@@ -139,6 +137,10 @@ table {
     table-layout: fixed; 
     border-collapse: separate;
     border-spacing: 0 20px;
+}
+
+th {
+    border-bottom: 1px solid #ddd;
 }
 
 th, td {
@@ -176,6 +178,7 @@ th, td {
 }
 
 .receipt-icon {
+    background-color: #e7e782;
     width: 24px;
     height: 24px;
 }
