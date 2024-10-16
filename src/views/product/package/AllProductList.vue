@@ -28,13 +28,13 @@
                                         위시리스트 담기
                                     </v-btn>
                                     <v-card-text style="padding-left: 0px;">
-                                        <span style="font-weight: bold;" v-if="pkg.packageName.length > 10"> {{
+                                        <span style="" v-if="pkg.packageName.length > 10"> {{
                                             pkg.packageName.substring(0, 10)
                                         }}... </span>
-                                        <span style="font-weight: bold; font-size:large;" v-else> {{ pkg.packageName
+                                        <span style="font-size:medium; font-weight: 400;" v-else> {{ pkg.packageName
                                             }}</span>
                                         <br />
-                                        <span style="color:darkgreen; font-weight: bold; font-size:medium;"> {{
+                                        <span style="color:darkgreen; font-size:medium;"> {{
                                             formatPrice(pkg.price) }} </span>
                                         <br />
                                         <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
@@ -101,12 +101,12 @@
                             위시리스트 담기
                         </v-btn>
                         <v-card-text style="padding-left: 0px;">
-                            <span style="font-weight: bold;" v-if="pkg.packageName.length > 10"> {{
+                            <span style="font-size:medium; font-weight: 400;" v-if="pkg.packageName.length > 10"> {{
                                 pkg.packageName.substring(0, 10)
                             }}... </span>
-                            <span style="font-weight: bold; font-size:large;" v-else> {{ pkg.packageName }}</span>
+                            <span style="font-size:medium; font-weight: 400;" v-else> {{ pkg.packageName }}</span>
                             <br />
-                            <span style="color:darkgreen; font-weight: bold; font-size:medium;"> {{
+                            <span style="color:darkgreen; font-size:medium;"> {{
                                 formatPrice(pkg.price) }} </span>
                             <br />
                             <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
