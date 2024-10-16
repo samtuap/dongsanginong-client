@@ -4,13 +4,13 @@
         <div class="member-change-address">
             <h2>주소지 변경</h2>
             <hr class="horizontal-divider" />
-            <form @submit.prevent="onSubmit">
+            <form @submit.prevent="onSubmit_address">
                 <div class="form-group">
                     <label for="zipcode">우편번호</label>
                     <input type="text" id="zipcode" v-model="zipcode" placeholder="우편번호를 입력하세요 (ex. 12345)" required />
                 </div>
 
-                <input type="button" class="find-postal" @click="execDaumPostcode" value="우편번호 찾기" />
+                <input type="button" class="find-postal" @click="execDaumPostcode_address" value="우편번호 찾기" />
 
                 <div class="form-group">
                     <label for="address">주소</label>
@@ -34,18 +34,18 @@
         </div>
     </div>
 
-    <v-dialog v-model="alertModal" max-width="300px">
+    <v-dialog v-model="alertModal_address" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center; height: 130px; padding-bottom: 20px; 
         overflow-y: hidden;">
-            <v-card-text style="margin-bottom:5px">{{ modalMessage }}</v-card-text>
-            <v-btn @click="handleAlertClose" class="submit-btn" style="border-radius: 50px; width: 100px">close</v-btn>
+            <v-card-text style="margin-bottom:5px">{{ modalMessage_address }}</v-card-text>
+            <v-btn @click="handleAlertClose_address" class="submit-btn" style="border-radius: 50px; width: 100px">close</v-btn>
         </v-card>
     </v-dialog>
 
     <v-dialog v-model="errorModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center;">
             <v-card-text>주소지 변경 중 오류가 발생했습니다. <br /> 다시 시도해주세요.</v-card-text>
-            <v-btn @click="handleCloseErrorModal" class="submit-btn" width="100px">close</v-btn>
+            <v-btn @click="handleCloseErrorModal_address" class="submit-btn" width="100px">close</v-btn>
         </v-card>
     </v-dialog>
 </template>
@@ -60,7 +60,7 @@ export default {
     },
     data() {
         return {
-            memberInfo: {
+            memberInfo_address: {
                 phone: '',
                 address: '',
                 addressDetail: '',
@@ -69,43 +69,43 @@ export default {
             zipcode: '',
             address: '',
             addressDetail: '',
-            alertModal: false,
+            alertModal_address: false,
             errorModal: false,
-            modalMessage: '',
-            loading: false
+            modalMessage_address: '',
+            loading_address: false
         };
     },
     methods: {
-        async fetchMemberInfo() {
-            this.loading = true;
+        async fetchMemberInfo_address() {
+            this.loading_address = true;
             try {
                 const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/member-info`);
-                this.memberInfo = response.data;
+                this.memberInfo_address = response.data;
             } catch (error) {
                 console.log(error);
             } finally {
-                this.loading = false;
+                this.loading_address = false;
             }
         },
-        handleAlertClose() {
-            this.alertModal = false;
-            if (this.modalMessage === "주소지가 변경되었습니다.") {
+        handleAlertClose_address() {
+            this.alertModal_address = false;
+            if (this.modalMessage_address === "주소지가 변경되었습니다.") {
                 window.location.reload();
             }
         },
-        handleCloseErrorModal() {
+        handleCloseErrorModal_address() {
             this.errorModal = false;
         },
-        async onSubmit() {
+        async onSubmit_address() {
             // 입력값 검증
             if (!this.zipcode || !this.address || !this.addressDetail) {
-                this.modalMessage = "모든 주소 정보를 입력해 주세요."; // 에러 메시지 설정
+                this.modalMessage_address = "모든 주소 정보를 입력해 주세요."; // 에러 메시지 설정
                 this.errorModal = true; // 에러 모달 띄우기
                 return; // 함수 종료
             }
 
             const addressData = {
-                phone: this.memberInfo.phone,
+                phone: this.memberInfo_address.phone,
                 zipcode: this.zipcode,
                 address: this.address,
                 addressDetail: this.addressDetail
@@ -113,15 +113,15 @@ export default {
 
             try {
                 await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/update-info`, addressData);
-                this.modalMessage = "주소지가 변경되었습니다.";
-                this.alertModal = true;
+                this.modalMessage_address = "주소지가 변경되었습니다.";
+                this.alertModal_address = true;
             } catch (error) {
                 console.error("주소지 변경 실패:", error);
-                this.modalMessage = "주소지 변경에 실패했습니다.";
+                this.modalMessage_address = "주소지 변경에 실패했습니다.";
                 this.errorModal = true; // 에러 모달 띄우기
             }
         },
-        execDaumPostcode() {
+        execDaumPostcode_address() {
             if (this.daum) {
                 new this.daum.Postcode({
                     oncomplete: (data) => {
@@ -138,7 +138,7 @@ export default {
         }
     },
     mounted() {
-        this.fetchMemberInfo(); // Fetch member info to populate fields
+        this.fetchMemberInfo_address(); // Fetch member info to populate fields
         const script = document.createElement('script');
         script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
         script.onload = () => {

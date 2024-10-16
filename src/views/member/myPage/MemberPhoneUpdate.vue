@@ -10,34 +10,91 @@
 
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
+        <h3 style="margin-right: 76%;">내 정보 수정</h3><br>
         <div class="member-info">
-            <h2>전화번호 수정</h2>
-            <hr class="horizontal-divider" />
-
-            <div class="info-container">
-                <div class="label" style="padding-bottom: 20px;">
-                    <label>현재 전화번호</label>
-                    <label>새 전화번호</label>
+            <!-- 전화번호 수정 -->
+            <div class="number-container">
+                <br>
+                <div style="font-weight: 700; margin-left: 6%; font-size: 17px;"> <i class="mdi mdi-phone" style="font-size: 18px;"></i>
+                    &nbsp;전화번호 변경
                 </div>
-
-                <div class="divider"></div>
-
-                <div class="value">
-                    <input type="text" v-model="currentPhone" placeholder="현재 전화번호를 입력하세요." class="form-input" />
-                    <input type="text" v-model="newPhone" placeholder="새 전화번호를 입력하세요." class="form-input" />
+                <br>
+                <div class="label" style="padding-bottom: 20px;">
+                    <div class="form-group">
+                        <label style="font-size: 16px; font-weight: 400; margin-left: 10%;">현재 전화번호&nbsp;&nbsp;&nbsp;</label>
+                        <input type="password" v-model="currentPhone" placeholder="현재 전화번호를 입력하세요." />
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 16px; font-weight: 400; margin-left: 10%;">&nbsp;&nbsp;&nbsp;새 전화번호&nbsp;&nbsp;&nbsp;</label>
+                        <input type="password" v-model="newPhone" placeholder="새 전화번호를 입력하세요."/>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="update-container">
+                        <button class="update-button" @click="handleUpdatePhone">전화번호 수정하기</button>
+                    </div>
                 </div>
             </div>
-
+            <br>
             <hr class="horizontal-divider" />
 
-            <div class="footer">
-                <div class="update-container">
-                    <button class="update-button" @click="handleUpdatePhone">전화번호 수정하기</button>
+            <!-- 주소지 변경 -->
+            <div class="address-container">
+                <div style="font-weight: 700; margin-left: 8%; font-size: 17px;"> <i class="mdi mdi-home" style="font-size: 18px;"></i>
+                    &nbsp;주소지 변경
                 </div>
+                <br>
+                <form @submit.prevent="onSubmit_address">
+                    <div class="form-group">
+                        <label for="zipcode" style="font-size: 16px; font-weight: 400; margin-left: 14%;">우편번호 &nbsp;&nbsp;&nbsp;</label>
+                        <input type="text" id="zipcode" v-model="zipcode" placeholder="우편번호를 입력하세요 (ex. 12345)" required />
+                    </div>
+                    <div class="form-group">
+                        <input type="button" class="find-postal" @click="execDaumPostcode_address" value="우편번호 찾기" />
+                    </div>
+                    <!-- <input type="button" class="find-postal" @click="execDaumPostcode_address" value="우편번호 찾기" /> -->
+
+                    <div class="form-group">
+                        <label for="address" style="font-size: 16px; font-weight: 400; margin-left: 14%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            주소&nbsp;&nbsp;&nbsp;
+                        </label>
+                        <input type="text" id="address" v-model="address" placeholder="도로명 주소를 입력하세요 (ex. 서울시 노원구)"
+                            required />
+                    </div>
+                    <div class="form-group">
+                        <label for="address-detail" style="font-size: 16px; font-weight: 400; margin-left: 14%;">상세 주소&nbsp;&nbsp;&nbsp;</label>
+                        <input type="text" id="address-detail" v-model="addressDetail" placeholder="상세 주소를 입력하세요 (ex. 101호)"
+                            required ref="addressDetail" />
+                    </div>
+
+                    <div class="footer">
+                        <div class="update-container" style="margin-top: 20px;">
+                            <button type="submit" class="update-button">주소지 변경하기</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <!-- 주소지 변경 완료 모달 -->
+    <v-dialog v-model="alertModal_address" max-width="300px">
+        <v-card class="modal" style="align-items: center; text-align: center; height: 130px; padding-bottom: 20px; 
+        overflow-y: hidden;">
+            <v-card-text style="margin-bottom:5px">{{ modalMessage_address }}</v-card-text>
+            <v-btn @click="handleAlertClose_address" class="submit-btn" style="border-radius: 50px; width: 100px">확인</v-btn>
+        </v-card>
+    </v-dialog>
+
+    <!-- 주소지 변경 에러 모달 -->
+    <v-dialog v-model="errorModal" max-width="300px">
+        <v-card class="modal" style="align-items: center; text-align: center;">
+            <v-card-text>주소지 변경 중 오류가 발생했습니다. <br /> 다시 시도해주세요.</v-card-text>
+            <v-btn @click="handleCloseErrorModal_address" class="submit-btn" width="100px">확인</v-btn>
+        </v-card>
+    </v-dialog>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -59,10 +116,27 @@ export default {
             newPhone: '',
             loading: false,
             alertModal: false,
-            modalMessage: ''
+            modalMessage: '',
+
+            // 주소지 변경 
+            memberInfo_address: {
+                phone: '',
+                address: '',
+                addressDetail: '',
+                zipcode: ''
+            },
+            zipcode: '',
+            address: '',
+            addressDetail: '',
+            alertModal_address: false,
+            errorModal: false,
+            modalMessage_address: '',
+            loading_address: false,
+            daum: null
         };
     },
     methods: {
+        // 전화번호 변경
         async fetchMemberInfo() {
             this.loading = true;
             try {
@@ -101,79 +175,89 @@ export default {
                 }
             }
             this.alertModal = true;
+        },
+        // 주소지 변경 
+        async fetchMemberInfo_address() {
+            this.loading_address = true;
+            try {
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/member-info`);
+                this.memberInfo_address = response.data;
+            } catch (error) {
+                console.log(error);
+            } finally {
+                this.loading_address = false;
+            }
+        },
+        handleAlertClose_address() {
+            this.alertModal_address = false;
+            if (this.modalMessage_address === "주소지가 변경되었습니다.") {
+                window.location.reload();
+            }
+        },
+        handleCloseErrorModal_address() {
+            this.errorModal = false;
+        },
+        async onSubmit_address() {
+            // 입력값 검증
+            if (!this.zipcode || !this.address || !this.addressDetail) {
+                this.modalMessage_address = "모든 주소 정보를 입력해 주세요."; // 에러 메시지 설정
+                this.errorModal = true; // 에러 모달 띄우기
+                return; // 함수 종료
+            }
+
+            const addressData = {
+                phone: this.memberInfo_address.phone,
+                zipcode: this.zipcode,
+                address: this.address,
+                addressDetail: this.addressDetail
+            };
+
+            try {
+                await axios.patch(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/update-info`, addressData);
+                this.modalMessage_address = "주소지가 변경되었습니다.";
+                this.alertModal_address = true;
+            } catch (error) {
+                console.error("주소지 변경 실패:", error);
+                this.modalMessage_address = "주소지 변경에 실패했습니다.";
+                this.errorModal = true; // 에러 모달 띄우기
+            }
+        },
+        execDaumPostcode_address() {
+            if (this.daum) {
+                new this.daum.Postcode({
+                    oncomplete: (data) => {
+                        this.zipcode = data.zonecode;
+                        this.address = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+                        this.$nextTick(() => {
+                            this.$refs.addressDetail.focus();
+                        });
+                    }
+                }).open();
+            } else {
+                console.error("주소지 변경에 실패했습니다. 다시 시도해주세요.");
+            }
         }
     },
     mounted() {
+        // 전화번호 변경 
         this.fetchMemberInfo();
+
+        // 주소지 변경
+        this.fetchMemberInfo_address();
+        const script = document.createElement('script');
+        script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+        script.onload = () => {
+            this.daum = window.daum;
+        };
+        document.body.appendChild(script);
     }
 };
 </script>
 
+
 <style scoped>
-h2 {
-    margin-bottom: 10px;
-}
-
-.modal {
-    position: fixed;
-    top: -100px;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 40px;
-    border-radius: 5px;
-    width: 500px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.modal-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.form-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-}
-
-.modal-title+p {
-    margin-bottom: 20px;
-}
-
-.error-message {
-    color: red;
-    margin-bottom: 10px;
-}
-
-.form-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-}
-
 .member-page {
-    margin-left: 200px;
+    background-color: #F3F3F3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -185,60 +269,17 @@ h2 {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 40px;
-    width: 1000px;
-    height: 650px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px 40px;
+    width: 905px;
+    min-height: 650px;
+    margin-left: 20%;
+    background-color: white;
 }
 
-.header {
-    margin-bottom: 20px;
-}
-
-.info-container {
-    display: grid;
-    grid-template-columns: 4fr auto 6fr;
-    gap: 20px;
-    align-items: center;
-    width: 100%;
-    flex-grow: 1;
-}
-
-.label {
-    font-weight: 900;
-    font-size: large;
-    display: flex;
-    color: #4a4a4a;
-    flex-direction: column;
-    height: 100%;
-    text-align: left;
-    justify-content: space-evenly;
-    align-items: flex-start;
-    padding-left: 130px;
-    width: fit-content;
-}
-
-.value {
+.number-container {
     display: flex;
     flex-direction: column;
-    height: 78%;
-    justify-content: space-evenly;
-    text-align: left;
-    padding-left: 80px;
-    padding-right: 70px;
-}
-
-.value p {
-    margin: 0;
-}
-
-.horizontal-divider {
-    width: 100%;
-    border: none;
-    border-top: 1px solid #ccc;
-    margin: 20px 0;
+    justify-content: flex-start;
 }
 
 .footer {
@@ -254,20 +295,15 @@ h2 {
 }
 
 .update-button {
+    margin-top: -10px;
+    margin-right: 12%;
     background-color: #BCC07B;
     color: black;
     padding: 10px 20px;
     border: none;
     border-radius: 50px;
     cursor: pointer;
-    font-size: 16px;
-}
-
-.divider {
-    width: 100%;
-    border: none;
-    border-top: 1px solid #ccc;
-    margin: 20px 0;
+    font-size: 15px;
 }
 
 .submit-btn {
@@ -276,5 +312,51 @@ h2 {
     background-color: #BCC07B;
     color: black;
     border-radius: 50px;
+}
+
+/* 주소지 변경 스타일 */
+.address-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px 0;
+}
+
+.form-group {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+input {
+    width: 65%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 50px;
+}
+
+input[type="button"].find-postal {
+    padding: 10px;
+    background-color: #FFE2A6;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px; 
+    font-weight: 400; 
+    margin-left: 23%;
+}
+
+input.find-postal:hover {
+    background-color: #FFD68B;
+}
+
+.horizontal-divider {
+    width: 100%;
+    border: none;
+    border-top: 3px solid #ededed;
+    margin: 20px 0;
 }
 </style>
