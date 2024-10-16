@@ -294,12 +294,7 @@ export default {
 .search-icon:hover {
     cursor: pointer;
     transition: color 0.3s ease;
-}
-
-.package-card {
-    /* border-radius: 10px; */
-    /* 카드 경계선 둥글게 유지 */
-}
+}git
 
 .package-image {
     object-fit: cover;
