@@ -47,7 +47,7 @@
                 <form @submit.prevent="onSubmit_address">
                     <div class="form-group">
                         <label for="zipcode" style="font-size: 16px; font-weight: 400; margin-left: 14%;">우편번호 &nbsp;&nbsp;&nbsp;</label>
-                        <input type="text" id="zipcode" v-model="zipcode" placeholder="우편번호를 입력하세요 (ex. 12345)" required />
+                        <input type="text" id="zipcode" v-model="zipcode" placeholder="우편번호를 입력하세요 (ex. 12345)" required readonly/>
                     </div>
                     <div class="form-group">
                         <input type="button" class="find-postal" @click="execDaumPostcode_address" value="우편번호 찾기" />
@@ -59,7 +59,7 @@
                             주소&nbsp;&nbsp;&nbsp;
                         </label>
                         <input type="text" id="address" v-model="address" placeholder="도로명 주소를 입력하세요 (ex. 서울시 노원구)"
-                            required />
+                            required readonly/>
                     </div>
                     <div class="form-group">
                         <label for="address-detail" style="font-size: 16px; font-weight: 400; margin-left: 14%;">상세 주소&nbsp;&nbsp;&nbsp;</label>
