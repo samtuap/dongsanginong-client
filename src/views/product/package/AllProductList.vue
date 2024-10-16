@@ -294,7 +294,7 @@ export default {
 .search-icon:hover {
     cursor: pointer;
     transition: color 0.3s ease;
-}git
+}
 
 .package-image {
     object-fit: cover;
