@@ -315,11 +315,13 @@ export default {
                 }
 
                 const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
-                const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 } });
+                const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0, size: 10 } });
 
 
                 this.salesData = resData.data;
-                this.salesList = resList.data;
+                this.salesList = resList.data.content;
+                
+                console.log(this.salesList);
 
                 console.log(this.salesData);
                 console.log(this.salesList);
