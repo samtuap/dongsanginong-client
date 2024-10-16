@@ -15,7 +15,7 @@
           </div>
           <div v-if="isPublisher && selectedMessageIndex === index" class="dropdown-menu">
             <!-- memberId 또는 sellerId 중 하나를 선택하여 전달 -->
-            <button @click.stop="kickUser(message.memberId, message.sellerId)" class="dropdown-item">
+            <button @click.stop="openKickConfirmModal(message)" class="dropdown-item">
               강퇴하기
             </button>
           </div>
@@ -40,6 +40,15 @@
         <button @click="closeKickSuccessModal">닫기</button>
       </div>
     </div>
+
+    <div v-if="kickConfirmModalVisible" class="modal">
+      <div class="modal-content">
+        <p>정말로 강퇴하시겠습니까?</p>
+        <button @click="confirmKick" class="submit-btn">확인</button>
+        <button @click="closeKickConfirmModal" class="submit-btn">취소</button>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -76,6 +85,9 @@ export default {
       isKicked: false,
       selectedMessageIndex: null, // 선택한 메시지 인덱스
       kickSuccessModalVisible: false,
+      kickConfirmModalVisible: false,
+      messageToKick: null,
+      kickedUserIds: [],
     };
   },
   async mounted() {
@@ -231,6 +243,30 @@ export default {
       }
     },
 
+    openKickConfirmModal(message) {
+      this.messageToKick = message;
+      this.kickConfirmModalVisible = true;
+      this.selectedMessageIndex = null;
+    },
+
+    closeKickConfirmModal() {
+      this.kickConfirmModalVisible = false;
+      this.messageToKick = null;
+    },
+
+    confirmKick() {
+      if (this.messageToKick) {
+        this.kickUser(this.messageToKick.memberId, this.messageToKick.sellerId);
+        this.kickConfirmModalVisible = false;
+        this.selectedMessageIndex = null;
+      }
+    },
+
+    isUserKicked(message) {
+      const userId = message.memberId || message.sellerId;
+      return this.kickedUserIds.includes(userId);
+    },
+
     // userId과 sellerId를 함께 받아 적절한 userId 설정
     kickUser(memberId, sellerId) {
       const userId = memberId !== null ? memberId : sellerId;
@@ -312,6 +348,7 @@ export default {
 .message-item {
   margin-bottom: 10px;
   cursor: pointer;
+  position: relative;
 }
 
 .chat-input {
@@ -400,6 +437,21 @@ export default {
 }
 
 .modal button:hover {
+  background-color: #a8b05b;
+}
+
+.submit-btn {
+  margin-left: 10px;
+  margin-top: 8px;
+  background-color: #bcc07b;
+  color: black;
+  border-radius: 50px;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
   background-color: #a8b05b;
 }
 </style>
