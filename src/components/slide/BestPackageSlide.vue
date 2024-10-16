@@ -7,7 +7,7 @@
                     <img :src="item.imageUrl" alt="item image" class="item-img" />
                     <div class="item-info">
                         <h2>{{ item.packageName }}</h2>
-                        <p>{{ item.price }}원</p>
+                        <p>{{ getAmountWithFormat(item.price) }}원</p>
                     </div>
                 </div>
             </div>
@@ -42,6 +42,18 @@ export default {
                 this.currentSlide = (this.currentSlide + 1) % this.totalPages;  // Move to next page
             }, 5000); // Change slide every 3 seconds
         },
+        getAmountWithFormat(amount) {
+            let ret = "";
+            let i = 0;
+            amount = String(amount);
+            for(i=0; i<amount.length; i++) {
+                ret = String(amount[amount.length - i - 1]) + ret;
+                if(i % 3 == 2 && i != amount.length-1) {
+                    ret = ',' + ret
+                }
+            }
+            return ret;
+        }
     },
 };
 </script>
