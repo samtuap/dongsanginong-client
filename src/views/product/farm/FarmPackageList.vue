@@ -1,5 +1,5 @@
 <template>
-    <FarmMenuComponent :currentMenu="2"/>
+    <FarmMenuComponent :currentMenu="1"/>
     <br>
     <v-container style="max-width: 1200px;"> 
       <!-- 에러 메시지 출력 -->

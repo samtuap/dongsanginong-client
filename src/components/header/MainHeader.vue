@@ -3,18 +3,18 @@
         <v-container class="bar" fluid>
             <v-row no-gutters class="flex-nowrap justify-space-between">
                 <!-- Left-aligned buttons -->
-                <v-col class="d-flex justify-start">
+                <v-col class="d-flex justify-start" style="margin-top: 6px;">
                     <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
                     <v-btn :to="{ path: '/live/list' }" style="text-transform: none;">Live</v-btn>
                     <v-btn :to="{ path: '/product' }" style="text-transform: none;">Package</v-btn>
                 </v-col>
                 <v-col class="text-center">
-                    <v-btn :to="{ path: '/' }" color="white">
-                        <img src="/inongLogo.png" width=175 alt="Logo" class="main-logo-image" />
+                    <v-btn :to="{ path: '/' }" color="white" style="margin-top: 3%;">
+                        <img src="/123.png" width=110 alt="Logo" class="main-logo-image" />
                     </v-btn>
                 </v-col>
                 <!-- Right-aligned buttons -->
-                <v-col class="d-flex justify-end">
+                <v-col class="d-flex justify-end" style="margin-top: 6px;">
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
                         v-if="!isSeller && isLogin">Mypage</v-btn>
                     <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">MyFarm</v-btn>

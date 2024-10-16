@@ -1,5 +1,5 @@
 <template>
-  <FarmMenuComponent :currentMenu="4" />
+  <FarmMenuComponent :currentMenu="3" />
     <br><br>
     <div class="review-container">
       <h4 class="review-header" style="margin-left: 30px;">전체 리뷰({{ reviews.length }})</h4>

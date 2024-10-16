@@ -1,6 +1,6 @@
 <template>
     <FarmMenuComponent
-    :currentMenu="3" />
+    :currentMenu="2" />
     <v-container>
         <v-row justify="center">
             <v-col cols="12" sm="8" md="6" lg="8">

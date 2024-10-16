@@ -1,17 +1,26 @@
 <template>
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
+        <h3 style="margin-right: 74%;">배송 내역 조회</h3><br>
+        <div style="margin-left: 20%; border: 1px solid #bbb; width: 905px;">
+            <div class="steps">
+                <div class="step" v-for="(step, index) in steps" :key="index"
+                    :class="{ completed: index >= completedStep }">
+                    <img :src="step.icon" :alt="step.label" class="icon" style="margin: 0px 70px;"/>
+                    <p>{{ step.label }}</p>
+                </div>
+            </div>
+        </div>
+        <br>
         <div class="delivery-list">
-            <h2>배송 내역 조회</h2>
-            <hr class="horizontal-divider" />
             <div class="table-wrapper">
                 <table>
                     <thead>
-                        <tr>
-                            <th>주문 상품</th>
-                            <th>주문 농장</th>
-                            <th>배송 일자</th>
-                            <th>배송 현황</th>
+                        <tr style="font-size: 15px;">
+                            <th style="font-weight: 400; color: black;">주문 상품</th>
+                            <th style="font-weight: 400; color: black;">주문 농장</th>
+                            <th style="font-weight: 400; color: black;">배송 일자</th>
+                            <th style="font-weight: 400; color: black;">배송 현황</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -24,7 +33,7 @@
                             <td>{{ formatDate(delivery.deliveryAt) }}</td>
                             <td @click="openDeliveryStatus(delivery.deliveryStatus, delivery.trackingData)"
                                 class="delivery-status">
-                                <span style="cursor: pointer;">
+                                <span style="cursor: pointer; background-color: #FFE2A6; padding: 3px; border-radius: 10px;">
                                     {{ formatDeliveryStatus(delivery.deliveryStatus) }}
                                 </span>
                             </td>
@@ -199,7 +208,8 @@ export default {
 
 <style scoped>
 .member-page {
-    margin-left: 200px;
+    background-color: #F3F3F3;
+    /* margin-left: 200px; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -207,25 +217,23 @@ export default {
     flex-direction: column;
 }
 
-h2 {
-    margin-bottom: 10px;
-}
-
 .delivery-list {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 40px;
-    width: 1000px;
+    padding: 10px 40px;
+    width: 905px;
     min-height: 650px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    /* border: 1px solid #ddd; */
+    /* border-radius: 8px; */
+    margin-left: 20%;
+    background-color: white;
+    /* box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); */
 }
 
 .table-wrapper {
     flex: 1;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 table {
@@ -236,19 +244,23 @@ table {
     border-spacing: 0 20px;
 }
 
+th {
+    border-bottom: 1px solid #ddd;
+}
+
 th,
 td {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    height: 50px;
+    height: 40px;
 }
 
 .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
+    margin: 8px 0;
     min-height: 50px;
 }
 
@@ -289,8 +301,8 @@ tbody td {
 .horizontal-divider {
     width: 100%;
     border: none;
-    border-top: 1px solid #ccc;
-    margin: 20px 0 10px;
+    border-top: 3px solid #e9e9e9;
+    margin-top: 10px;
 }
 
 .modal {
@@ -366,7 +378,7 @@ tbody td {
 }
 
 .close-btn {
-    background-color: #BCC07B;
+    background-color: white;
     color: black;
     border-radius: 50px;
     padding: 10px 15px;
