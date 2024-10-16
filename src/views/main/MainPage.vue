@@ -6,134 +6,45 @@
         </v-carousel-item>
     </v-carousel>
 
-    <!-- 인기 패키지 -->
-     <br>
-    <v-container>
-        <!-- 제목 -->
-        <v-col cols="12">
-            <div class="text-center" style="font-size: 23px; font-weight: bold;">
-                🏆 패키지 실시간 인기 랭킹 🏆
-            </div>
-            <p class="text-center" style="color: grey; font-size: 16px;">가장 인기있는 상품만 모아보세요!</p>
-        </v-col>
-
-        <!-- 상품 슬라이드 -->
-         <br>
-        <v-window v-model="onboarding" style="width: 1080px; margin: auto;">
-            <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
-            <v-window-item v-for="n in packageWindowCount" :key="`window-${n}`" :value="n">
-                <div class="d-flex">
-                    <div v-for="(packageProduct, index) in paginatedPackages(n)" :key="index" style="margin-left: 50px;"
-                        class="card-outer">
-                        <div style="padding-bottom: 30px;">
-                            <div class="package-img-box">
-                                <v-img class="package-img" :src="packageProduct.imageUrl"
-                                    @click="this.$router.push(`/package/${packageProduct.id}`)" alt="Farm 썸네일" cover />
-                            </div>
-                        </div>
-                        <div style="display: flex; width: 190px;">
-                            <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">{{ 4 * (n - 1) +
-                                index + 1 }}</div>
-                            <!-- 패키지 이름 -->
-                            <p v-if="packageProduct.packageName.length > 50" style="font-size: 13px; font-weight: 500;">
-                                {{
-                                    packageProduct.packageName.substring(0, 50) }}... </p>
-                            <p v-else style="font-size: 15px; font-weight: 500;"> {{ packageProduct.packageName }}</p>
-                        </div>
-
-                        <div style="width: 190px;">
-                            <p style="font-weight: 500; opacity: 0.5; font-size: small; margin-left: 27px;">{{
-                                packageProduct.price }}
-                                <span style="color: black; "> 원</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </v-window-item>
-        </v-window>
-        <v-card-actions style="justify-content: center; margin-top: -20px;">
-            <v-item-group v-model="onboarding" class="text-center" mandatory>
-                <v-item v-for="n in packageWindowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
-                    <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
-                        @click="toggle"></v-btn>
-                </v-item>
-            </v-item-group>
-        </v-card-actions>
-        <!-- 전체보기 버튼 -->
-        <v-col cols="12" class="text-center" style="margin-top: -20px;">
-            <v-btn color="#FFFFFF" @click="this.$router.push('package')" style="border-radius: 50px;">
-                🥦 패키지 전체보기
-            </v-btn>
-        </v-col>
-    </v-container>
-    <!-- 인기 패키지 끝 -->
-
 
     <!-- 인기 농장 -->
-     <br>
+    <br>
     <v-container class="farm-container">
         <!-- 제목 -->
         <v-col cols="12">
-            <div class="text-center" style="font-size: 23px; font-weight: bold;">
-                🏠 실시간 인기 농장 🏠
+            <div class="text-center slide-title" @click="this.$router.push('/farm')">
+                🏠 Farm Best 9 🏠
+                <v-icon icon="mdi-chevron-right" style="font-size: 46px;"/>
             </div>
             <p class="text-center" style="color: grey; font-size: 16px;">즐겨찾기 수가 많은 농장들입니다.</p>
         </v-col>
         <br>
-        <v-window v-model="farmOnboarding" style="width: 1080px; margin: auto;">
-            <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
-            <v-window-item v-for="n in farmWindowCount" :key="`window-${n}`" :value="n">
-                <div style="display:flex">
-                    <div v-for="(farm, index) in paginatedFarm(n)" :key="index" style="margin-left: 50px;"
-                        class="card-outer">
-                        <div style="padding-bottom: 30px;">
-                            <v-img class="farm-img" style="width:190px; height:190px;" :src="farm.imageUrl"
-                                alt="Farm 썸네일" cover />
-                        </div>
 
-                        <div style="display: flex; width: 190px; height: 30px;">
-                            <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">
-                                {{ 4 * (n - 1) + index + 1 }}</div>
-                            <div style="width: 120px;">
-                                <p v-if="farm.farmName.length < 8" style="font-size: 15px; font-weight: 500;"> {{
-                                    farm.farmName }}</p>
-                                <p v-else style="font-size: 15px; font-weight: 500;"> {{ farm.farmName.substring(0, 8)
-                                    }}... </p>
-                            </div>
-
-
-                            <v-chip
-                                :class="{ 'selected-like-chip': this.likes[4 * (n - 1) + index] == 1 || this.likes[4 * (n - 1) + index] == 2 }"
-                                class="like-chip" size="small" color="deep_orange"
-                                @click="clickLike((4 * (n - 1) + index), farm.id)">
-                                💛 {{ likeCount[4 * (n - 1) + index] }}
-                            </v-chip>
-
-                            <!-- 하트 이모지 애니메이션 -->
-                            <div v-if="likes[(4 * (n - 1) + index)] == 2" class="heart-emoji">💛</div>
-                        </div>
-
-                    </div>
-                </div>
-            </v-window-item>
-        </v-window>
-        <v-card-actions style="justify-content: center;  margin-top: -20px;">
-            <v-item-group v-model="farmOnboarding" class="text-center" mandatory>
-                <v-item v-for="n in farmWindowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
-                    <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
-                        @click="toggle"></v-btn>
-                </v-item>
-            </v-item-group>
-        </v-card-actions>
-        <!-- 전체보기 버튼 -->
-        <v-col cols="12" class="text-center" style="margin-top: -20px;">
-            <v-btn color="#FFFFFF" @click="this.$router.push('/farm')" style="border-radius: 50px;">
-                🌾 농장 둘러보기
-            </v-btn>
-        </v-col>
+        <BestFarmSlide />
+        
     </v-container>
     <!-- 인기 농장 끝 -->
 
+
+
+    <!-- 인기 패키지 -->
+    <br>
+    <v-container>
+        <div style="margin-bottom: 40px; padding-top: 50px; display: flex; justify-content: center; border-top: 1px #D5D5D5 solid;">
+            <div>
+                <div class="text-center slide-title"
+                @click="this.$router.push('/product')"
+                >
+                    🥦 Best Packages 🥦 
+                    <v-icon icon="mdi-chevron-right" style="font-size: 46px;"/>
+                </div>
+                <p class="text-center" style="color: grey; font-size: 16px;">가장 많이 팔린 패키지를 주문해보세요. :)</p>
+            </div>
+        </div>
+        <BestPackageSlide />
+
+    </v-container>
+    <!-- 인기 패키지 끝 -->
 
 
     <v-dialog v-model="this.loginModal" max-width="300px">
@@ -170,14 +81,26 @@
 
 </template>
 <script>
+import BestFarmSlide from '@/components/slide/BestFarmSlide.vue';
+import BestPackageSlide from '@/components/slide/BestPackageSlide.vue';
 import axios from 'axios';
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
 export default {
+    components: {
+        BestPackageSlide,
+        BestFarmSlide
+    },
+    icons: {
+        defaultSet: 'mdi',
+        aliases,
+        sets: {
+            mdi,
+        },
+    },
     data() {
         return {
             images: [],
-            items: [],
-            packageWindowCount: 0,
             farmWindowCount: 0,
             onboarding: 1,
             scrollPosition: 0,
@@ -188,20 +111,6 @@ export default {
         }
     },
     methods: {
-        paginatedPackages(page) {
-            // 페이지에 따라 프로젝트를 반환하도록 수정
-            const packagesPerPage = 4;
-            const start = (page - 1) * packagesPerPage;
-            const end = start + packagesPerPage;
-            return this.items.slice(start, end);
-        },
-        paginatedFarm(page) {
-            // 페이지에 따라 프로젝트를 반환하도록 수정
-            const farmsPerPage = 4;
-            const start = (page - 1) * farmsPerPage;
-            const end = start + farmsPerPage;
-            return this.farmList.slice(start, end);
-        },
         saveScrollPosition() {
             this.scrollPosition = window.scrollY;  // 현재 스크롤 위치 저장
         },
@@ -249,36 +158,6 @@ export default {
             // { "src:": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/local/desktop+wallpaper.jpeg", "alt": "배너사진4", "link": "/event2" },
             // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/local/desktop+wallpaper.jpeg", "alt": "배너사진5", "link": "/event2" }
         ];
-
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
-        this.items = response.data;
-        this.packageWindowCount = parseInt(this.items.length / 4) + 1;
-
-        const params = {
-            "page": 0,
-            "size": 10,
-            "sort": "favoriteCount,desc"
-        }
-
-        try {
-            const response2 = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/no-auth`, { params });
-            this.farmList = response2.data.content;
-            this.farmWindowCount = parseInt((this.farmList.length / 4)) + 1;
-
-            this.likes = new Array(this.farmList.length);
-            this.likeCount = new Array(this.farmList.length);
-            for (let i = 0; i < this.farmList.length; ++i) {
-                if (this.farmList[i].isLiked === true) {
-                    this.likes[i] = 1;
-                } else {
-                    this.likes[i] = 0;
-                }
-                this.likeCount[i] = Number(this.farmList[i].favoriteCount);
-            }
-
-        } catch (e) {
-            console.log(e);
-        }
 
 
     },
@@ -351,9 +230,7 @@ export default {
 }
 
 .farm-container {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px #D5D5D5 solid;
+    margin-top: 10px;
 }
 
 .slider-wrapper {
@@ -429,6 +306,13 @@ export default {
 .card-outer:hover {
     box-shadow: 10px 10px #5D5D5D, 0 25px 40px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
     transition: 0.7s ease;
+}
+
+.slide-title {
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+
 }
 
 
