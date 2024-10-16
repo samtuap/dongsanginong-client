@@ -2,48 +2,73 @@
     <v-container class="custom-container">
         <!-- Top 10 패키지 시작 -->
         <v-card style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%;" rounded="0" flat>
-            <v-card-title>Best 10</v-card-title>
-            <v-card-text style="color: gray;">가장 많이 판매된 패키지입니다.</v-card-text>
+            <v-card-title style="font-size: 23px;"> <span style="font-weight: bold;">🏆 BEST 10 </span>
+                <span style="font-size: 15px; color: grey;"> 지금 가장 인기있는 패키지를 만나보세요 ! </span>
+            </v-card-title>
+            <br />
             <div style="display: flex; justify-content: center; align-items:center;">
-                <v-btn icon="mdi-chevron-left" variant="plain" @click="prev"></v-btn>
+                <v-btn icon="mdi-chevron-left" variant="plain" @click="prev" style="margin-bottom: 15%;"></v-btn>
                 <v-window v-model="onboarding" style="width: 1080px;">
                     <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
                     <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n">
                         <v-row class="d-flex justify-center">
                             <v-col v-for="(pkg, index) in paginatedPackages(n)" :key="index" cols="12" md="3"
                                 class="d-flex justify-center">
-                                <v-card variant="text" style="width:190px; height:230px;">
-                                    <v-img class="package-image" width="190px" height="180px" :src="pkg.imageUrl"
-                                        alt="Package 썸네일" cover @click="this.$router.push(`/product/${pkg.id}`)" />
-                                    <v-card-text>
-                                        <span v-if="pkg.packageName.length > 10"> {{ pkg.packageName.substring(0, 10)
-                                            }}... </span>
-                                        <span v-else> {{ pkg.packageName }}</span>
-                                        <v-chip size="small" color="deep_orange">
-                                            💛 {{ pkg.orderCount }}
-                                        </v-chip>
+                                <v-card variant="text" style="width:260px; height:500px;">
+                                    <v-img class="package-image" :src="pkg.imageUrl" alt="Package 썸네일" cover
+                                        @click="this.$router.push(`/product/${pkg.id}`)" style="border-radius: 10px" />
+                                    <v-chip class="d-inline-block"
+                                        style="position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 8px; background-color: rgba(128, 128, 128, 0.9); color: white;">
+                                        {{ pkg.deliveryCycle }}일 주기 배송🚚
+                                    </v-chip>
+                                    <v-btn
+                                        style="width: 100%; margin-top:10px; border: 0.5px solid gray; box-shadow: none;"
+                                        @click="addToWishList(pkg)">
+                                        <svg-icon type="mdi" :path="path" style="margin-right: 10px;"></svg-icon>
+                                        위시리스트 담기
+                                    </v-btn>
+                                    <v-card-text style="padding-left: 0px;">
+                                        <span style="font-weight: bold;" v-if="pkg.packageName.length > 10"> {{
+                                            pkg.packageName.substring(0, 10)
+                                        }}... </span>
+                                        <span style="font-weight: bold; font-size:large;" v-else> {{ pkg.packageName
+                                            }}</span>
+                                        <br />
+                                        <span style="color:darkgreen; font-weight: bold; font-size:medium;"> {{
+                                            formatPrice(pkg.price) }} </span>
+                                        <br />
+                                        <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
+                                            formatPrice(getPerCyclePrice(pkg.price, pkg.deliveryCycle)) }} </span>
+                                        <br />
+                                        <span style="color:#999; font-size: small;">
+                                            🧾 누적 주문 {{ pkg.orderCount }}
+                                        </span>
                                     </v-card-text>
                                 </v-card>
                             </v-col>
                         </v-row>
                     </v-window-item>
                 </v-window>
-                <v-btn icon="mdi-chevron-right" variant="plain" @click="next"></v-btn>
+                <v-btn icon="mdi-chevron-right" variant="plain" @click="next" style="margin-bottom: 15%;"></v-btn>
             </div>
-            <v-card-actions style="margin: auto; justify-content: center;">
+            <v-card-actions style="justify-content: center;">
                 <v-item-group v-model="onboarding" class="text-center" mandatory>
-                    <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
-                        <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
-                            @click="toggle"></v-btn>
-                    </v-item>
+                    <v-item-group v-model="onboarding" class="text-center" mandatory>
+                        <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
+                            <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
+                                @click="toggle"></v-btn>
+                        </v-item>
+                    </v-item-group>
+                    
                 </v-item-group>
-            </v-card-actions>
+            </v-card-actions>            
         </v-card>
         <!-- Top 10 패키지 끝 -->
 
         <!-- 패키지 리스트 -->
-        <v-container style="width: 100%; border-top: 1px solid #D4D4D4; text-align: center;">
-            <h3>패키지 둘러보기</h3>
+        <v-container style="width: 100%; border-top: 1px solid #D4D4D4; text-align: start;">
+            <v-card-title style="font-size: 23px;"> <span style="font-weight: bold;">🥦 패키지 살펴보기 </span>
+            </v-card-title>
 
             <v-row style="margin-top: 20px;">
                 <v-col cols="6"></v-col>
@@ -59,18 +84,37 @@
                     </v-text-field>
                 </v-col>
             </v-row>
+
             <v-container class="d-flex custom-card-container">
                 <v-row>
                     <v-card v-for="(pkg, index) in packageList" :key="index" class="package-card" md="2" variant="text"
-                        style="width:190px; height:230px; margin: 10px; margin-bottom: 15px;">
-                        <v-img class="package-image" width="190px" height="180px" :src="pkg.imageUrl" alt="Package 썸네일"
-                            cover @click="this.$router.push(`/product/${pkg.id}`)" />
-                        <v-card-text>
-                            <span v-if="pkg.packageName.length > 10"> {{ pkg.packageName.substring(0, 10) }}... </span>
-                            <span v-else> {{ pkg.packageName }}</span>
-                            <v-chip size="small" color="deep_orange">
-                                💛 {{ pkg.orderCount }}
-                            </v-chip>
+                        style="width:260px; height:530px; margin: 10px; margin-bottom: 15px;">
+                        <v-img class="package-image" :src="pkg.imageUrl" alt="Package 썸네일" cover
+                            @click="this.$router.push(`/product/${pkg.id}`)" />
+                        <v-chip class="d-inline-block"
+                            style="position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 8px; background-color: rgba(128, 128, 128, 0.9); color: white;">
+                            {{ pkg.deliveryCycle }}일 주기 배송🚚
+                        </v-chip>
+                        <v-btn style="width: 100%; margin-top:10px; border: 0.5px solid gray; box-shadow: none;"
+                            @click="addToWishList(pkg)">
+                            <svg-icon type="mdi" :path="path" style="margin-right: 10px;"></svg-icon>
+                            위시리스트 담기
+                        </v-btn>
+                        <v-card-text style="padding-left: 0px;">
+                            <span style="font-weight: bold;" v-if="pkg.packageName.length > 10"> {{
+                                pkg.packageName.substring(0, 10)
+                            }}... </span>
+                            <span style="font-weight: bold; font-size:large;" v-else> {{ pkg.packageName }}</span>
+                            <br />
+                            <span style="color:darkgreen; font-weight: bold; font-size:medium;"> {{
+                                formatPrice(pkg.price) }} </span>
+                            <br />
+                            <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
+                                formatPrice(getPerCyclePrice(pkg.price, pkg.deliveryCycle)) }} </span>
+                            <br />
+                            <span style="color:#999; font-size: small;">
+                                🧾 누적 주문 {{ pkg.orderCount }}
+                            </span>
                         </v-card-text>
                     </v-card>
                 </v-row>
@@ -82,13 +126,19 @@
 
 <script>
 import axios from 'axios';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiHeartPlusOutline } from '@mdi/js';
 
 export default {
+    name: "my-component",
+    components: {
+        SvgIcon
+    },
     data() {
         return {
+            path: mdiHeartPlusOutline,
             topPackageList: [],
             onboarding: 1,
-            windowCount: 3,
             packageList: [],
             currentPage: 0,
             pageSize: 10,
@@ -100,6 +150,11 @@ export default {
             sortOptionMap: new Map(),
             isLoading: false,
             isLastPage: false,
+        }
+    },
+    computed: {
+        windowCount() {
+            return Math.ceil(this.topPackageList.length / 4); // 페이지당 4개의 패키지가 표시된다고 가정
         }
     },
     async created() {
@@ -116,7 +171,7 @@ export default {
         }
         const packageListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth`, { params });
         this.packageList = packageListResponse.data.content;
-
+        console.log(this.packageList)
         // sortOptionMap 설정
         this.sortOptionMap.set("최신순", "id,desc");
         this.sortOptionMap.set("판매량 순", "orderCount,desc");
@@ -130,6 +185,20 @@ export default {
         }); // 엔터 키 이벤트
     },
     methods: {
+        formatPrice(value) {
+            if (value == null) {
+                return "0원";
+            }
+            return parseInt(value).toLocaleString('ko-KR') + ' 원'; // 한국어 화폐 양식으로 변환
+        },
+        getPerCyclePrice(price, deliveryCycle) {
+            if (price == null || deliveryCycle == null || deliveryCycle == 0) {
+                return 0; // 값이 없거나 deliveryCycle이 0일 경우 0 반환
+            }
+            // 10단위 반올림 처리
+            const perCyclePrice = Math.round(price / (28 / deliveryCycle) / 10) * 10;
+            return perCyclePrice;
+        },
         next() {
             this.onboarding =
                 this.onboarding + 1 > this.windowCount ? 1 : this.onboarding + 1;
@@ -157,9 +226,9 @@ export default {
             console.log(params)
             this.isLoading = true;
             try {
-                const farmListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/search`, { params });
-                this.packageList = farmListResponse.data.content;
-                this.isLastPage = farmListResponse.data.last;
+                const packageListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/search`, { params });
+                this.packageList = packageListResponse.data.content;
+                this.isLastPage = packageListResponse.data.last;
             } catch (error) {
                 console.error(error);
             }
@@ -227,14 +296,22 @@ export default {
     transition: color 0.3s ease;
 }
 
+.package-card {
+    border-radius: 10px;
+    /* 카드 경계선 둥글게 유지 */
+}
+
 .package-image {
-    transition: color 0.7s ease;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    width: 260px;
+    height: 320px;
 }
 
 .package-image:hover {
-    opacity: 0.85;
+    transform: scale(1.05);
     cursor: pointer;
-    transition: 0.7s ease;
 }
 
 .custom-card-container {
