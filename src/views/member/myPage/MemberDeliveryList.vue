@@ -209,7 +209,6 @@ export default {
 <style scoped>
 .member-page {
     background-color: #F3F3F3;
-    /* margin-left: 200px; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -224,11 +223,8 @@ export default {
     padding: 10px 40px;
     width: 905px;
     min-height: 650px;
-    /* border: 1px solid #ddd; */
-    /* border-radius: 8px; */
     margin-left: 20%;
     background-color: white;
-    /* box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); */
 }
 
 .table-wrapper {
