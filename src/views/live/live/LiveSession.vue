@@ -4,7 +4,7 @@
   <div v-if="kickModalVisible" class="kick-modal-overlay"></div> 
     <div v-if="kickModalVisible" class="kick-modal">
       <p>강퇴되었습니다.<br> 이 방에 입장할 수 없습니다.</p>
-      <button @click="redirectToHome" class="submit-btn">홈으로</button>
+      <button @click="confirmKickExit" class="submit-btn">홈으로</button>
     </div>
     <!-- 🔖 라이브 세션 화면 -->  
     <div v-if="!kickModalVisible" class="live-container">
@@ -284,6 +284,11 @@ export default {
 
     handleKicked() {
       this.kickModalVisible = true;
+      },
+
+      confirmKickExit() {
+        this.kickModalVisible = false;
+        this.leaveSession();
       },
     },
     beforeRouteLeave(to, from, next) {

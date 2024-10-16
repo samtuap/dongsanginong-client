@@ -4,7 +4,7 @@
       <div class="title">실시간 채팅</div>
       <div class="message-list" ref="messageList">
         <div
-          v-for="(message, index) in messages"
+          v-for="(message, index) in filteredMessages"
           :key="message.timestamp"
           class="message-item"
           @click="selectMessage(index)"
@@ -116,6 +116,14 @@ export default {
       });
     }
   },
+  computed: {
+    filteredMessages() {
+      return this.messages.filter(message => {
+        const userId = message.memberId || message.sellerId;
+        return !this.kickedUserIds.includes(userId);  // 강퇴된 유저의 메시지 제외
+      });
+    }
+  },
   methods: {
     enterChatRoom() {
       if (this.subscription) {
@@ -163,10 +171,13 @@ export default {
                 console.log("kickMessage", kickMessage);
                 const kickedUserId = kickMessage.memberId || kickMessage.sellerId;
                 if (kickedUserId === Number(userId)) {
+                  this.kickedUserIds.push(kickedUserId);
+                  this.messages = this.messages.filter(
+                  msg => (msg.memberId || msg.sellerId) !== kickedUserId
+                  );
                   this.$emit('kicked'); // 부모에게 'kicked' 이벤트 전송
                   this.stompClient.disconnect(() => {
                     console.log("Kicked user WebSocket disconnected");
-                    // 모달을 보여준 후 리디렉션을 부모 컴포넌트가 처리하도록 합니다.
                   });
                 }
               } catch (e) {
@@ -174,6 +185,23 @@ export default {
               }
             });
           }
+
+            // 강퇴된 유저 정보 수신 구독
+            this.stompClient.subscribe(`/topic/live/${this.liveId}/kick`, (message) => {
+              const kickMessage = JSON.parse(message.body);
+              console.log("강퇴 메시지 수신:", kickMessage);
+
+              const { userId } = kickMessage;
+
+              // 강퇴된 유저의 메시지 제거
+              this.messages = this.messages.filter(
+                msg => (msg.memberId || msg.sellerId) !== userId
+              );
+
+              if (userId === Number(this.memberId || this.sellerId)) {
+                this.$emit('kicked');
+              }
+            });
         },
         (error) => {
           console.error('WebSocket connection error:', error);
@@ -284,6 +312,7 @@ export default {
       })
         .then(() => {
           console.log(`${userId} 강퇴됨`);
+          this.kickedUserIds.push(userId);
           this.showKickSuccessModal();
         })
         .catch(error => {
