@@ -9,30 +9,47 @@
             <!-- 구글 로그인 버튼 -->
             <img :src="require('@/assets/google_login.png')" class="sign-in" @click="googleLogin" />
             <!-- 판매자로 로그인하기 링크 -->
-            <a class="seller-login" @click="openModal">판매자로 로그인하기</a>
-            <a class="seller-signup" @click="goToSellerSignUp">판매자로 회원가입</a>
+            <a class="seller-login" @click="openLoginModal">판매자로 로그인하기</a>
+            <a class="seller-signup" @click="openSignUpModal">판매자로 회원가입</a>
         </div>
 
         <SellerSignIn
-            :isModalOpen="isModalOpen"
+            :isModalOpen="isLoginModalOpen"
             :title="'판매자 로그인'"
-            @close="closeModal"
+            @close="closeLoginModal"
             @login="sellerLogin"/>
+
+      <SellerSignUp
+        v-model="isSignUpModalOpen"
+        @close="closeSignUpModal"
+        @register-success="handleRegisterSuccess"
+      />
+
+      <v-dialog v-model="isRegisterSuccessModalOpen" max-width="400px">
+      <v-card class="modal-card" style="padding: 10px; padding-right: 20px; text-align: center;">
+        <v-card-text>완료되었습니다.</v-card-text>
+        <v-btn @click="closeRegisterSuccessModal" class="submit-btn">Close</v-btn>
+      </v-card>
+    </v-dialog>
     </div>
 </template>
 
 <script>
 import SellerSignIn from '@/views/product/seller/SellerSignIn.vue';
-
+import SellerSignUp from '@/views/product/seller/SellerSignUp.vue';
+  
 export default {
     name: "KakaoLogin",
     components: {
-        SellerSignIn
+        SellerSignIn,
+        SellerSignUp,
     },
     data() {
-        return {
-            isModalOpen: false,
-        };
+      return {
+        isLoginModalOpen: false,
+        isSignUpModalOpen: false,
+        isRegisterSuccessModalOpen: false,
+      };
     },
     methods: {
         kakaoLogin() {
@@ -49,23 +66,40 @@ export default {
             window.location.href = auth_url;
         },
 
-        openModal() {
-            this.isModalOpen = true;
-        },
-
-        closeModal() {
-            this.isModalOpen = false;
-        },
-
+      openLoginModal() {
+        this.isLoginModalOpen = true;
+      },
+  
+      closeLoginModal() {
+        this.isLoginModalOpen = false;
+      },
+  
+      openSignUpModal() {
+        this.isSignUpModalOpen = true;
+      },
+  
+      closeSignUpModal() {
+        this.isSignUpModalOpen = false;
+      },
+  
         sellerLogin(formData) {
             console.log("판매자 로그인 성공: ", JSON.stringify(formData));
         },
 
         goToSellerSignUp() {
             this.$router.push({ path: '/seller/sign-up' });
-        }
-    }
-}
+        },
+  
+        handleRegisterSuccess() {
+            this.isRegisterSuccessModalOpen  = true;
+            this.isSignUpModalOpen = false;
+        },
+
+        closeRegisterSuccessModal() {
+            this.isRegisterSuccessModalOpen = false;
+        },
+    },
+  };
 </script>
 
 <style scoped>
@@ -129,5 +163,19 @@ export default {
 
 .seller-signup:hover {
     text-decoration: underline;
+}
+.modal-card {
+  background-color: rgb(255, 255, 255);
+  border: none;
+  padding: 35px;
+  box-shadow: none;
+  border-radius: 10px;
+}
+.submit-btn {
+  margin-left: 10px;
+  margin-top: 8px;
+  background-color: #bcc07b;
+  color: black;
+  border-radius: 50px;
 }
 </style>
