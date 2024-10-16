@@ -390,12 +390,12 @@ export default {
 
 .green-text {
   color: green;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .black-text {
   color: black;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .package-description-container {
@@ -416,9 +416,9 @@ export default {
 }
 
 .package-description {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
-  background-color: #E9F5E9;
+  background-color: #f7f7f7;
   padding: 15px;
   padding-bottom: 30px;
   border-radius: 8px;
@@ -427,7 +427,7 @@ export default {
 }
 
 .payment-info {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
   color: #666;
   margin-left: -15px;
