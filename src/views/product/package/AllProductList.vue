@@ -2,7 +2,7 @@
     <v-container class="custom-container">
         <!-- Top 10 패키지 시작 -->
         <v-card style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%;" rounded="0" flat>
-            <v-card-title style="font-size: 23px;"> <span style="font-weight: bold;">🏆 BEST 10 </span>
+            <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🏆 BEST 10 </span>
                 <span style="font-size: 15px; color: grey;"> 지금 가장 인기있는 패키지를 만나보세요 ! </span>
             </v-card-title>
             <br />
@@ -14,9 +14,9 @@
                         <v-row class="d-flex justify-center">
                             <v-col v-for="(pkg, index) in paginatedPackages(n)" :key="index" cols="12" md="3"
                                 class="d-flex justify-center">
-                                <v-card variant="text" style="width:260px; height:500px;">
+                                <v-card variant="text" style="width:260px; height:500px; margin: 10px; margin-bottom: 15px;" :rounded="false">
                                     <v-img class="package-image" :src="pkg.imageUrl" alt="Package 썸네일" cover
-                                        @click="this.$router.push(`/product/${pkg.id}`)" style="border-radius: 10px" />
+                                        @click="this.$router.push(`/product/${pkg.id}`)" :rounded="false"/>
                                     <v-chip class="d-inline-block"
                                         style="position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 8px; background-color: rgba(128, 128, 128, 0.9); color: white;">
                                         {{ pkg.deliveryCycle }}일 주기 배송🚚
@@ -67,7 +67,7 @@
 
         <!-- 패키지 리스트 -->
         <v-container style="width: 100%; border-top: 1px solid #D4D4D4; text-align: start;">
-            <v-card-title style="font-size: 23px;"> <span style="font-weight: bold;">🥦 패키지 살펴보기 </span>
+            <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🥦 패키지 살펴보기 </span>
             </v-card-title>
 
             <v-row style="margin-top: 20px;">
@@ -88,7 +88,7 @@
             <v-container class="d-flex custom-card-container">
                 <v-row>
                     <v-card v-for="(pkg, index) in packageList" :key="index" class="package-card" md="2" variant="text"
-                        style="width:260px; height:530px; margin: 10px; margin-bottom: 15px;">
+                    style="width:260px; height:500px; margin: 10px; margin-bottom: 15px;" :rounded="false">
                         <v-img class="package-image" :src="pkg.imageUrl" alt="Package 썸네일" cover
                             @click="this.$router.push(`/product/${pkg.id}`)" />
                         <v-chip class="d-inline-block"
@@ -297,14 +297,14 @@ export default {
 }
 
 .package-card {
-    border-radius: 10px;
+    /* border-radius: 10px; */
     /* 카드 경계선 둥글게 유지 */
 }
 
 .package-image {
     object-fit: cover;
     transition: transform 0.3s ease;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     width: 260px;
     height: 320px;
 }
