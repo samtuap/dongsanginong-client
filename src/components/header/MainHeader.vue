@@ -67,8 +67,8 @@
 
     <v-dialog v-model="firstFarmModal" max-width="260px">
         <v-card class="farmModal" style="padding: 10px; padding-right: 20px; text-align: center;">
-            <v-card-text style="font-weight: bold;">
-                농장 정보가 존재하지 않네요.<br><br>농장 정보를 입력해주세요. :)
+            <v-card-text>
+                농장 정보가 존재하지 않네요.<br>농장 정보를 입력해주세요.
             </v-card-text>
             <v-btn @click="goToFarmCreate" class="submit-btn">확인</v-btn>
         </v-card>

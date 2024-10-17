@@ -163,4 +163,8 @@ export default {
   font-size: 18px;
   font-weight: bold;
 }
+
+.banner-image {
+  image-rendering: crisp-edges;
+}
 </style>
