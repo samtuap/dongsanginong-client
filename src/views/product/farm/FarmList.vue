@@ -5,54 +5,8 @@
             <v-card-title>Best 10</v-card-title>
             <v-card-text style="color: gray;">가장 많이 스크랩된 농장입니다.</v-card-text>
             <div style="display: flex; justify-content: center; align-items:center;">
-                <v-btn icon="mdi-chevron-left" variant="plain" @click="prev"></v-btn>
-                <v-window v-model="onboarding" style="width: 1080px;">
-                    <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n"
-                        style="align-items: center;">
-                        <v-row class="d-flex" style="align-items: center; padding-top: 20px;">
-                            <div v-for="(farm, index) in paginatedFarms(n)" :key="index" style="margin-left: 50px;"
-                                class="card-outer">
-                                <div style="padding-bottom: 30px;">
-                                    <v-img class="favorite-farm-img" style="width:190px; height:190px;"
-                                        @click="this.$router.push(`/farm/${farm.id}/packages`)" :src="farm.imageUrl"
-                                        alt="Farm 썸네일" cover />
-                                </div>
-
-                                <div style="display: flex; width: 190px; height: 30px;">
-                                    <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">{{ 4 *
-                                        (n - 1) +
-                                        index + 1 }}</div>
-                                    <div style="width: 120px;">
-                                        <p v-if="farm.farmName.length < 8" style="font-size: 14px; font-weight: 500;">
-                                            {{ farm.farmName }}</p>
-                                        <p v-else style="font-size: 14px; font-weight: 500;"> {{
-                                            farm.farmName.substring(0, 8) }}... </p>
-                                    </div>
-
-
-                                    <v-chip class="like-chip" size="small" color="deep_orange"
-                                        :class="{ 'selected-like-chip': this.likes.get(farm.id) == 1 || this.likes.get(farm.id) == 2 }"
-                                        @click="clickLike(farm.id)">
-                                        💛 {{ likeCount.get(farm.id) }}
-                                    </v-chip>
-
-                                    <div v-if="likes.get(farm.id) == 2" class="heart-emoji">💛</div>
-                                </div>
-
-                            </div>
-                        </v-row>
-                    </v-window-item>
-                </v-window>
-                <v-btn icon="mdi-chevron-right" variant="plain" @click="next"></v-btn>
+                <BestFarmMovingSlide />
             </div>
-            <v-card-actions style="justify-content: center;">
-                <v-item-group v-model="onboarding" class="text-center" mandatory>
-                    <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
-                        <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
-                            @click="toggle"></v-btn>
-                    </v-item>
-                </v-item-group>
-            </v-card-actions>
         </v-card>
         <!-- top 10 끝 -->
 
@@ -153,8 +107,12 @@
     </v-container>
 </template>
 <script>
+import BestFarmMovingSlide from '@/components/slide/BestFarmMovingSlide.vue';
 import axios from 'axios';
 export default {
+    component() {
+        BestFarmMovingSlide
+    },
     data() {
         return {
             topFarmList: [],
