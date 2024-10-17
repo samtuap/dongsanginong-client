@@ -4,9 +4,9 @@
             <v-row no-gutters class="flex-nowrap justify-space-between">
                 <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start" style="margin-top: 6px;">
-                    <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
-                    <v-btn :to="{ path: '/live/list' }" style="text-transform: none;">Live</v-btn>
-                    <v-btn :to="{ path: '/product' }" style="text-transform: none;">Package</v-btn>
+                    <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">농장</v-btn>
+                    <v-btn :to="{ path: '/live/list' }" style="text-transform: none;">라이브</v-btn>
+                    <v-btn :to="{ path: '/product' }" style="text-transform: none;">정기구독 패키지</v-btn>
                 </v-col>
                 <v-col class="text-center">
                     <v-btn :to="{ path: '/' }" color="white" style="margin-top: 3%;">
@@ -16,12 +16,12 @@
                 <!-- Right-aligned buttons -->
                 <v-col class="d-flex justify-end" style="margin-top: 6px;">
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
-                        v-if="!isSeller && isLogin">Mypage</v-btn>
+                        v-if="!isSeller && isLogin">마이페이지</v-btn>
                     <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">MyFarm</v-btn>
                     <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing"
-                        :to="{ path: '/member/sign-in' }">Login</v-btn>
+                        :to="{ path: '/member/sign-in' }">로그인</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
-                        @click="alertModal = true">Logout</v-btn> <!-- Open modal instead of logging out directly -->
+                        @click="alertModal = true">로그아웃</v-btn> <!-- Open modal instead of logging out directly -->
 
                     <v-menu>
                         <template v-slot:activator="{ props }">

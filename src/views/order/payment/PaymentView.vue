@@ -381,7 +381,7 @@ export default {
 
                 const body = {
                     'billingKey': this.billingKey,
-                    'paymentMethod': this.paymentMethod
+                    'paymentMethodType': this.paymentMethod
                 }
 
                 await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/subscription/payment/method`, body);
