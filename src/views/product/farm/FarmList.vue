@@ -11,8 +11,12 @@
         </v-card>
         <!-- top 10 끝 -->
 
+        <br>
+        <div class="hr-style"></div>
+        <br>
+        
         <!-- 농장 리스트 -->
-        <v-container style="width: 100%; border-top: 1px solid #D4D4D4;">
+        <v-container style="width: 100%;">
             <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🏡 농장 둘러보기 </span>
             </v-card-title>
 
@@ -29,7 +33,6 @@
                         variant="solo" single-line @click:append-inner="onSearch">
                     </v-text-field>
                 </v-col>
-
             </v-row>
             <v-row>
                 <div v-for="(farm, index) in farmList" :key="index" class="farm-card-outer">
@@ -578,6 +581,10 @@ export default {
     /* 애니메이션 정의 */
     margin-left: 35px;
 }
+
+.hr-style {
+    border-bottom: 3px solid #efefef; border-radius: 3px;
+  }
 
 
 @keyframes popUp {

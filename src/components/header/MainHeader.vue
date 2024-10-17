@@ -495,6 +495,7 @@ export default {
 </script>
 
 <style scoped>
+
 .bar {
     /* font-family: "Fredoka", sans-serif;  */
     font-weight: 400;
