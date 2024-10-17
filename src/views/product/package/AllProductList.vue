@@ -1,7 +1,7 @@
 <template>
     <v-container class="custom-container">
         <!-- Top 10 패키지 시작 -->
-        <v-card style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%;" rounded="0" flat>
+        <v-card style="border-radius: 15px; padding: 20px; padding-bottom: 0px; max-width: 1200px; width: 100%;" rounded="0" flat>
             <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🏆 BEST 10 </span>
                 <span style="font-size: 15px; color: grey;"> 지금 가장 인기있는 패키지를 만나보세요 ! </span>
             </v-card-title>
@@ -65,8 +65,13 @@
         </v-card>
         <!-- Top 10 패키지 끝 -->
 
+        <br>
+        <div class="hr-style"></div>
+        <br>
+
         <!-- 패키지 리스트 -->
-        <v-container style="width: 100%; border-top: 1px solid #D4D4D4; text-align: start;">
+        <v-container style="width: 100%; text-align: start;">
+
             <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🥦 패키지 살펴보기 </span>
             </v-card-title>
 
@@ -313,4 +318,8 @@ export default {
     display: flex;
     justify-content: left;
 }
+
+.hr-style {
+    border-bottom: 3px solid #efefef; border-radius: 3px;
+  }
 </style>
