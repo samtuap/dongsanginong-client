@@ -30,8 +30,12 @@ export default {
         },
     },
     async created() {
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
-        this.items = response.data;
+        try {
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
+            this.items = response.data;
+        } catch(e) {
+            console.log(e);
+        }
     },
     mounted() {
         this.startCarousel();

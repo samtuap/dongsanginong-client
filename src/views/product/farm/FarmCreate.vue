@@ -5,15 +5,15 @@
     <!-- 배너 이미지 업로드 -->
     <div class="image-upload banner-upload">
       <img :src="bannerImageUrl || defaultBanner" alt="배너 이미지" class="banner-image" @click="triggerBannerUpload" />
-      <input type="file" @change="onBannerImageUpload" class="image-input" ref="bannerInput" />
+      <input type="file" @change="onBannerImageUpload" class="image-input" ref="bannerInput" accept="image/*" />
 
       <!-- 배너 이미지 위에 + 모양 버튼 추가 -->
       <div class="upload-button banner-upload-button" @click="triggerBannerUpload">+</div>
 
       <!-- 프로필 이미지 업로드: 배너 이미지 위에 겹치도록 변경 -->
       <div class="profile-upload-wrapper">
-        <img :src="profileImageUrl" class="profile-image" @click="triggerProfileUpload" />
-        <input type="file" @change="onProfileImageUpload" class="image-input" ref="profileInput" />
+        <img :src="profileImageUrl || defaultProfile" class="profile-image" @click="triggerProfileUpload" />
+        <input type="file" @change="onProfileImageUpload" class="image-input" ref="profileInput" accept="image/*" />
 
         <!-- 프로필 이미지 위에 + 모양 버튼 추가 -->
         <div class="upload-button profile-upload-button" @click="triggerProfileUpload">+</div>
@@ -59,17 +59,57 @@
     <button @click="submitFarm" class="submit-button">저장</button>
   </div>
 
-  <v-dialog v-model="alertModal" max-width="260px">
-            <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-                <v-card-text>완료되었습니다.</v-card-text>
-                <v-btn @click="closeModalAndRedirect" class="submit-btn">close</v-btn>
-            </v-card>
-        </v-dialog>
+  <!-- Cropper Modal -->
+  <v-dialog v-model="cropModal" max-width="800px">
+    <v-card class="modal" style="padding: 10px; text-align: center;">
+      <v-card-text>
+        <div class="cropper-container flex">
+          <div class="cropper-image-container w-3/4">
+            <img ref="cropperImage" :src="cropImageSrc" alt="Cropper Image" style="max-width: 100%;" />
+          </div>
+          <div class="cropper-preview-container w-1/4">
+            <h4>프리뷰</h4>
+            <div class="preview overflow-hidden w-full h-32 bg-gray-200"></div>
+          </div>
+        </div>
+      </v-card-text>
+      <v-card-actions class="justify-end">
+        <v-btn 
+          class="img-submit-btn" 
+          @click="saveCrop"
+          color="black"
+        >
+          저장
+        </v-btn>
+        <v-btn 
+          class="cancel-btn" 
+          @click="cancelCrop"
+          color="black"
+        >
+          취소
+        </v-btn>
+      </v-card-actions>
+      <div class="cropper-controls">
+        <button @click="zoomIn">+</button>
+        <button @click="zoomOut">-</button>
+        <button @click="resetCrop">원본으로</button>
+      </div>
+    </v-card>
+  </v-dialog>
 
+  <!-- 완료 모달 -->
+  <v-dialog v-model="alertModal" max-width="260px">
+    <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+      <v-card-text>완료되었습니다.</v-card-text>
+      <v-btn @click="closeModalAndRedirect" class="submit-btn">close</v-btn>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 import axios from 'axios';
+import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 
 export default {
   data() {
@@ -84,6 +124,11 @@ export default {
       defaultBanner: '/baseBannerImage.png', // 기본 배너 이미지
       defaultProfile: '', // 기본 프로필 이미지
       alertModal: false,
+
+      // Cropper 관련 데이터
+      cropModal: false,
+      cropImageSrc: '',
+      cropper: null,
     };
   },
   created() {
@@ -134,8 +179,16 @@ export default {
     },
 
     async onBannerImageUpload(event) {
-      this.projectImageFile = event?.target?.files[0];
-      this.bannerImageUrl = await this.uploadImage(this.projectImageFile);
+      const file = event?.target?.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.cropImageSrc = e.target.result;
+          this.cropModal = true;
+        };
+        reader.readAsDataURL(file);
+        this.projectImageFile = file;
+      }
     },
 
     async onProfileImageUpload(event) {
@@ -196,8 +249,89 @@ export default {
         console.error('농장 생성 실패:', error);
         alert(error.response?.data?.message || "농장 생성 중 문제가 발생했습니다.");
       }
-    }
-  }
+    },
+
+    // Cropper Methods
+    initializeCropper() {
+      const image = this.$refs.cropperImage;
+      if (this.cropper) {
+        this.cropper.destroy();
+      }
+      this.cropper = new Cropper(image, {
+        aspectRatio: 3 / 1, // 원하는 비율 설정
+        viewMode: 1,
+        preview: '.preview',
+        autoCropArea: 1,
+        movable: true,
+        zoomable: true,
+        scalable: true,
+        ready() {
+          console.log("프리뷰")
+        }
+      });
+    },
+
+    saveCrop() {
+      if (this.cropper) {
+        this.cropper.getCroppedCanvas({
+          width: 1200,
+          height: 400,
+        }).toBlob(async (blob) => {
+
+          const croppedFile = new File([blob], this.projectImageFile.name, { type: blob.type })
+
+          const uploadedUrl = await this.uploadImage(croppedFile);
+
+          this.bannerImageUrl = uploadedUrl;
+
+          this.cropModal = false;
+
+          this.cropper.destroy();
+          this.cropper = null;
+        }, this.projectImageFile.type);
+      }
+    },
+
+    cancelCrop() {
+      this.cropModal = false;
+      if (this.cropper) {
+        this.cropper.destroy();
+        this.cropper = null;
+      }
+    },
+
+    zoomIn() {
+      if (this.cropper) {
+        this.cropper.zoom(0.2);
+      }
+    },
+
+    zoomOut() {
+      if (this.cropper) {
+        this.cropper.zoom(-0.2);
+      }
+    },
+
+    resetCrop() {
+      if (this.cropper) {
+        this.cropper.reset();
+      }
+    },
+  },
+  watch: {
+    cropModal(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          this.initializeCropper();
+        });
+      } else {
+        if (this.cropper) {
+          this.cropper.destroy();
+          this.cropper = null;
+        }
+      }
+    },
+  },
 };
 </script>
 
@@ -276,7 +410,6 @@ export default {
   bottom: 43px;
   right: 44px;
 }
-
 
 .farm-name-input {
   width: calc(100% - 150px); /* 프로필 이미지와 수평을 맞추기 위해 너비를 조정 */
@@ -398,11 +531,70 @@ export default {
     box-shadow: none;
     border-radius: 10px;
 }
+
 .submit-btn {
     margin-left: 10px;
     margin-top: 8px;
     background-color: #BCC07B;
     color: black;
     border-radius: 50px;
+}
+
+/* Cropper Controls */
+.cropper-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.cropper-controls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  background-color: #BCC07B;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cropper-controls button:hover {
+  background-color: #a0a0a0;
+}
+
+/* Cropper Modal Layout */
+.cropper-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cropper-image-container {
+  flex: 3;
+}
+
+.cropper-preview-container {
+  flex: 1;
+  text-align: center;
+}
+
+.preview {
+  width: 100%;
+  height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #e0e0e0;
+}
+
+.img-submit-btn {
+  background-color: #bcc07b;
+  color: black;
+  border-radius: 50px;
+  padding: 10px;
+}
+
+.cancel-btn {
+  background-color: #e0e0e0;
+  color: black;
+  border-radius: 50px;
+  padding: 10px;
 }
 </style>

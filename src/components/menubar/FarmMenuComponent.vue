@@ -2,7 +2,7 @@
     <v-container style="max-width: 95%;">
         <!-- Image Banner -->
         <v-row justify="center">
-            <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" style="margin-top: 10px; height:400px; width:100%;" contain></v-img>
+          <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" style="margin-top: 10px; height:400px; width:100%;" cover></v-img>
         </v-row>
         <!-- 프로필 이미지 및 농장명 -->
          <v-row>
