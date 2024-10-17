@@ -27,8 +27,9 @@
 
       <v-dialog v-model="isRegisterSuccessModalOpen" max-width="400px">
       <v-card class="modal-card" style="padding: 10px; padding-right: 20px; text-align: center;">
-        <v-card-text>완료되었습니다.</v-card-text>
-        <v-btn @click="closeRegisterSuccessModal" class="submit-btn">닫기</v-btn>
+        <v-card-text style="margin-top: 20px;">동상이농 회원가입이 <br />
+          완료되었습니다.</v-card-text>
+        <v-btn @click="closeRegisterSuccessModal" class="submit-btn" style="margin-bottom:15px">닫기</v-btn>
       </v-card>
     </v-dialog>
     </div>
@@ -48,7 +49,7 @@ export default {
       return {
         isLoginModalOpen: false,
         isSignUpModalOpen: false,
-        isRegisterSuccessModalOpen: true,
+        isRegisterSuccessModalOpen: false,
       };
     },
     methods: {
@@ -170,7 +171,9 @@ export default {
   padding: 35px;
   box-shadow: none;
   border-radius: 10px;
+  height: 200px;
 }
+
 .submit-btn {
   margin-left: 10px;
   margin-top: 8px;
