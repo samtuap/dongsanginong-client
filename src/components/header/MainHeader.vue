@@ -17,7 +17,7 @@
                 <v-col class="d-flex justify-end" style="margin-top: 6px;">
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
                         v-if="!isSeller && isLogin">마이페이지</v-btn>
-                    <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">MyFarm</v-btn>
+                    <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">내 농장 바로가기</v-btn>
                     <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing"
                         :to="{ path: '/member/sign-in' }">로그인</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
@@ -298,18 +298,6 @@ export default {
 
                     // Store the token in local storage
                     localStorage.setItem("fcmToken", token);
-
-                    // DB에 fcm 토큰을 저장
-                    try {
-                        const role = localStorage.getItem("role");
-                        if(role === 'MEMBER') {
-                            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
-                        } else if(role === 'SELLER') {
-                            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/fcm/token`, body);
-                        }
-                    } catch(e) {
-                        console.log(e);
-                    }
                 } catch (err) {
                     console.log(err);
                 }
@@ -318,6 +306,19 @@ export default {
             const body = {
                 "fcmToken": localStorage.getItem("fcmToken")
             };
+
+            // DB에 fcm 토큰을 저장
+            try {
+                const role = localStorage.getItem("role");
+                if(role === 'MEMBER') {
+                    console.log("!!!!!!!!!!!!");
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
+                } else if(role === 'SELLER') {
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/fcm/token`, body);
+                }
+            } catch(e) {
+                console.log(e);
+            }
 
             onMessage(messaging, (payload) => {
 
