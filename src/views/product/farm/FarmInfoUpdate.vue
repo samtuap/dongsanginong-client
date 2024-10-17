@@ -91,11 +91,39 @@
             <v-btn @click="closeModalAndRedirect" class="submit-btn">close</v-btn>
         </v-card>
     </v-dialog>
+
+
+    <v-dialog v-model="cropModal" max-width="800px">
+        <v-card class="modal" style="padding: 10px; text-align: center;">
+            <v-card-text>
+                <div class="cropper-container flex">
+                    <div class="cropper-image-container w-3/4">
+                    <img ref="cropperImage" :src="cropImageSrc" alt="Cropper Image" style="max-width: 100%;" />
+                    </div>
+                    <div class="cropper-preview-container w-1/4">
+                    <h4>프리뷰</h4>
+                    <div class="preview overflow-hidden w-full h-32 bg-gray-200"></div>
+                    </div>
+                </div>
+
+            <!-- 이미지 처리 중일 때 메시지 표시 -->
+            <div v-if="loading" class="loading-message" style="color: gray; margin-top: 20px;">
+                이미지를 처리하고 있습니다...
+            </div>
+            </v-card-text>
+            <div class="cropper-controls">
+                <button @click="saveCrop" class="cropper-control-btn save-btn" :disabled="loading">저장</button>
+                <button @click="cancelCrop" class="cropper-control-btn cancel-btn" :disabled="loading">취소</button>
+            </div>
+        </v-card>
+        </v-dialog>
 </template>
 
 <script>
 import SellerSidebar from '@/components/sidebar/SellerSidebar.vue';
 import axios from 'axios';
+import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 
 export default {
     components: {
@@ -115,6 +143,10 @@ export default {
             defaultBanner: '/baseBannerImage.png',
             defaultProfile: '',
             alertModal: false,
+            cropModal: false,   // 크롭 모달을 위한 상태
+            cropImageSrc: '',   // 크롭할 이미지 URL
+            cropper: null,      // Cropper 인스턴스
+            loading: false,     // 이미지 처리 중 로딩 상태
         };
     },
     created() {
@@ -214,8 +246,89 @@ export default {
         },
 
         async onBannerImageUpload(event) {
-            this.projectImageFile = event?.target?.files[0];
-            this.bannerImageUrl = await this.uploadImage(this.projectImageFile);
+            const file = event?.target?.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                this.cropImageSrc = e.target.result;  // 선택한 이미지를 크롭 모달에 표시
+                this.cropModal = true;                // 크롭 모달 열기
+                };
+                reader.readAsDataURL(file);
+                this.projectImageFile = file; // 원본 파일 저장
+            }
+        },
+
+        saveCrop() {
+            if (this.cropper) {
+                this.loading = true; // 로딩 상태 시작
+                const dpr = window.devicePixelRatio || 1;
+
+                // 크롭된 캔버스를 가져와서 고해상도 처리
+                const croppedCanvas = this.cropper.getCroppedCanvas({
+                width: this.cropper.getCroppedCanvas().width * dpr,
+                height: this.cropper.getCroppedCanvas().height * dpr,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+                });
+
+                if (croppedCanvas) {
+                    croppedCanvas.toBlob(async (blob) => {
+                        const croppedFile = new File([blob], this.projectImageFile.name, { type: 'image/png' });
+                        this.bannerImageUrl = await this.uploadImage(croppedFile); // 이미지 업로드
+                        this.loading = false; // 로딩 상태 종료
+                        this.cropModal = false; // 모달 닫기
+                        this.cropper.destroy(); // Cropper 인스턴스 제거
+                        this.cropper = null;
+                    }, 'image/png', 1);
+                }
+            }
+        },
+
+        initializeCropper() {
+            const image = this.$refs.cropperImage;
+                if (this.cropper) {
+                    this.cropper.destroy();
+                }
+                this.cropper = new Cropper(image, {
+                    aspectRatio: 3 / 1, // 배너 이미지의 비율
+                    viewMode: 2,
+                    dragMode: 'crop',
+                    preview: '.preview',
+                    autoCrop: true,
+                    autoCropArea: 1.0,
+                    movable: false,
+                    zoomable: false,
+                    rotatable: false,
+                    scalable: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: false,
+                    modal: true,
+                    guides: true,
+                    center: true,
+                    highlight: true,
+                    background: true,
+                    responsive: true,
+                    checkCrossOrigin: true,
+                    checkOrientation: true,
+                    ready() {
+                    const cropperData = this.cropper.getCropBoxData();
+                    const containerData = this.cropper.getContainerData();
+                    this.cropper.setCropBoxData({
+                        left: (containerData.width - cropperData.width) / 2,
+                        top: (containerData.height - cropperData.height) / 2,
+                        width: cropperData.width,
+                        height: cropperData.height
+                    });
+                },
+            });
+        },
+
+        cancelCrop() {
+            this.cropModal = false; // 모달 닫기
+            if (this.cropper) {
+                this.cropper.destroy(); // Cropper 인스턴스 제거
+                this.cropper = null;
+            }
         },
 
         async onProfileImageUpload(event) {
@@ -254,6 +367,20 @@ export default {
             this.cancelModal = false;
             this.loadFarmInfo();
         },
+    },
+    watch: {
+        cropModal(newVal) {
+            if (newVal) {
+                this.$nextTick(() => {
+                this.initializeCropper(); // 모달 열릴 때 Cropper 초기화
+                });
+            } else {
+                if (this.cropper) {
+                    this.cropper.destroy(); // 모달 닫힐 때 Cropper 인스턴스 제거
+                    this.cropper = null;
+                }
+            }
+        }
     }
 };
 </script>
@@ -517,5 +644,67 @@ export default {
 
 .cancel-button {
     background-color: lightgrey; /* 취소 버튼 스타일 */
+}
+
+.cropper-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cropper-image-container {
+  width: 70%; /* 이미지를 표시할 공간 */
+}
+
+.cropper-preview-container {
+  width: 25%; /* 프리뷰 공간 */
+  text-align: center;
+}
+
+.preview {
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  margin-top: 10px;
+}
+
+.loading-message {
+  font-size: 14px;
+  color: #999;
+}
+
+.cropper-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* 버튼 사이의 간격을 추가 */
+  margin-top: 10px;
+}
+
+.cropper-control-btn {
+  color: black;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.save-btn {
+  background-color: #bcc07b;
+}
+
+.save-btn:hover {
+    background-color: #a8b05b;
+}
+
+.cancel-btn {
+  background-color: #e0e0e0;
+  color: black;
+}
+
+.cancel-btn:hover {
+  background-color: #c0c0c0;
 }
 </style>
