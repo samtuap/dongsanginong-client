@@ -6,14 +6,15 @@
         <h3>매출 내역 조회</h3>
         <!-- 첫 구독만 표시와 날짜 선택 -->
         <v-row style="height: 100px;" align="center">
-            <v-col cols="5" style="align-items: center; justify-content: center">
+            <v-col cols="6" style="align-items: center; justify-content: center">
                 <v-checkbox v-model="this.checked" label="첫 구독만 표시" />
             </v-col>
-            <v-col cols="2.5">
-                    <MonthPickerInput :default-year="this.startMonth.year" :default-month="this.startMonth.month" @change="updateStartDate" />
-            </v-col>
-            <v-col cols="1" class="text-center">~</v-col>
-            <v-col cols="2.5">
+            <v-col cols="4" style="display: flex; margin:auto; text-align:center; align-items: center;">
+                    <MonthPickerInput
+                    :default-year="this.startMonth.year"
+                    :default-month="this.startMonth.month"
+                    @change="updateStartDate"
+                    /> <p style="margin-left: 70px; margin-right: 20px; text-align: center">~</p>
                 <MonthPickerInput :default-year="this.endMonth.year" :default-month="this.endMonth.month" @change="updateEndDate" />
             </v-col>
             <v-col cols="1">
@@ -404,7 +405,7 @@ export default {
     text-align: center;
     width: 100%;
     /* 부모 컨테이너 너비 */
-    height: 280px;
+    height: 340px;
     overflow-x: hidden;
     /* 가로 스크롤 활성화 */
     overflow-y: hidden;
