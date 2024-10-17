@@ -72,27 +72,14 @@
             <div class="preview overflow-hidden w-full h-32 bg-gray-200"></div>
           </div>
         </div>
+
+        <div v-if="loading" class="loading-message" style="color: gray; margin-top: 20px;">
+          이미지를 처리하고 있습니다...
+        </div>
       </v-card-text>
-      <v-card-actions class="justify-end">
-        <v-btn 
-          class="img-submit-btn" 
-          @click="saveCrop"
-          color="black"
-        >
-          저장
-        </v-btn>
-        <v-btn 
-          class="cancel-btn" 
-          @click="cancelCrop"
-          color="black"
-        >
-          취소
-        </v-btn>
-      </v-card-actions>
       <div class="cropper-controls">
-        <button @click="zoomIn">+</button>
-        <button @click="zoomOut">-</button>
-        <button @click="resetCrop">원본으로</button>
+        <button @click="saveCrop" class="cropper-control-btn save-btn" :disabled="loading">저장</button>
+        <button @click="cancelCrop" class="cropper-control-btn cancel-btn" :disabled="loading">취소</button>
       </div>
     </v-card>
   </v-dialog>
@@ -129,6 +116,7 @@ export default {
       cropModal: false,
       cropImageSrc: '',
       cropper: null,
+      loading: false,
     };
   },
   created() {
@@ -256,39 +244,76 @@ export default {
       const image = this.$refs.cropperImage;
       if (this.cropper) {
         this.cropper.destroy();
+        this.cropper = null;
       }
       this.cropper = new Cropper(image, {
-        aspectRatio: 3 / 1, // 원하는 비율 설정
-        viewMode: 1,
-        preview: '.preview',
-        autoCropArea: 1,
-        movable: true,
-        zoomable: true,
-        scalable: true,
+        aspectRatio: 3 / 1, // 고정된 비율 설정 (예: 1200x400)
+        viewMode: 2, // Crop 박스가 캔버스 내에 제한되도록 설정
+        dragMode: 'crop', // 초기 드래그 모드를 'crop'으로 설정
+        preview: '.preview', // 프리뷰 클래스 지정
+        autoCrop: true, // 자동 크롭 활성화
+        autoCropArea: 1.0, // 자동 크롭 영역 크기 (80%)
+        movable: false, // 이미지 이동 비활성화
+        zoomable: false, // 이미지 확대/축소 비활성화
+        rotatable: false, // 이미지 회전 비활성화
+        scalable: false, // 이미지 스케일링 비활성화
+        cropBoxMovable: true, // 크롭 박스 이동 가능
+        cropBoxResizable: false, // 크롭 박스 크기 조절 불가
+        modal: true, // 모달 배경 표시
+        guides: true, // 크롭 박스 가이드 표시
+        center: true, // 중앙 표시기 표시
+        highlight: true, // 크롭 박스 강조 표시
+        background: true, // 그리드 배경 표시
+        responsive: true, // 창 크기 변경 시 반응형 처리
+        checkCrossOrigin: true, // 크로스 오리진 이미지 체크
+        checkOrientation: true, // 이미지의 Exif Orientation 정보 체크
         ready() {
-          console.log("프리뷰")
-        }
+          console.log("Cropper is ready");
+          // 크롭 박스를 중앙에 고정
+          const cropperData = this.cropper.getCropBoxData();
+          const containerData = this.cropper.getContainerData();
+          this.cropper.setCropBoxData({
+            left: (containerData.width - cropperData.width) / 2,
+            top: (containerData.height - cropperData.height) / 2,
+            width: cropperData.width,
+            height: cropperData.height
+          });
+        },
       });
     },
 
     saveCrop() {
       if (this.cropper) {
-        this.cropper.getCroppedCanvas({
-          width: 1200,
-          height: 400,
-        }).toBlob(async (blob) => {
 
-          const croppedFile = new File([blob], this.projectImageFile.name, { type: blob.type })
+        this.loading = true;
 
-          const uploadedUrl = await this.uploadImage(croppedFile);
+        const dpr = window.devicePixelRatio || 1;
 
-          this.bannerImageUrl = uploadedUrl;
+        // getCroppedCanvas를 사용하여 크롭된 이미지의 캔버스를 가져옵니다.
+        const croppedCanvas = this.cropper.getCroppedCanvas({
+          width: this.cropper.getCroppedCanvas().width * dpr,
+          height: this.cropper.getCroppedCanvas().height * dpr,
+          imageSmoothingEnabled: true,
+          imageSmoothingQuality: 'high',
+          // 크롭 박스의 원본 해상도를 유지하도록 설정 (너비와 높이를 지정하지 않음)
+        });
 
-          this.cropModal = false;
+        // 캔버스가 정상적으로 생성되었는지 확인
+        if (croppedCanvas) {
+          const ctx = croppedCanvas.getContext('2d');
+          ctx.scale(dpr, dpr);
 
-          this.cropper.destroy();
-          this.cropper = null;
-        }, this.projectImageFile.type);
+          croppedCanvas.toBlob(async (blob) => {
+            // PNG 포맷 사용하여 이미지 품질 유지
+            const croppedFile = new File([blob], this.projectImageFile.name, { type: 'image/png' });
+            const uploadedUrl = await this.uploadImage(croppedFile);
+            this.bannerImageUrl = uploadedUrl;
+            this.loading = false;
+            this.cropModal = false;
+            this.cropper.destroy();
+            this.cropper = null;
+          }, 'image/png', 1);
+        }
       }
     },
 
@@ -361,6 +386,7 @@ export default {
   object-fit: cover;
   position: relative;
   border: 1px solid #ccc;
+  image-rendering: crisp-edges;
 }
 
 .profile-upload-wrapper {
@@ -544,23 +570,36 @@ export default {
 .cropper-controls {
   display: flex;
   justify-content: center;
+  gap: 10px; /* 버튼 사이의 간격을 추가 */
   margin-top: 10px;
 }
 
-.cropper-controls button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  background-color: #BCC07B;
+.cropper-control-btn {
   color: black;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.cropper-controls button:hover {
+.save-btn {
+  background-color: #bcc07b;
+}
+
+.save-btn:hover {
   background-color: #a0a0a0;
 }
 
+.cancel-btn {
+  background-color: #e0e0e0;
+  color: black;
+}
+
+.cancel-btn:hover {
+  background-color: #c0c0c0;
+}
 /* Cropper Modal Layout */
 .cropper-container {
   display: flex;
@@ -578,23 +617,15 @@ export default {
 
 .preview {
   width: 100%;
-  height: 200px;
+  height: 200px; /* 프리뷰 높이 조정 */
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #e0e0e0;
+  overflow: hidden; /* 이미지가 컨테이너를 벗어나지 않도록 설정 */
 }
 
-.img-submit-btn {
-  background-color: #bcc07b;
-  color: black;
-  border-radius: 50px;
-  padding: 10px;
-}
-
-.cancel-btn {
-  background-color: #e0e0e0;
-  color: black;
-  border-radius: 50px;
-  padding: 10px;
+.loading-message {
+  font-size: 14px;
+  color: #666;
 }
 </style>

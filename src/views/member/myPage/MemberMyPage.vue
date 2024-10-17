@@ -21,8 +21,8 @@
     <v-dialog v-model="alertModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; top: -100px; background-color: white;
         overflow-y: hidden;">
-            <v-card-text>탈퇴가 완료되었습니다.</v-card-text>
-            <v-btn @click="handleAlertClose" class="submit-btn">close</v-btn>
+            <v-card-text style="margin-top: 20px;">탈퇴가 완료되었습니다.</v-card-text>
+            <v-btn @click="handleAlertClose" class="submit-btn">닫기</v-btn>
         </v-card>
     </v-dialog>
 
@@ -276,7 +276,6 @@ export default {
 
 .submit-btn {
     margin-left: 10px;
-    margin-top: 8px;
     background-color: #BCC07B;
     color: black;
     border-radius: 50px;

@@ -1,6 +1,6 @@
 <template>
     <v-carousel cycle :show-arrows="false" delimiter-icon="mdi-square" delimiter-color="light_green" height="520"
-        interval="5000" hide-delimiter-background> <!--5초마다 슬라이드-->
+        interval="5000" hide-delimiter-background> <!--4초마다 슬라이드-->
         <v-carousel-item v-for="(image, index) in images" :key="index" style="overflow: hidden;">
             <img :src="image.src" :alt="image.alt" class="banner-img" />
         </v-carousel-item>
@@ -21,16 +21,19 @@
         <br>
 
         <BestFarmSlide />
-        
+
+        <br><br>
+        <div class="hr-style"></div>
+        <br>
     </v-container>
     <!-- 인기 농장 끝 -->
 
 
 
     <!-- 인기 패키지 -->
-    <br>
     <v-container>
-        <div style="margin-bottom: 40px; padding-top: 50px; display: flex; justify-content: center; border-top: 1px #D5D5D5 solid;">
+
+        <div style="margin-bottom: 40px; padding-top: 20px; display: flex; justify-content: center;">
             <div>
                 <div class="text-center slide-title"
                 @click="this.$router.push('/product')"
@@ -38,7 +41,7 @@
                     🥦 Best Packages 🥦 
                     <v-icon icon="mdi-chevron-right" style="font-size: 46px;"/>
                 </div>
-                <p class="text-center" style="color: grey; font-size: 16px;">가장 많이 팔린 패키지를 주문해보세요. :)</p>
+                <p class="text-center" style="color: grey; font-size: 16px;">가장 많이 팔린 패키지를 주문해보세요.</p>
             </div>
         </div>
         <BestPackageSlide />
@@ -315,6 +318,9 @@ export default {
 
 }
 
+.hr-style {
+    border-bottom: 3px solid #efefef; border-radius: 3px;
+  }
 
 @keyframes popUp {
     0% {

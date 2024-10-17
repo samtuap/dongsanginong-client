@@ -2,15 +2,15 @@
     <v-dialog v-model="alertModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center; height: 130px; padding-bottom: 20px; 
         overflow-y: hidden;">
-            <v-card-text style="margin-bottom:5px">회원가입이 완료되었습니다.</v-card-text>
-            <v-btn @click="handleCloseModal(true)" class="submit-btn" style="border-radius: 50px; width: 100px">close</v-btn>
+            <v-card-text style="margin-top:10px;">회원가입이 완료되었습니다.</v-card-text>
+            <v-btn @click="handleCloseModal(true)" class="submit-btn" style="border-radius: 50px; width: 100px; margin-bottom:8px">닫기</v-btn>
         </v-card>
     </v-dialog>
 
     <v-dialog v-model="errorModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center;">
             <v-card-text>회원가입 중 오류가 발생했습니다. <br /> 다시 시도해주세요.</v-card-text>
-            <v-btn @click="handleCloseModal(false)" class="submit-btn" width="100px">close</v-btn>
+            <v-btn @click="handleCloseModal(false)" class="submit-btn" width="100px">닫기</v-btn>
         </v-card>
     </v-dialog>
 
@@ -214,6 +214,7 @@ button.submit-btn {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-weight: 400;
 }
 
 button.submit-btn:hover {
