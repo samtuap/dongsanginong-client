@@ -82,7 +82,7 @@
                         <!-- 사진 영역 -->
                         <div class="farm-image-frame">
                             <v-img :src="farm.imageUrl" class="farm-image-circle"
-                                @click="this.$router.push(`/farm/${farm.id}`)" cover />
+                            @click="this.$router.push(`/farm/${farm.id}/packages`)" cover />
                         </div>
                         <!-- 제목 영역 -->
                         <div class="farm-description">

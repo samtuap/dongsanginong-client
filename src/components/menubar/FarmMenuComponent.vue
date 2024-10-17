@@ -11,7 +11,7 @@
               <div class="farm-image-frame">
                 <v-img :src="profileImageUrl" class="farm-image-circle" cover />
               </div>
-              <div class="farm-text" style="margin-top: -100px; margin-left: 120px; text-align: start;">
+              <div class="farm-text" style="margin-top: -90px; margin-left: 110px; text-align: start;">
                 <span class="farm-name" style="margin-left: 10px;">{{ this.farmName }}</span><br>
                 <span style="font-size: 14px; color: grey; margin-left: 10px;"> 스크랩 수 {{ this.favoriteCount }}</span><br>
                 <span style="font-size: 14px; color: grey; margin-left: 10px;"> {{ this.farmIntro }}</span>
