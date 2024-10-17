@@ -100,13 +100,13 @@ export default {
 .product-card {
   overflow-x: hidden;
   margin-top: 20px;
-  width: 79%; /* 테이블 가로 길이 줄임 */
+  width: 77%; /* 테이블 가로 길이 줄임 */
   margin: 0 auto; /* 중앙에 위치 */
   height: auto;
   border: 1px solid #d4d4d4;
   border-radius: 10px;
   padding: 20px;
-  right: 62px;
+  margin-right: 17%;
 }
 
 .table-header {
