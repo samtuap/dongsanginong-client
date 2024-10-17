@@ -27,8 +27,8 @@
             </div>
 
             <div style="border-top: 1px #D4D4D4 solid; width: 100%; margin-top: 20px; padding-top: 20px">
-                <p class="payment-description">* 등록한 카드 정보로 설정된 구독주기에 따라 자동 결제가 진행됩니다.</p>
-                <p class="payment-description">* 자동 정기 결제는 </p>
+                <p class="payment-description">* 등록한 결제 수단으로 28일마다 오후 1시에 자동 결제됩니다.</p>
+                <p class="payment-description">* 결제 수단은 언제든 변경 가능하며, 해당 결제 수단으로 모든 정기 결제가 진행됩니다.</p>
             </div>
         </div>
         <br><br>
