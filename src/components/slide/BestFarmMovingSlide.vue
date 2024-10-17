@@ -100,8 +100,8 @@ export default {
 }
 
 .item-img {
-  width: 210px;
-  height: 210px;
+  width: 250px;
+  height: 250px;
   object-fit: cover;
   border-radius: 50%;
 }
