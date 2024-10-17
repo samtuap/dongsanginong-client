@@ -1,19 +1,34 @@
 <template>
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
-        <h3 style="margin-right: 74%;">내 구독 정보 관리</h3><br>
+        <h3 style="margin-right: 74%;">내 구독 정보 관리</h3>
+        <br>
 
         <!-- 자동결제 카드 정보 -->
         <div class="card-section">
-            <div style="font-weight: 700; font-size:17px;">자동 결제 카드 정보</div>
 
-            <div v-if="billingKey === ''" style="margin-top: 15px;">
-                <p style="margin-bottom: 10px;">결제 수단이 없습니다. 등록해주세요.</p>
-                <v-btn @click="addPaymentMethod" style="border-radius: 50px;">결제 수단 등록하기</v-btn>
+            <div style="font-weight: 700; font-size:17px;">정기 결제 수단
+                <i class="mdi mdi-credit-card-outline"></i>
+                <button @click="addPaymentMethod" style="margin-left: 5px;">
+                    
+                    <span style="font-size: 15px; font-weight: 200; margin-top: -10px;">결제수단 등록/변경</span>
+                  </button>
             </div>
-            <div v-else style="align-items: center; display: flex; margin-top: 15px;">
-                <img :src="paymentMethodImageUrl" style="width: 60px;" />
-                <p>{{ paymentMethodType }}</p>
+
+            <div v-if="billingKey === ''" style="margin-top: 23px;" class="">
+                <p style="margin-bottom: 10px;">결제 수단이 없습니다. 등록해주세요.</p>
+            </div>
+            
+            <div v-else>
+                <div style="align-items: center; display: flex; margin-top: 23px;">
+                    <img :src="paymentMethodImageUrl" style="width: 60px;" />
+                    <p>{{ paymentMethodType }}</p>
+                </div>
+            </div>
+
+            <div style="border-top: 1px #D4D4D4 solid; width: 100%; margin-top: 20px; padding-top: 20px">
+                <p class="payment-description">* 등록한 카드 정보로 설정된 구독주기에 따라 자동 결제가 진행됩니다.</p>
+                <p class="payment-description">* 자동 정기 결제는 </p>
             </div>
         </div>
         <br><br>
@@ -230,5 +245,10 @@ export default {
 
 .packageProduct-image {
     cursor: pointer;
+}
+
+.payment-description {
+    font-size: 12px;
+    color: #D4D4D4;
 }
 </style>
