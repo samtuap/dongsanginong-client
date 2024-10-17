@@ -4,7 +4,7 @@
       <div class="title">실시간 채팅</div>
       <div class="message-list" ref="messageList">
         <div
-          v-for="(message, index) in messages"
+          v-for="(message, index) in filteredMessages"
           :key="message.timestamp"
           class="message-item"
           @click="selectMessage(index)"
@@ -15,7 +15,7 @@
           </div>
           <div v-if="isPublisher && selectedMessageIndex === index" class="dropdown-menu">
             <!-- memberId 또는 sellerId 중 하나를 선택하여 전달 -->
-            <button @click.stop="kickUser(message.memberId, message.sellerId)" class="dropdown-item">
+            <button @click.stop="openKickConfirmModal(message)" class="dropdown-item">
               강퇴하기
             </button>
           </div>
@@ -40,6 +40,15 @@
         <button @click="closeKickSuccessModal">닫기</button>
       </div>
     </div>
+
+    <div v-if="kickConfirmModalVisible" class="modal">
+      <div class="modal-content">
+        <p>정말로 강퇴하시겠습니까?</p>
+        <button @click="confirmKick" class="submit-btn">확인</button>
+        <button @click="closeKickConfirmModal" class="submit-btn">취소</button>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -76,6 +85,9 @@ export default {
       isKicked: false,
       selectedMessageIndex: null, // 선택한 메시지 인덱스
       kickSuccessModalVisible: false,
+      kickConfirmModalVisible: false,
+      messageToKick: null,
+      kickedUserIds: [],
     };
   },
   async mounted() {
@@ -101,6 +113,14 @@ export default {
       console.log("Disconnecting WebSocket connection");
       this.stompClient.disconnect(() => {
         console.log("WebSocket disconnected");
+      });
+    }
+  },
+  computed: {
+    filteredMessages() {
+      return this.messages.filter(message => {
+        const userId = message.memberId || message.sellerId;
+        return !this.kickedUserIds.includes(userId);  // 강퇴된 유저의 메시지 제외
       });
     }
   },
@@ -151,10 +171,13 @@ export default {
                 console.log("kickMessage", kickMessage);
                 const kickedUserId = kickMessage.memberId || kickMessage.sellerId;
                 if (kickedUserId === Number(userId)) {
+                  this.kickedUserIds.push(kickedUserId);
+                  this.messages = this.messages.filter(
+                  msg => (msg.memberId || msg.sellerId) !== kickedUserId
+                  );
                   this.$emit('kicked'); // 부모에게 'kicked' 이벤트 전송
                   this.stompClient.disconnect(() => {
                     console.log("Kicked user WebSocket disconnected");
-                    // 모달을 보여준 후 리디렉션을 부모 컴포넌트가 처리하도록 합니다.
                   });
                 }
               } catch (e) {
@@ -162,6 +185,23 @@ export default {
               }
             });
           }
+
+            // 강퇴된 유저 정보 수신 구독
+            this.stompClient.subscribe(`/topic/live/${this.liveId}/kick`, (message) => {
+              const kickMessage = JSON.parse(message.body);
+              console.log("강퇴 메시지 수신:", kickMessage);
+
+              const { userId } = kickMessage;
+
+              // 강퇴된 유저의 메시지 제거
+              this.messages = this.messages.filter(
+                msg => (msg.memberId || msg.sellerId) !== userId
+              );
+
+              if (userId === Number(this.memberId || this.sellerId)) {
+                this.$emit('kicked');
+              }
+            });
         },
         (error) => {
           console.error('WebSocket connection error:', error);
@@ -231,6 +271,30 @@ export default {
       }
     },
 
+    openKickConfirmModal(message) {
+      this.messageToKick = message;
+      this.kickConfirmModalVisible = true;
+      this.selectedMessageIndex = null;
+    },
+
+    closeKickConfirmModal() {
+      this.kickConfirmModalVisible = false;
+      this.messageToKick = null;
+    },
+
+    confirmKick() {
+      if (this.messageToKick) {
+        this.kickUser(this.messageToKick.memberId, this.messageToKick.sellerId);
+        this.kickConfirmModalVisible = false;
+        this.selectedMessageIndex = null;
+      }
+    },
+
+    isUserKicked(message) {
+      const userId = message.memberId || message.sellerId;
+      return this.kickedUserIds.includes(userId);
+    },
+
     // userId과 sellerId를 함께 받아 적절한 userId 설정
     kickUser(memberId, sellerId) {
       const userId = memberId !== null ? memberId : sellerId;
@@ -248,6 +312,7 @@ export default {
       })
         .then(() => {
           console.log(`${userId} 강퇴됨`);
+          this.kickedUserIds.push(userId);
           this.showKickSuccessModal();
         })
         .catch(error => {
@@ -312,6 +377,7 @@ export default {
 .message-item {
   margin-bottom: 10px;
   cursor: pointer;
+  position: relative;
 }
 
 .chat-input {
@@ -400,6 +466,21 @@ export default {
 }
 
 .modal button:hover {
+  background-color: #a8b05b;
+}
+
+.submit-btn {
+  margin-left: 10px;
+  margin-top: 8px;
+  background-color: #bcc07b;
+  color: black;
+  border-radius: 50px;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
   background-color: #a8b05b;
 }
 </style>
