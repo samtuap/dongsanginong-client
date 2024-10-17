@@ -12,8 +12,9 @@
         <!-- top 10 끝 -->
 
         <!-- 농장 리스트 -->
-        <v-container style="width: 100%; border-top: 1px solid #D4D4D4; text-align: center;">
-            <h3>농장 둘러보기</h3>
+        <v-container style="width: 100%; border-top: 1px solid #D4D4D4;">
+            <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🏡 농장 둘러보기 </span>
+            </v-card-title>
 
             <v-row style="margin-top: 20px;">
                 <v-col cols="6"></v-col>

@@ -92,15 +92,15 @@ export default {
 }
 
 .carousel-item {
-  flex: 1 0 calc(33.333% - 20px); /* Three items per page with spacing */
+  flex: 1 0 calc(28.333% - 20px); /* Three items per page with spacing */
   margin-right: 20px; /* Create space between items */
   text-align: center;
   box-sizing: border-box;
 }
 
 .item-img {
-  width: 260px;
-  height: 260px;
+  width: 270px;
+  height: 270px;
   object-fit: cover;
   border-radius: 50%;
 }
