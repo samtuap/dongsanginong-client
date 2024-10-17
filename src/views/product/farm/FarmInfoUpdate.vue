@@ -64,9 +64,10 @@
             </div>
         </div>
 
-        <button @click="submitFarm" class="submit-button" v-if="isEditing">저장</button>
-        <button @click="cancelEdit" class="submit-button" v-if="isEditing"
-            style="background-color: lightgrey;">취소</button>
+        <div class="button-group" v-if="isEditing">
+            <button @click="submitFarm" class="submit-button">저장</button>
+            <button @click="cancelEdit" class="submit-button cancel-button">취소</button>
+        </div>        
         <button @click="editFarm" class="edit-button" style="margin-top: 10%;" v-else>수정하기</button>
     </div>
 
@@ -459,14 +460,10 @@ export default {
 .submit-button {
     background-color: #bcc07b;
     padding: 10px 10px;
-    /* 버튼의 가로 크기를 줄임 */
     border: none;
     border-radius: 8px;
     cursor: pointer;
     width: 48%;
-    /* 버튼의 너비를 절반으로 설정 */
-    margin-right: 2%;
-    /* 버튼 간 간격 조정 */
 }
 
 .edit-button {
@@ -505,13 +502,20 @@ export default {
 .modal-buttons {
     display: flex;
     justify-content: space-around;
-    /* 버튼 사이 간격을 동일하게 조정 */
     margin-top: 20px;
-    /* 버튼과 텍스트 간 간격 조정 */
 }
 
 .half-width {
     width: 45%;
-    /* 버튼의 너비를 절반으로 설정 */
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px; /* 필요한 경우 여백 추가 */
+}
+
+.cancel-button {
+    background-color: lightgrey; /* 취소 버튼 스타일 */
 }
 </style>
