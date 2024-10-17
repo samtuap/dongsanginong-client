@@ -9,6 +9,7 @@ import MemberCouponList from "@/views/order/coupon/MemberCouponList.vue"
 import MemberFavorite from "@/views/member/myPage/MemberFavorite.vue";
 import MemberPaymentList from "@/views/member/myPage/MemberPaymentList.vue";
 import MemberDeliveryList from "@/views/member/myPage/MemberDeliveryList.vue";
+import MemberSubscribeManage from "@/views/member/myPage/MemberSubscribeManage.vue";
 
 export const memberRouter = [
   {
@@ -37,7 +38,7 @@ export const memberRouter = [
     component: MemberMyPage,
   },
   {
-    path: "/member/update/phone",
+    path: "/member/update/info",
     name: "MemberPhoneUpdate",
     component: MemberPhoneUpdate,
   },
@@ -65,5 +66,10 @@ export const memberRouter = [
     path: "/member/delivery/list",
     name: "MemberDeliveryList",
     component: MemberDeliveryList
+  },
+  {
+    path: "/member/subscribe-management",
+    name: "MemberSubscribeManage",
+    component: MemberSubscribeManage
   },
 ];
