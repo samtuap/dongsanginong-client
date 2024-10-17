@@ -60,8 +60,8 @@
     <v-dialog v-model="alertModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; 
         overflow-y: hidden;">
-            <v-card-text>로그아웃 되었습니다.</v-card-text>
-            <v-btn @click="handleLogout" class="submit-btn">close</v-btn>
+            <v-card-text style="margin-top: 10%;">로그아웃 되었습니다.</v-card-text>
+            <v-btn @click="handleLogout" class="submit-btn">닫기</v-btn>
         </v-card>
     </v-dialog>
 
