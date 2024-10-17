@@ -2,7 +2,7 @@
     <div class="login-page">
         <div class="login-container">
             <!-- 로그인 제목 -->
-            <img src="/inongLogo.png" width=250px/>
+            <img :src="require('@/assets/inongLogo.png')" width=100px/>
             <h2 class="login-title">로그인</h2>
             
             <img :src="require('@/assets/kakao_login.png')" class="sign-in" @click="kakaoLogin" />
@@ -27,8 +27,9 @@
 
       <v-dialog v-model="isRegisterSuccessModalOpen" max-width="400px">
       <v-card class="modal-card" style="padding: 10px; padding-right: 20px; text-align: center;">
-        <v-card-text>완료되었습니다.</v-card-text>
-        <v-btn @click="closeRegisterSuccessModal" class="submit-btn">Close</v-btn>
+        <v-card-text style="margin-top: 20px;">동상이농 회원가입이 <br />
+          완료되었습니다.</v-card-text>
+        <v-btn @click="closeRegisterSuccessModal" class="submit-btn" style="margin-bottom:15px">닫기</v-btn>
       </v-card>
     </v-dialog>
     </div>
@@ -114,13 +115,13 @@ export default {
 .login-title {
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin: 10% 0 10% 0;
 }
 
 /* 로그인 버튼 컨테이너 스타일 */
 .login-container {
     display: flex;
-    padding-top: 70px;
+    padding-top: 50px;
     flex-direction: column;
     align-items: center;
     background-color: #f9f9f9;
@@ -170,7 +171,9 @@ export default {
   padding: 35px;
   box-shadow: none;
   border-radius: 10px;
+  height: 200px;
 }
+
 .submit-btn {
   margin-left: 10px;
   margin-top: 8px;

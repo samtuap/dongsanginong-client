@@ -6,8 +6,8 @@
     <v-dialog v-model="alertModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; 
     overflow-y: hidden;">
-            <v-card-text>동상이농 회원이 아닙니다. <br /> 회원가입 페이지로 이동합니다.</v-card-text>
-            <v-btn @click="handleCloseModal" class="submit-btn">close</v-btn>
+            <v-card-text style="margin-top: 5%;">동상이농 회원이 아닙니다. <br /> 회원가입 페이지로 이동합니다.</v-card-text>
+            <v-btn @click="handleCloseModal" class="submit-btn">닫기</v-btn>
         </v-card>
     </v-dialog>
 </template>
