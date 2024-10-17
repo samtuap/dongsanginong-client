@@ -1,12 +1,12 @@
 <template>
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
+        <h3 style="margin-right: 78%;">내 쿠폰함</h3><br>
         <div class="member-change-coupon">
-            <h2>내 쿠폰함</h2>
-            <hr class="horizontal-divider" />
 
             <!-- 쿠폰 리스트 -->
             <v-container fluid>
+                <br>
                 <v-row justify="center">
                     <!-- 쿠폰 리스트  -->
                     <v-col cols="12" md="8">
@@ -16,7 +16,7 @@
                                 :key="coupon.couponId"
                                 :class="{'coupon-item': true, 'bottom-row': index >= 3}"
                             >
-                                <div class="coupon-content">
+                                <div class="coupon-content" style="margin-top: 4%;">
                                     <p class="coupon-name">{{ coupon.couponName }}</p>
                                     <p class="coupon-discount">{{ coupon.discountPercentage }}%</p>
                                 </div>
@@ -29,10 +29,10 @@
                 <!-- Pagination -->
                 <v-row justify="center" class="pagination-buttons">
                     <v-btn icon @click="prevPage" :disabled="currentPage === 1">
-                        <v-icon>mdi-chevron-left</v-icon>
+                        <v-icon>mdi-menu-left</v-icon>
                     </v-btn>
                     <v-btn icon @click="nextPage" :disabled="isLastPage">
-                        <v-icon>mdi-chevron-right</v-icon>
+                        <v-icon>mdi-menu-right</v-icon>
                     </v-btn>
                 </v-row>
             </v-container>
@@ -133,7 +133,7 @@ export default {
 
 <style scoped>
 .member-page {
-    margin-left: 200px;
+    background-color: #F3F3F3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -145,12 +145,11 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 40px;
-    width: 1000px;
-    height: 650px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px 10px;
+    width: 905px;
+    min-height: 550px;
+    margin-left: 20%;
+    background-color: white;
 }
 
 .coupon-grid {
@@ -162,8 +161,8 @@ export default {
 }
 
 .coupon-item {
-    width: 300px;
-    height: 150px;
+    width: 270px;
+    height: 140px;
     background-image: url('/public/coupon3.png');
     background-size: cover;
     background-position: center;
@@ -182,14 +181,16 @@ export default {
 
 /* 유효기간 텍스트를 쿠폰 이미지 아래로 배치 */
 .coupon-expiration {
-    margin-top: 0px;
-    font-size: 12px;
+    /* margin-top: 0px; */
+    font-size: 13px;
+    color: grey;
+    margin-top: -5px;
     text-align: center;
 }
 
 /* 텍스트를 이미지 위에 가운데 정렬 */
 .coupon-name {
-    font-size: 12px;
+    font-size: 14px;
     margin-bottom: 10px;
     white-space: pre-wrap; 
     word-wrap: break-word;
@@ -198,15 +199,16 @@ export default {
 }
 
 .coupon-discount {
-    font-size: 36px;
+    font-size: 28px;
     margin-bottom: 50px;
 }
 
 .pagination-buttons {
-    margin-top: 90px;
-    margin-bottom: 50px;
+    margin-top: 8%;
+    margin-bottom: 2%;
     display: flex;
     gap: 10px;
+    background-color: white;
 }
 
 .horizontal-divider {

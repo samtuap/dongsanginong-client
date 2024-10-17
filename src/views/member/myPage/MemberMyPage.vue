@@ -28,37 +28,70 @@
 
     <div class="member-page" style="padding-right: 300px;">
         <MemberSidebar />
-        <div class="member-info">
-            <v-row class="header" @click="this.$router.push('/')">
-                <h2>마이 페이지</h2>
-                <hr class="horizontal-divider" />
-            </v-row >
-
-            <div class="info-container">
-                <div class="label">
-                    <label>이름</label>
-                    <label>이메일</label>
-                    <label>전화번호</label>
-                    <label>우편번호</label>
-                    <label>배송지</label>
+        <h3 style="margin-right: 78%;">내 정보 조회</h3>
+        <br>
+        <div class="member-info" style="padding-top: 5%;">
+            <div>
+                <div style="margin-left: 7%;">
+                    <v-row>
+                        <v-col cols="2" class="d-flex" style="margin-top: 2%;">
+                            <i class="mdi mdi-pencil"></i>&nbsp;
+                            <label style="font-size: 16px; font-weight: 400;">이름</label>
+                        </v-col>
+                        <v-col cols="9">
+                            <v-text-field type="text" readonly :value="memberInfo.name" />
+                        </v-col>
+                    </v-row>
                 </div>
-
-                <div class="divider"></div>
-
-                <div class="value">
-                    <p>{{ memberInfo.name }}</p>
-                    <p>{{ memberInfo.email }}</p>
-                    <p>{{ memberInfo.phone }}</p>
-                    <p>{{ memberInfo.zipcode }}</p>
-                    <p>{{ memberInfo.address }} {{ memberInfo.addressDetail }}</p>
+                <div style="margin-left: 7%;">
+                    <v-row>
+                        <v-col cols="2" class="d-flex" style="margin-top: 2%;">
+                            <i class="mdi mdi-mail"></i>&nbsp;
+                            <label style="font-size: 16px; font-weight: 400;">이메일</label>
+                        </v-col>
+                        <v-col cols="9">
+                            <v-text-field type="text" readonly :value="memberInfo.email" />
+                        </v-col>
+                    </v-row>
+                </div>
+                <div style="margin-left: 7%;">
+                    <v-row>
+                        <v-col cols="2" class="d-flex" style="margin-top: 2%;">
+                            <i class="mdi mdi-phone"></i>&nbsp;
+                            <label style="font-size: 16px; font-weight: 400;">전화번호</label>
+                        </v-col>
+                        <v-col cols="9">
+                            <v-text-field type="text" readonly :value="memberInfo.phone" />
+                        </v-col>
+                    </v-row>
+                </div>
+                <div style="margin-left: 7%;">
+                    <v-row>
+                        <v-col cols="2" class="d-flex" style="margin-top: 2%;">
+                            <i class="mdi mdi-map-marker"></i>&nbsp;
+                            <label style="font-size: 16px; font-weight: 400;">우편번호</label>
+                        </v-col>
+                        <v-col cols="9">
+                            <v-text-field type="text" readonly :value="memberInfo.zipcode" />
+                        </v-col>
+                    </v-row>
+                </div>
+                <div style="margin-left: 7%;">
+                    <v-row>
+                        <v-col cols="2" class="d-flex" style="margin-top: 2%;">
+                            <i class="mdi mdi-home"></i>&nbsp;
+                            <label style="font-size: 16px; font-weight: 400;">배송지</label>
+                        </v-col>
+                        <v-col cols="9">
+                            <v-text-field type="text" readonly :value="`${memberInfo.address} ${memberInfo.addressDetail}`" />
+                        </v-col>
+                    </v-row>
                 </div>
             </div>
 
-            <hr class="horizontal-divider" />
-
             <div class="footer">
                 <div class="withdraw-container">
-                    <a class="withdraw" @click="confirmWithdraw">탈퇴하기</a>
+                    <a class="withdraw" @click="confirmWithdraw" style="margin-top: -6%; margin-right: 8%;">탈퇴하기</a>
                 </div>
             </div>
         </div>
@@ -165,6 +198,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999;
 }
 
 .modal-content {
@@ -207,7 +241,6 @@ export default {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-    font-weight: bold;
 }
 
 .withdraw-button {
@@ -255,7 +288,7 @@ label {
 }
 
 .member-page {
-    margin-left: 200px;
+    background-color: #F3F3F3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -267,26 +300,25 @@ label {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 40px;
-    width: 1000px;
-    height: 650px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px 40px;
+    width: 905px;
+    min-height: 550px;
+    margin-left: 20%;
+    background-color: white;
 }
 
-.header {
+/* .header {
     margin-bottom: 20px;
-}
+} */
 
-.info-container {
+/* .info-container {
     display: grid;
     grid-template-columns: 4fr auto 6fr;
     gap: 20px;
     align-items: center;
     width: 100%;
     flex-grow: 1;
-}
+} */
 
 .label {
     display: flex;
