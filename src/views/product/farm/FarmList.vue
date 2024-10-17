@@ -508,7 +508,8 @@ export default {
 
 .product-image-frame {
     height: 200px;
-    width: auto;
+    width: 200px;
+    overflow: hidden;
     border-radius: 5px;
     margin-right: 6px;
     /* 영역을 넘어가는 부분을 잘라냄 */
