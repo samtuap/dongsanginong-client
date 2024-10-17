@@ -3,7 +3,7 @@
     <SellerSidebar />
 
     <v-container fluid>
-        <h3>매출 내역 조회</h3>
+        <h3 style="padding-top: 10px;">매출 내역 조회</h3>
         <!-- 첫 구독만 표시와 날짜 선택 -->
         <v-row style="height: 100px;" align="center">
             <v-col cols="6" style="align-items: center; justify-content: center">
