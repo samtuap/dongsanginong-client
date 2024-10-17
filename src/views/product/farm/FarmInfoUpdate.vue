@@ -6,31 +6,33 @@
         <!-- 배너 이미지 업로드 -->
         <div class="image-upload banner-upload">
             <img :src="bannerImageUrl || defaultBanner" alt="배너 이미지" class="banner-image"
-                @click="triggerBannerUpload" />
+                @click="isEditing ? triggerBannerUpload() : null" />
             <input type="file" @change="onBannerImageUpload" class="image-input" ref="bannerInput" />
 
             <!-- 수정하기 버튼을 눌렀을 때만 보이도록 설정 -->
             <div class="upload-button banner-upload-button" @click="triggerBannerUpload" v-if="isEditing">+</div>
-            <div class="profile-name-wrapper">
-                <div class="profile-upload-wrapper">
-                    <img :src="profileImageUrl || defaultProfile" class="profile-image" @click="triggerProfileUpload" />
-                    <input type="file" @change="onProfileImageUpload" class="image-input" ref="profileInput" />
-                    <!-- 수정하기 버튼을 눌렀을 때만 보이도록 설정 -->
-                    <div class="upload-button profile-upload-button" @click="triggerProfileUpload" v-if="isEditing">+
-                    </div>
-                </div>
-                <div class="farm-name">
-                    <h3 v-if="!isEditing">{{ farmName }}</h3>
+
+            <div class="profile-upload-wrapper">
+                <img :src="profileImageUrl || defaultProfile" class="profile-image"
+                    @click="isEditing ? triggerProfileUpload() : null" />
+                <input type="file" @change="onProfileImageUpload" class="image-input" ref="profileInput" />
+                <!-- 수정하기 버튼을 눌렀을 때만 보이도록 설정 -->
+                <div class="upload-button profile-upload-button" @click="triggerProfileUpload" v-if="isEditing">+
                 </div>
             </div>
-        </div><br>
+        </div>
+        <div class="farm-name">
+            <h3 v-if="!isEditing">{{ farmName }}</h3>
+        </div>
+
+        <br />
 
         <!-- 수정하기 버튼을 눌렀을 때만 input 보이기 -->
-        <input type="text" v-model="farmName" placeholder="농장 이름을 입력해주세요." class="farm-name-input"
-            v-if="isEditing" /><br>
+        <input type="text" v-model="farmName" placeholder="농장 이름을 입력해주세요." class="farm-name-input" v-if="isEditing" />
+        <br />
 
         <div class="selected-category-space">
-            <h4 class="left-align" v-if="isEditing">선택된 카테고리</h4><br />
+            <h4 class="left-align" v-if="!isEditing">선택된 카테고리</h4><br />
             <div class="selected-categories">
                 <span v-for="categoryId in selectedCategories" :key="categoryId" class="category-chip">
                     {{ getCategoryName(categoryId) }}
@@ -40,10 +42,10 @@
                 </span>
             </div>
         </div>
-        <br />
 
         <div class="category-selection" v-if="isEditing">
-            <h4 class="left-align">농장 카테고리 선택</h4><br />
+            <h4 class="left-align">농장 카테고리 선택</h4>
+            <br />
             <div class="category-list">
                 <button v-for="category in categories" :key="category.id" @click="selectCategory(category.id)"
                     class="category-button" :class="{ selected: selectedCategories.includes(category.id) }">
@@ -51,18 +53,37 @@
                 </button>
             </div>
         </div>
-        <br />
 
         <div class="farm-intro">
             <h4 class="left-align" v-if="isEditing">농장 설명을 적어주세요.</h4><br />
             <!-- 수정하기 버튼을 눌렀을 때만 textarea 보이기 -->
             <textarea v-model="farmIntro" class="intro-textarea" v-if="isEditing"></textarea>
-            <p v-if="!isEditing">{{ farmIntro }}</p>
+            <h4 v-if="!isEditing" class="left-align">농장 카테고리 선택</h4>
+            <div class="intro-area" v-if="!isEditing">
+                <p v-if="!isEditing">{{ farmIntro }}</p>
+            </div>
         </div>
 
-        <button @click="submitFarm" class="submit-button" v-if="isEditing">저장</button>
-        <button @click="editFarm" v-else>수정하기</button>
+        <div class="button-group" v-if="isEditing">
+            <button @click="submitFarm" class="submit-button">저장</button>
+            <button @click="cancelEdit" class="submit-button cancel-button">취소</button>
+        </div>        
+        <button @click="editFarm" class="edit-button" style="margin-top: 10%;" v-else>수정하기</button>
     </div>
+
+    <!-- 모달 -->
+    <v-dialog v-model="cancelModal" max-width="260px">
+        <v-card class="modal" style="width:150%; padding: 10px; padding-right: 20px; text-align: center;">
+            <v-card-text>변경 사항이 모두 삭제됩니다. <br />
+                취소하시겠습니까?</v-card-text>
+            <div class="modal-buttons">
+                <v-btn @click="confirmCancel" class="submit-btn half-width">확인</v-btn>
+                <v-btn @click="cancelModal = false" class="submit-btn half-width"
+                    style="background-color: lightgrey;">취소</v-btn>
+            </div>
+
+        </v-card>
+    </v-dialog>
 
     <v-dialog v-model="alertModal" max-width="260px">
         <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
@@ -82,7 +103,8 @@ export default {
     },
     data() {
         return {
-            isEditing: false, // 수정 모드 여부
+            isEditing: false,
+            cancelModal: false,
             farmName: '',
             farmIntro: '',
             bannerImageUrl: '',
@@ -223,7 +245,15 @@ export default {
                 console.error('농장 수정 실패:', error);
                 alert(error.response?.data?.message || "농장 수정 중 문제가 발생했습니다.");
             }
-        }
+        },
+        cancelEdit() {
+            this.cancelModal = true;
+        },
+        confirmCancel() {
+            this.isEditing = false;
+            this.cancelModal = false;
+            this.loadFarmInfo();
+        },
     }
 };
 </script>
@@ -314,25 +344,23 @@ export default {
 .farm-name {
     display: flex;
     text-align: left;
+    margin: 1% 0 0 20%;
 }
 
 .farm-name-input {
-    width: calc(100% - 150px);
-    /* 프로필 이미지와 수평을 맞추기 위해 너비를 조정 */
     padding: 10px;
     font-size: 16px;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 8px;
     margin-left: 152px;
-    /* 프로필 이미지 크기에 맞게 왼쪽으로 마진을 설정 */
     position: relative;
-    /* 상대 위치 설정 */
     top: -30px;
-    /* 위로 이동 */
+
 }
 
 .selected-category-space {
+    margin-top: 5%;
     margin-bottom: 20px;
     text-align: center;
 }
@@ -406,8 +434,17 @@ export default {
 }
 
 .farm-intro {
-    margin-bottom: 20px;
     text-align: center;
+}
+
+.intro-area {
+    height: 100px;
+    text-align: start;
+    padding: 15px 0 0 15px;
+    margin-top: 3%;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 .intro-textarea {
@@ -421,6 +458,15 @@ export default {
 }
 
 .submit-button {
+    background-color: #bcc07b;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 48%;
+}
+
+.edit-button {
     background-color: #bcc07b;
     padding: 10px 20px;
     border: none;
@@ -451,5 +497,25 @@ export default {
     background-color: #BCC07B;
     color: black;
     border-radius: 50px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.half-width {
+    width: 45%;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px; /* 필요한 경우 여백 추가 */
+}
+
+.cancel-button {
+    background-color: lightgrey; /* 취소 버튼 스타일 */
 }
 </style>
