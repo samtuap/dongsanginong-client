@@ -23,9 +23,16 @@
                                     </v-chip>
                                     <v-btn
                                         style="width: 100%; margin-top:10px; border: 0.5px solid gray; box-shadow: none;"
-                                        @click="addToWishList(pkg)">
-                                        <svg-icon type="mdi" :path="path" style="margin-right: 10px;"></svg-icon>
-                                        위시리스트 담기
+                                        @click="addToWishList(pkg)"
+                                        v-if="member"
+                                    >
+                                        <svg-icon
+                                            type="mdi"
+                                            :path="wishlistItems[pkg.id] ? mdiHeart : mdiHeartOutline"
+                                            :style="{ marginRight: '2px', color: wishlistItems[pkg.id] ? 'red' : 'black' }"
+                                            class="heart-icon"
+                                        ></svg-icon>
+                                        <span style="font-size: 14px;">{{ wishlistItems[pkg.id] ? '위시리스트 취소' : '위시리스트 담기' }}</span>
                                     </v-btn>
                                     <v-card-text style="padding-left: 0px;">
                                         <span style="" v-if="pkg.packageName.length > 10"> {{
@@ -95,10 +102,18 @@
                             style="position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 8px; background-color: rgba(128, 128, 128, 0.9); color: white;">
                             {{ pkg.deliveryCycle }}일 주기 배송🚚
                         </v-chip>
-                        <v-btn style="width: 100%; margin-top:10px; border: 0.5px solid gray; box-shadow: none;"
-                            @click="addToWishList(pkg)">
-                            <svg-icon type="mdi" :path="path" style="margin-right: 10px;"></svg-icon>
-                            위시리스트 담기
+                        <v-btn
+                            style="width: 100%; margin-top:10px; border: 0.5px solid gray; box-shadow: none;"
+                            @click="addToWishList(pkg)"
+                            v-if="member"
+                        >
+                            <svg-icon
+                                type="mdi"
+                                :path="wishlistItems[pkg.id] ? mdiHeart : mdiHeartOutline"
+                                :style="{ marginRight: '2px', color: wishlistItems[pkg.id] ? 'red' : 'black' }"
+                                class="heart-icon"
+                            ></svg-icon>
+                            <span style="font-size: 14px;">{{ wishlistItems[pkg.id] ? '위시리스트 취소' : '위시리스트 담기' }}</span>
                         </v-btn>
                         <v-card-text style="padding-left: 0px;">
                             <span style="font-size:medium; font-weight: 400;" v-if="pkg.packageName.length > 10"> {{
@@ -128,6 +143,7 @@
 import axios from 'axios';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiHeartPlusOutline } from '@mdi/js';
+import { mdiHeartOutline, mdiHeart } from '@mdi/js';
 
 export default {
     name: "my-component",
@@ -150,6 +166,12 @@ export default {
             sortOptionMap: new Map(),
             isLoading: false,
             isLastPage: false,
+
+            wishlistItems: [],
+            mdiHeartOutline: mdiHeartOutline,
+            mdiHeart: mdiHeart,
+
+            member: localStorage.getItem("memberId"),
         }
     },
     computed: {
@@ -184,7 +206,26 @@ export default {
             }
         }); // 엔터 키 이벤트
     },
+    async mounted() {
+        await this.fetchWishlistItems();
+    },
     methods: {
+        async fetchWishlistItems() {
+            try {
+                const memberId = localStorage.getItem('memberId');
+                if (memberId) {
+                    const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/wishlist`);
+                    console.log(">>>>>>>>response : ", response.data);
+                    
+                    const wishlistProductIds = response.data.map(product => product.id);
+                    wishlistProductIds.forEach(id => {
+                        this.wishlistItems[id] = true;
+                    });
+                }
+            } catch (error) {
+                console.error('위시리스트 정보를 가져오는데 실패했습니다:', error);
+            }
+        },
         formatPrice(value) {
             if (value == null) {
                 return "0원";
@@ -262,6 +303,19 @@ export default {
                 this.loadPackage();
             }
         },
+        async addToWishList(packageProduct) {
+            try {
+                const memberId = localStorage.getItem('memberId');
+                await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/wishlist/product/${packageProduct.id}`, {
+                    headers: {
+                        myId: memberId,
+                    }
+                });
+                this.wishlistItems[packageProduct.id] = !this.wishlistItems[packageProduct.id];
+            } catch(e) {
+                console.log(e.message);
+            }
+        }
     }
 }
 </script>
@@ -312,5 +366,10 @@ export default {
 .custom-card-container {
     display: flex;
     justify-content: left;
+}
+
+.heart-icon {
+    width: 17px;
+    height: 17px;
 }
 </style>
