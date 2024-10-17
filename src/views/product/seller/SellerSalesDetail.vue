@@ -9,7 +9,7 @@
             <v-col cols="6" style="align-items: center; justify-content: center">
                 <v-checkbox v-model="this.checked" label="첫 구독만 표시" />
             </v-col>
-            <v-col cols="4" style="display: flex; margin:auto; text-align:center; align-items: center;">
+            <v-col cols="5" style="display: flex; margin:auto; text-align:center; align-items: center;">
                     <MonthPickerInput
                     :default-year="this.startMonth.year"
                     :default-month="this.startMonth.month"
@@ -18,7 +18,7 @@
                 <MonthPickerInput :default-year="this.endMonth.year" :default-month="this.endMonth.month" @change="updateEndDate" />
             </v-col>
             <v-col cols="1">
-                <v-btn style="border-radius: 50px;" :disabled="btnDisable" color="deep_green"
+                <v-btn style="border-radius: 50px; margin-left: 10px;" :disabled="btnDisable" color="deep_green"
                     @click="loadData">적용</v-btn>
             </v-col>
         </v-row>
