@@ -4,7 +4,11 @@
         <div class="carousel">
             <div class="carousel-inner" :style="`transform: translateX(-${currentSlide * (100 / itemsPerPage)}%);`">
                 <div class="carousel-item" v-for="(item, index) in items" :key="index">
-                    <img :src="item.imageUrl" alt="item image" class="item-img" />
+                    <img :src="item.imageUrl"
+                    alt="item image"
+                    class="item-img"
+                    @click="this.$router.push(`/product/${item.id}`)"
+                    />
                     <div class="item-info">
                         <h2>{{ item.packageName }}</h2>
                         <p>{{ getAmountWithFormat(item.price) }}원</p>
@@ -86,6 +90,10 @@ export default {
   height: 280px;
   object-fit: cover;
   border-radius: 2%;
+}
+
+.item-img:hover {
+    cursor: pointer;
 }
 
 .item-info {

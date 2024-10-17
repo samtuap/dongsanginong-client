@@ -1,9 +1,13 @@
 <template>
     <v-container>
         <div class="carousel">
-            <div class="carousel-inner">
+            <div class="carousel-inner" :style="`transform: translateX(-${currentSlide * (100 / itemsPerPage)}%);`">
                 <div class="carousel-item" v-for="(item, index) in items" :key="index">
-                    <img :src="item.imageUrl" alt="item image" class="item-img" />
+                    <img :src="item.imageUrl"
+                    alt="item image"
+                    class="item-img"
+                    @click="this.$router.push(`/farm/${item.id}/packages`)"
+                    />
                     <div class="item-info">
                         <h2>{{ item.farmName }}</h2>
                         <p class="farm-intro">{{ item.farmIntro }}</p>
@@ -19,7 +23,7 @@ export default {
     data() {
         return {
             currentSlide: 0,
-            itemsPerPage: 9,  // Number of items to show per page
+            itemsPerPage: 4,  // Number of items to show per page
             items: [],
             farmList: [],
             likes: [],
@@ -34,7 +38,7 @@ export default {
     async created() {
         const params = {
             "page": 0,
-            "size": 9,
+            "size": 10,
             "sort": "favoriteCount,desc"
         }
 
@@ -64,7 +68,7 @@ export default {
         startCarousel() {
             setInterval(() => {
                 this.currentSlide = (this.currentSlide + 1) % this.totalPages;  // Move to next page
-            }, 4000); // Change slide every 3 seconds
+            }, 3000); // Change slide every 3 seconds
         },
     },
 };
@@ -72,10 +76,10 @@ export default {
 <style scoped>
 .carousel {
   width: 100%;
-  overflow-x: scroll;
   overflow-y: hidden;
-  -ms-overflow-style: none;
+  overflow-x: hidden;
   padding-right: 20px; /* To make the next item partially visible */
+  
 }
 
 .carousel::-webkit-scrollbar {
@@ -85,18 +89,19 @@ export default {
 .carousel-inner {
   display: flex;
   width: calc(100% + 20px); /* Compensate for the padding */
+  transition: transform 1s ease-in-out;
 }
 
 .carousel-item {
-  flex: 1 0 calc(33.333% - 20px); /* Three items per page with spacing */
+  flex: 1 0 calc(25% - 20px); /* Three items per page with spacing */
   margin-right: 20px; /* Create space between items */
   text-align: center;
   box-sizing: border-box;
 }
 
 .item-img {
-  width: 260px;
-  height: 260px;
+  width: 210px;
+  height: 210px;
   object-fit: cover;
   border-radius: 50%;
 }
@@ -110,6 +115,9 @@ export default {
   font-weight: bold;
 }
 
+.item-img:hover {
+    cursor: pointer;
+}
 
 .farm-intro {
     font-size: 15px;

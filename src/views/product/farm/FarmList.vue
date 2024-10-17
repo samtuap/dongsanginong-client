@@ -2,11 +2,12 @@
     <v-container class="custom-container">
         <!-- top 10 시작 -->
         <v-card style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%;" rounded="0" flat>
-            <v-card-title>Best 10</v-card-title>
-            <v-card-text style="color: gray;">가장 많이 스크랩된 농장입니다.</v-card-text>
-            <div style="display: flex; justify-content: center; align-items:center;">
+            <v-card-title style="font-size: 20px; margin-bottom: 30px;"> <span style="font-weight: bold;">🏆 BEST 10 </span>
+                <span style="font-size: 15px; color: grey;"> 즐겨찾기 수가 많은 농장들입니다. </span>
+            </v-card-title>
+            <!-- <div style="display: flex; justify-content: center; align-items:center;"> -->
                 <BestFarmMovingSlide />
-            </div>
+            <!-- </div> -->
         </v-card>
         <!-- top 10 끝 -->
 
@@ -110,8 +111,8 @@
 import BestFarmMovingSlide from '@/components/slide/BestFarmMovingSlide.vue';
 import axios from 'axios';
 export default {
-    component() {
-        BestFarmMovingSlide
+    components: {
+        BestFarmMovingSlide,
     },
     data() {
         return {

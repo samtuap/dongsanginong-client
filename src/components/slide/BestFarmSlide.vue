@@ -3,7 +3,11 @@
         <div class="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item" v-for="(item, index) in items" :key="index">
-                    <img :src="item.imageUrl" alt="item image" class="item-img" />
+                    <img :src="item.imageUrl"
+                    alt="item image"
+                    class="item-img"
+                    @click="this.$router.push(`/farm/${item.id}/packages`)"
+                    />
                     <div class="item-info">
                         <h2>{{ item.farmName }}</h2>
                         <p class="farm-intro">{{ item.farmIntro }}</p>
@@ -99,6 +103,10 @@ export default {
   height: 260px;
   object-fit: cover;
   border-radius: 50%;
+}
+
+.item-img:hover {
+    cursor: pointer;
 }
 
 .item-info {
