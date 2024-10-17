@@ -12,10 +12,10 @@
             <v-col cols="5" style="display: flex; margin:auto; text-align:center; align-items: center;">
                     <MonthPickerInput
                     :default-year="this.startMonth.year"
-                    :default-month="this.startMonth.month"
+                    :default-month="this.startMonth.month + 1"
                     @change="updateStartDate"
                     /> <p style="margin-left: 70px; margin-right: 20px; text-align: center">~</p>
-                <MonthPickerInput :default-year="this.endMonth.year" :default-month="this.endMonth.month" @change="updateEndDate" />
+                <MonthPickerInput :default-year="this.endMonth.year" :default-month="this.endMonth.month + 1" @change="updateEndDate" />
             </v-col>
             <v-col cols="1">
                 <v-btn style="border-radius: 50px; margin-left: 10px;" :disabled="btnDisable" color="deep_green"
@@ -116,14 +116,14 @@ export default {
     },
     data() {
         return {
-            page: 1,
             btnDisable: false,
             currentPage: 0,
-            pageCount: 0,
             startDialog: false,
             endDialog: false,
             startTime: new Date(),
             endTime: new Date(),
+            isLastPage: false,
+            isLoading: false,
             startMonth: {
                 from: null,
                 to: null,
@@ -180,11 +180,6 @@ export default {
             },
         }
     },
-    watch: {
-        currentPage(newPage) {
-            this.loadMoreData(newPage);
-        },
-    },
     async created() {
         this.endTime = new Date();
         this.startTime.setMonth(this.endTime.getMonth() - 6);
@@ -202,11 +197,16 @@ export default {
             month: this.endTime.getMonth(),
             year: this.endTime.getFullYear()
         }
-        await this.loadData();
 
+        this.from = new Date(this.startTime.getFullYear(), this.startTime.getMonth(), 1); // 첫날
+        this.to = new Date(this.endTime.getFullYear(), this.endTime.getMonth() + 1, 0); // 마지막 날
 
+        console.log(this.from + " " + this.to);
+        
         // 페이지네이션을 위한 이벤트 리스너 추가
         window.addEventListener('scroll', this.scrollPagination); // 스크롤을 움직였을 때
+
+        await this.loadData();
     },
     methods: {
         async createLineChart() {
@@ -299,32 +299,32 @@ export default {
         updateStartDate(date) {
             const from = new Date(date.from);
             this.startTime = new Date(from.setDate(from.getDate() + 1));
-            console.log(this.startTime);
+            this.from = from;
         },
         updateEndDate(date) {
             const to = new Date(date.to);
             this.endTime = new Date(to.setDate(to.getDate()));
-            console.log(this.endTime);
+            this.to = to;
         },
         async loadData() {
+            this.currentPage = 0;
+            this.isLastPage = false;
             this.btnDisable = true;
             try {
                 const body = {
                     "onlyFirstSubscription": this.checked,
-                    "startTime": this.startTime,
-                    "endTime": this.endTime
+                    "startTime": this.from,
+                    "endTime": this.to
                 }
 
-                if (this.startTime > this.endTime) {
+                if (this.from > this.to) {
                     this.dateCheckDialog = true;
                     return;
                 }
 
 
                 const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
-                const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0, size: 10 } });
-                // const resPackage = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/package-sales-data`, params);
-                console.log(resData);
+                const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0, size: 20 } });
 
                 this.salesData = resData.data;
                 this.salesList = resList.data.content;
@@ -354,27 +354,22 @@ export default {
             try {
 
                 if (this.isLoading || this.isLastPage) return;
-
                 this.isLoading = true;
                 this.currentPage++;
 
                 const body = {
                     "onlyFirstSubscription": this.checked,
-                    "startTime": this.startTime,
-                    "endTime": this.endTime
+                    "startTime": this.from,
+                    "endTime": this.to
                 }
 
                 try {
-                    const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: this.currentPage-1, size: 10 } });
+                    const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: this.currentPage, size: 20 } });
 
-                    // this.products = response.data.content; // 상품 데이터 설정
-                    // this.totalItems = response.data.totalElements; // 전체 상품 수 설정
+                    console.log(response);
                     console.log(response.data.content);
-                    this.salesList = [...this.salesList, ...response.data.content]; 
+                    this.salesList = [...this.salesList, ...response.data.content];
                     this.isLastPage = response.data.last; // 라스트 여부
-                    if(this.isLastPage) {
-                        this.isLastPage = true;
-                    }
                 } catch (error) {
                     console.error('Error fetching product list:', error);
                 }
@@ -383,13 +378,12 @@ export default {
                 console.log(e);
             }
 
-            console.log(this.currentPage);
+            
             this.isLoading = false; // 로딩 끝!
         },
 
         scrollPagination() {
             const isBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
-
             if (isBottom && !this.isLastPage && !this.isLoading) {
                 this.loadMoreData();
             }
