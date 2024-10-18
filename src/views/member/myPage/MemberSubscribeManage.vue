@@ -77,8 +77,8 @@
     <v-dialog v-model="failModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; 
         overflow-y: hidden;">
-            <v-card-text style="margin-top: 10%;">결제 수단 등록에 실패했습니다.</v-card-text>
-            <v-btn @click="handleLogout" class="submit-btn">닫기</v-btn>
+            <v-card-text style="margin-top: 10%;">⚠️ 결제 수단 등록에 실패했습니다.</v-card-text>
+            <v-btn @click="closeWarningAndReload" class="submit-btn">닫기</v-btn>
         </v-card>
     </v-dialog>
 
@@ -205,14 +205,20 @@ export default {
                 }
 
                 await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/subscription/payment/method`, body);
-                
+
+                window.location.reload();
             } catch (e) {
                 this.failModal = true;
                 console.log(e);
             }
 
-            // window.location.reload();
+
         },
+        closeWarningAndReload() {
+            this.failModal = false;
+            window.location.reload();
+        }
+        
     }
 }
 </script>
@@ -273,5 +279,13 @@ export default {
 .payment-description {
     font-size: 12px;
     color: #5D5D5D;
+}
+
+.submit-btn {
+    margin-left: 10px;
+    margin-top: 8px;
+    background-color: #BCC07B;
+    color: black;
+    border-radius: 50px;
 }
 </style>
