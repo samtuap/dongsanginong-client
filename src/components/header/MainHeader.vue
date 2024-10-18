@@ -4,9 +4,9 @@
             <v-row no-gutters class="flex-nowrap justify-space-between">
                 <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start" style="margin-top: 6px;">
-                    <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">Farm</v-btn>
-                    <v-btn :to="{ path: '/live/list' }" style="text-transform: none;">Live</v-btn>
-                    <v-btn :to="{ path: '/product' }" style="text-transform: none;">Package</v-btn>
+                    <v-btn style="text-transform: none;" @click="this.$router.push(`/farm`)">농장</v-btn>
+                    <v-btn :to="{ path: '/live/list' }" style="text-transform: none;">라이브</v-btn>
+                    <v-btn :to="{ path: '/product' }" style="text-transform: none;">정기구독 패키지</v-btn>
                 </v-col>
                 <v-col class="text-center">
                     <v-btn :to="{ path: '/' }" color="white" style="margin-top: 3%;">
@@ -16,12 +16,12 @@
                 <!-- Right-aligned buttons -->
                 <v-col class="d-flex justify-end" style="margin-top: 6px;">
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
-                        v-if="!isSeller && isLogin">Mypage</v-btn>
-                    <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">MyFarm</v-btn>
+                        v-if="!isSeller && isLogin">마이페이지</v-btn>
+                    <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">내 농장 바로가기</v-btn>
                     <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing"
-                        :to="{ path: '/member/sign-in' }">Login</v-btn>
+                        :to="{ path: '/member/sign-in' }">로그인</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
-                        @click="alertModal = true">Logout</v-btn> <!-- Open modal instead of logging out directly -->
+                        @click="alertModal = true">로그아웃</v-btn> <!-- Open modal instead of logging out directly -->
 
                     <v-menu>
                         <template v-slot:activator="{ props }">
@@ -60,15 +60,15 @@
     <v-dialog v-model="alertModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; 
         overflow-y: hidden;">
-            <v-card-text>로그아웃 되었습니다.</v-card-text>
-            <v-btn @click="handleLogout" class="submit-btn">close</v-btn>
+            <v-card-text style="margin-top: 10%;">로그아웃 되었습니다.</v-card-text>
+            <v-btn @click="handleLogout" class="submit-btn">닫기</v-btn>
         </v-card>
     </v-dialog>
 
     <v-dialog v-model="firstFarmModal" max-width="260px">
         <v-card class="farmModal" style="padding: 10px; padding-right: 20px; text-align: center;">
-            <v-card-text style="font-weight: bold;">
-                농장 정보가 존재하지 않네요.<br><br>농장 정보를 입력해주세요. :)
+            <v-card-text>
+                농장 정보가 존재하지 않네요.<br>농장 정보를 입력해주세요.
             </v-card-text>
             <v-btn @click="goToFarmCreate" class="submit-btn">확인</v-btn>
         </v-card>
@@ -298,18 +298,6 @@ export default {
 
                     // Store the token in local storage
                     localStorage.setItem("fcmToken", token);
-
-                    // DB에 fcm 토큰을 저장
-                    try {
-                        const role = localStorage.getItem("role");
-                        if(role === 'MEMBER') {
-                            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
-                        } else if(role === 'SELLER') {
-                            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/fcm/token`, body);
-                        }
-                    } catch(e) {
-                        console.log(e);
-                    }
                 } catch (err) {
                     console.log(err);
                 }
@@ -318,6 +306,19 @@ export default {
             const body = {
                 "fcmToken": localStorage.getItem("fcmToken")
             };
+
+            // DB에 fcm 토큰을 저장
+            try {
+                const role = localStorage.getItem("role");
+                if(role === 'MEMBER') {
+                    console.log("!!!!!!!!!!!!");
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
+                } else if(role === 'SELLER') {
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/fcm/token`, body);
+                }
+            } catch(e) {
+                console.log(e);
+            }
 
             onMessage(messaging, (payload) => {
 
@@ -495,9 +496,17 @@ export default {
 </script>
 
 <style scoped>
+/* 나눔 스퀘어라운드 */
+@font-face {
+    font-family: 'NanumSquareRound';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 .bar {
-    /* font-family: "Fredoka", sans-serif;  */
-    font-weight: 400;
+    /* font-weight: 400; */
+    font-family: 'NanumSquareRound';
 }
 
 .main-logo-image {

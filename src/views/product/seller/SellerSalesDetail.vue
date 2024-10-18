@@ -3,31 +3,22 @@
     <SellerSidebar />
 
     <v-container fluid>
-        <h3>매출 내역 조회</h3>
+        <h3 style="padding-top: 10px;">매출 내역 조회</h3>
         <!-- 첫 구독만 표시와 날짜 선택 -->
         <v-row style="height: 100px;" align="center">
-            <v-col cols="5" style="align-items: center; justify-content: center">
+            <v-col cols="6" style="align-items: center; justify-content: center">
                 <v-checkbox v-model="this.checked" label="첫 구독만 표시" />
             </v-col>
-            <v-col cols="2.5">
-                <v-text-field density="compact" label="시작일" v-model="this.formattedStartDate" readonly
-                    @click.stop="startDialog = true" append-icon="mdi-calendar"
-                    style="height: 30px; line-height: 30px;" />
-                <v-dialog v-model="this.startDialog" max-width="290">
-                    <v-date-picker v-model="this.startTime" @change="updateStartDate"></v-date-picker>
-                </v-dialog>
-            </v-col>
-            <v-col cols="1" class="text-center">~</v-col>
-            <v-col cols="2.5">
-                <v-text-field density="compact" label="종료일" v-model="this.formattedEndDate" readonly
-                    @click.stop="endDialog = true" append-icon="mdi-calendar"
-                    style="height: 30px; line-height: 30px;" />
-                <v-dialog v-model="this.endDialog" max-width="290">
-                    <v-date-picker v-model="this.endTime" @change="updateEndDate"></v-date-picker>
-                </v-dialog>
+            <v-col cols="5" style="display: flex; margin:auto; text-align:center; align-items: center;">
+                    <MonthPickerInput
+                    :default-year="this.startMonth.year"
+                    :default-month="this.startMonth.month + 1"
+                    @change="updateStartDate"
+                    /> <p style="margin-left: 70px; margin-right: 20px; text-align: center">~</p>
+                <MonthPickerInput :default-year="this.endMonth.year" :default-month="this.endMonth.month + 1" @change="updateEndDate" />
             </v-col>
             <v-col cols="1">
-                <v-btn style="border-radius: 50px;" :disabled="btnDisable" color="deep_green"
+                <v-btn style="border-radius: 50px; margin-left: 10px;" :disabled="btnDisable" color="deep_green"
                     @click="loadData">적용</v-btn>
             </v-col>
         </v-row>
@@ -35,14 +26,14 @@
         <v-row>
             <v-col cols="12" sm="6">
                 <div class="chart-container">
-                    <p>일별 매출 추이</p>
+                    <p>월별 매출</p>
                     <!-- 그래프1 -->
                     <canvas ref="LineChart" />
                 </div>
             </v-col>
             <v-col cols="12" sm="6">
                 <div class="chart-container">
-                    <p>월별 매출 추이</p>
+                    <p>월별 판매건수</p>
                     <canvas ref="BarChart" />
                 </div>
             </v-col>
@@ -68,7 +59,6 @@
                                 <th>결제일</th>
                                 <th>패키지 명</th>
                                 <th>구매자 이름</th>
-                                <th>누적 결제 횟수</th>
                                 <th>금액</th>
                             </tr>
                         </thead>
@@ -78,7 +68,6 @@
                                 <td>{{ extractYearAndMonthAndDay(salesDetail.paidAt) }}</td>
                                 <td>{{ salesDetail.packageName }}</td>
                                 <td>{{ salesDetail.customerName }}</td>
-                                <td>-</td>
                                 <td>{{ salesDetail.paidAmount }}</td>
                             </tr>
                         </tbody>
@@ -106,10 +95,14 @@
 import axios from 'axios';
 import { Chart, registerables } from 'chart.js'
 import SellerSidebar from '@/components/sidebar/SellerSidebar.vue';
+// import { MonthPicker } from 'vue-month-picker'
+import { MonthPickerInput } from 'vue-month-picker'
+
 Chart.register(...registerables)
 export default {
     components: {
-        SellerSidebar
+        SellerSidebar,
+        MonthPickerInput
     },
     computed: {
         // 계산된 getter
@@ -125,13 +118,27 @@ export default {
         return {
             btnDisable: false,
             currentPage: 0,
-            pageCount: 0,
             startDialog: false,
             endDialog: false,
             startTime: new Date(),
             endTime: new Date(),
+            isLastPage: false,
+            isLoading: false,
+            startMonth: {
+                from: null,
+                to: null,
+                month: null,
+                year: null
+            },
+            endMonth: {
+                from: null,
+                to: null,
+                month: null,
+                year: null
+            },
             checked: false,
             salesList: [],
+            packageData: {},
             headers: [
                 { text: '결제 아이디', align: 'center', sortable: false, value: 'orderId' },
                 { text: '결제일', align: 'center', sortable: false, value: 'paidAt' },
@@ -157,7 +164,7 @@ export default {
                     borderWidth: 1
                 }]
             },
-            dayData: {
+            saleData: {
                 labels: [],
                 datasets: [{
                     label: 'number of sales',
@@ -175,13 +182,31 @@ export default {
     },
     async created() {
         this.endTime = new Date();
-        this.startTime.setMonth(this.endTime.getMonth() - 1);
-        await this.loadData();
-    },
-    watch: {
-        currentPage(newPage) {
-            this.farmNoticeDetail(newPage);
+        this.startTime.setMonth(this.endTime.getMonth() - 6);
+
+        this.startMonth = {
+            from: this.startTime,
+            to: this.startTime,
+            month: this.startTime.getMonth(),
+            year: this.startTime.getFullYear()
         }
+
+        this.endMonth = {
+            from: this.endTime,
+            to: this.endTime,
+            month: this.endTime.getMonth(),
+            year: this.endTime.getFullYear()
+        }
+
+        this.from = new Date(this.startTime.getFullYear(), this.startTime.getMonth(), 1); // 첫날
+        this.to = new Date(this.endTime.getFullYear(), this.endTime.getMonth() + 1, 0); // 마지막 날
+
+        console.log(this.from + " " + this.to);
+        
+        // 페이지네이션을 위한 이벤트 리스너 추가
+        window.addEventListener('scroll', this.scrollPagination); // 스크롤을 움직였을 때
+
+        await this.loadData();
     },
     methods: {
         async createLineChart() {
@@ -191,7 +216,7 @@ export default {
 
             this.lineChart = await new Chart(this.$refs.LineChart, {
                 type: 'line',
-                data: this.dayData
+                data: this.saleData
             });
         },
         async createBarChart() {
@@ -206,35 +231,15 @@ export default {
         },
         createDataForBarChart() { // 차트를 그리기 위한 데이터를 만들기
             // 1. 월 label 생성
-            this.monthData.labels = this.getMonthsBetween(this.startTime, this.endTime);
-
-            // 인덱스 맵 만들기
-            const labelMap = this.createLabelIndexMap(this.monthData.labels);
-
+            this.monthData.labels = this.salesData.labels;
             // 2. 숫자 넣기
-            this.monthData.datasets[0].data = new Array(this.monthData.labels.length).fill(Number(0));
-
-            this.salesList.forEach(element => {
-                const yearMonth = this.extractYearAndMonth(element.paidAt);
-                const idx = labelMap.get(yearMonth);
-                this.monthData.datasets[0].data[idx] += 1;
-            });
+            this.monthData.datasets[0].data = this.salesData.monthSaleCount;
         },
         createDataForLineChart() { // 차트를 그리기 위한 데이터를 만들기
             // 1. 월 label 생성
-            this.dayData.labels = this.getDaysBetween(this.startTime, this.endTime);
-
-            // 인덱스 맵 만들기
-            const labelMap = this.createLabelIndexMap(this.dayData.labels);
-
+            this.saleData.labels = this.salesData.labels;
             // 2. 숫자 넣기
-            this.dayData.datasets[0].data = new Array(this.dayData.labels.length).fill(Number(0));
-
-            this.salesList.forEach(element => {
-                const yearMonthDay = this.extractYearAndMonthAndDay(element.paidAt);
-                const idx = labelMap.get(yearMonthDay);
-                this.dayData.datasets[0].data[idx] += 1;
-            });
+            this.saleData.datasets[0].data = this.salesData.monthSaleAmount;
         },
         extractYearAndMonth(dateString) { // 년, 월을 추출
             const date = new Date(dateString);
@@ -291,42 +296,42 @@ export default {
             });
             return map;
         },
-        updateStartDate() {
-            this.formattedStartDate = this.startTime ? this.startTime.toISOString().slice(0, 10) : '';
-            this.startDialog = false;
+        updateStartDate(date) {
+            const from = new Date(date.from);
+            this.startTime = new Date(from.setDate(from.getDate() + 1));
+            this.from = from;
         },
-        updateEndDate() {
-            this.formattedEndDate = this.endTime ? this.endTime.toISOString().slice(0, 10) : '';
-            this.endDialog = false;
+        updateEndDate(date) {
+            const to = new Date(date.to);
+            this.endTime = new Date(to.setDate(to.getDate()));
+            this.to = to;
         },
         async loadData() {
+            this.currentPage = 0;
+            this.isLastPage = false;
             this.btnDisable = true;
-
             try {
                 const body = {
                     "onlyFirstSubscription": this.checked,
-                    "startTime": this.startTime,
-                    "endTime": this.endTime
+                    "startTime": this.from,
+                    "endTime": this.to
                 }
 
-                if (this.startTime > this.endTime) {
+                if (this.from > this.to) {
                     this.dateCheckDialog = true;
                     return;
                 }
 
-                const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
-                const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0 } });
 
+                const resData = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-data`, body);
+                const resList = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: 0, size: 20 } });
 
                 this.salesData = resData.data;
-                this.salesList = resList.data;
-
-                console.log(this.salesData);
-                console.log(this.salesList);
+                this.salesList = resList.data.content;
 
                 // 월별 데이터 생성
-                this.createDataForBarChart();
-                this.createDataForLineChart();
+                this.createDataForBarChart(this.salesData);
+                this.createDataForLineChart(this.salesData);
             } catch (e) {
                 console.log(e);
             }
@@ -344,7 +349,45 @@ export default {
             setTimeout(() => {
                 this.btnDisable = false;
             }, "1100");
-        }
+        },
+        async loadMoreData() {
+            try {
+
+                if (this.isLoading || this.isLastPage) return;
+                this.isLoading = true;
+                this.currentPage++;
+
+                const body = {
+                    "onlyFirstSubscription": this.checked,
+                    "startTime": this.from,
+                    "endTime": this.to
+                }
+
+                try {
+                    const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/farm/backoffice/sales-list`, body, { params: { page: this.currentPage, size: 20 } });
+
+                    console.log(response);
+                    console.log(response.data.content);
+                    this.salesList = [...this.salesList, ...response.data.content];
+                    this.isLastPage = response.data.last; // 라스트 여부
+                } catch (error) {
+                    console.error('Error fetching product list:', error);
+                }
+
+            } catch (e) {
+                console.log(e);
+            }
+
+            
+            this.isLoading = false; // 로딩 끝!
+        },
+
+        scrollPagination() {
+            const isBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+            if (isBottom && !this.isLastPage && !this.isLoading) {
+                this.loadMoreData();
+            }
+        },
     }
 };
 </script>
@@ -356,7 +399,7 @@ export default {
     text-align: center;
     width: 100%;
     /* 부모 컨테이너 너비 */
-    height: 280px;
+    height: 340px;
     overflow-x: hidden;
     /* 가로 스크롤 활성화 */
     overflow-y: hidden;

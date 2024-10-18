@@ -2,63 +2,23 @@
     <v-container class="custom-container">
         <!-- top 10 시작 -->
         <v-card style="border-radius: 15px; padding: 20px; max-width: 1200px; width: 100%;" rounded="0" flat>
-            <v-card-title>Best 10</v-card-title>
-            <v-card-text style="color: gray;">가장 많이 스크랩된 농장입니다.</v-card-text>
-            <div style="display: flex; justify-content: center; align-items:center;">
-                <v-btn icon="mdi-chevron-left" variant="plain" @click="prev"></v-btn>
-                <v-window v-model="onboarding" style="width: 1080px;">
-                    <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n"
-                        style="align-items: center;">
-                        <v-row class="d-flex" style="align-items: center; padding-top: 20px;">
-                            <div v-for="(farm, index) in paginatedFarms(n)" :key="index" style="margin-left: 50px;"
-                                class="card-outer">
-                                <div style="padding-bottom: 30px;">
-                                    <v-img class="favorite-farm-img" style="width:190px; height:190px;"
-                                        @click="this.$router.push(`/farm/${farm.id}/packages`)" :src="farm.imageUrl"
-                                        alt="Farm 썸네일" cover />
-                                </div>
-
-                                <div style="display: flex; width: 190px; height: 30px;">
-                                    <div class="grade" :class="{ 'top-grade': (4 * (n - 1) + index + 1) <= 3 }">{{ 4 *
-                                        (n - 1) +
-                                        index + 1 }}</div>
-                                    <div style="width: 120px;">
-                                        <p v-if="farm.farmName.length < 8" style="font-size: 14px; font-weight: 500;">
-                                            {{ farm.farmName }}</p>
-                                        <p v-else style="font-size: 14px; font-weight: 500;"> {{
-                                            farm.farmName.substring(0, 8) }}... </p>
-                                    </div>
-
-
-                                    <v-chip class="like-chip" size="small" color="deep_orange"
-                                        :class="{ 'selected-like-chip': this.likes.get(farm.id) == 1 || this.likes.get(farm.id) == 2 }"
-                                        @click="clickLike(farm.id)">
-                                        💛 {{ likeCount.get(farm.id) }}
-                                    </v-chip>
-
-                                    <div v-if="likes.get(farm.id) == 2" class="heart-emoji">💛</div>
-                                </div>
-
-                            </div>
-                        </v-row>
-                    </v-window-item>
-                </v-window>
-                <v-btn icon="mdi-chevron-right" variant="plain" @click="next"></v-btn>
-            </div>
-            <v-card-actions style="justify-content: center;">
-                <v-item-group v-model="onboarding" class="text-center" mandatory>
-                    <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
-                        <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
-                            @click="toggle"></v-btn>
-                    </v-item>
-                </v-item-group>
-            </v-card-actions>
+            <v-card-title style="font-size: 20px; margin-bottom: 30px;"> <span style="font-weight: bold;">🏆 BEST 10 </span>
+                <span style="font-size: 15px; color: grey;"> 즐겨찾기 수가 많은 농장들입니다. </span>
+            </v-card-title>
+            <!-- <div style="display: flex; justify-content: center; align-items:center;"> -->
+                <BestFarmMovingSlide />
+            <!-- </div> -->
         </v-card>
         <!-- top 10 끝 -->
 
+        <br>
+        <div class="hr-style"></div>
+        <br>
+        
         <!-- 농장 리스트 -->
-        <v-container style="width: 100%; border-top: 1px solid #D4D4D4; text-align: center;">
-            <h3>농장 둘러보기</h3>
+        <v-container style="width: 100%;">
+            <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🏡 농장 둘러보기 </span>
+            </v-card-title>
 
             <v-row style="margin-top: 20px;">
                 <v-col cols="6"></v-col>
@@ -73,7 +33,6 @@
                         variant="solo" single-line @click:append-inner="onSearch">
                     </v-text-field>
                 </v-col>
-
             </v-row>
             <v-row>
                 <div v-for="(farm, index) in farmList" :key="index" class="farm-card-outer">
@@ -82,7 +41,7 @@
                         <!-- 사진 영역 -->
                         <div class="farm-image-frame">
                             <v-img :src="farm.imageUrl" class="farm-image-circle"
-                                @click="this.$router.push(`/farm/${farm.id}`)" cover />
+                            @click="this.$router.push(`/farm/${farm.id}/packages`)" cover />
                         </div>
                         <!-- 제목 영역 -->
                         <div class="farm-description">
@@ -115,7 +74,6 @@
                     </div>
 
                     <div class="package-info">
-
                         <div style="margin-top: 10px; display: flex; border-radius: 10px;" class="package-images-box">
                             <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
                                 <img :src="product.imageUrl" class="package-img"
@@ -164,6 +122,7 @@
     </v-container>
 </template>
 <script>
+import BestFarmMovingSlide from '@/components/slide/BestFarmMovingSlide.vue';
 import axios from 'axios';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiHeartOutline } from '@mdi/js';
@@ -171,7 +130,8 @@ import { mdiHeart } from '@mdi/js';
 export default {
     name: "my-component",
     components: {
-        SvgIcon
+        SvgIcon,
+        BestFarmMovingSlide
     },
     data() {
         return {
@@ -234,7 +194,7 @@ export default {
             const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
             console.log(res);
-            const packages = res.data.slice(0, 10);
+            const packages = res.data;
 
             this.farmList[i] = { ...this.farmList[i], "packages": packages };
         }
@@ -545,10 +505,11 @@ export default {
     line-height: 70px;
 }
 
+
+
 .package-img {
     height: 200px;
-    width: auto;
-    border-radius: 5px;
+    width: 200px;
 }
 
 .package-img:hover {
@@ -566,32 +527,21 @@ export default {
     cursor: pointer;
 }
 
-.package-images-box {
-    height: 300px;
-    width: 100%;
-    margin-top: 10px;
-    display: flex;
-    border-radius: 10px;
-    overflow-x: scroll;
-    transition: all 0.3s ease;
-    /* 부드러운 트랜지션 효과 */
-}
+
 
 .product-image-frame {
-    height: 200px;
-    width: auto;
+    height: 200px !important;
+    width: 200px !important;
+    min-width: 200px !important;
+    overflow: hidden;
     border-radius: 5px;
     margin-right: 6px;
-    /* 영역을 넘어가는 부분을 잘라냄 */
     transition: transform 0.3s ease;
     border-radius: 5px;
-    /* 이미지 확대 시 부드러운 트랜지션 */
 }
 
 
 .product-image-frame img {
-    height: 100%;
-    width: auto;
     border-radius: 5px;
     transition: transform 0.3s ease;
     /* 이미지 확대 시 부드러운 트랜지션 */
@@ -605,7 +555,14 @@ export default {
 
 
 .package-images-box {
+    height: 300px;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    border-radius: 10px;
     padding: 3px;
+    overflow-y: hidden;
+    overflow-x: scroll;
     -ms-overflow-style: none;
 }
 
@@ -647,6 +604,9 @@ export default {
     margin-left: 35px;
 }
 
+.hr-style {
+    border-bottom: 3px solid #efefef; border-radius: 3px;
+  }
 
 @keyframes popUp {
     0% {

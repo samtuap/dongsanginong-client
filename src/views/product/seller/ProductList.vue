@@ -159,13 +159,13 @@ export default {
 <style scoped>
 .product-card {
   margin-top: 20px;
-  width: 80%; /* 테이블 가로 길이 줄임 */
+  width: 78%; /* 테이블 가로 길이 줄임 */
   margin: 0 auto; /* 중앙에 위치 */
   height: auto;
   border: 1px solid #d4d4d4;
   border-radius: 10px;
   padding: 20px;
-  right: 62px;
+  margin-right: 16%;
 }
 
 .table-header {

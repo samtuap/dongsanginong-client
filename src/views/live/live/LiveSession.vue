@@ -327,17 +327,19 @@ export default {
 .live-container {
   display: flex;
   justify-content: space-between;
-  width: 98%;
+  width: 100%;
   height: 100vh;
 }
 .video-section {
   flex: 2; 
   margin-top: 1.7%;
   margin-left: 4%;
+  max-width: 100%;
 }
 .chat-section {
   flex: 1;
   margin-right: 3%;
+  max-width: 100%;
 }
 .kick-modal {
   background-color: rgb(255, 255, 255);
@@ -408,6 +410,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-left: 1%;
 }
 .farm-name {
   margin: 0;

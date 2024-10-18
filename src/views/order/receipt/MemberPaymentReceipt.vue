@@ -2,7 +2,7 @@
     <div class="receipt-page">
         <div class="receipt-container">
             <div class="logo">
-                <img src="/inongLogo.png" alt="로고" />
+                <img src="/123.png" alt="로고" />
             </div>
 
             <div class="receipt-details">

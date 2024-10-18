@@ -2,7 +2,7 @@
     <v-container style="max-width: 95%;">
         <!-- Image Banner -->
         <v-row justify="center">
-            <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" style="margin-top: 10px; height:400px; width:100%;" contain></v-img>
+          <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" style="margin-top: 10px; height:400px; width:100%;" cover></v-img>
         </v-row>
         <!-- 프로필 이미지 및 농장명 -->
          <v-row>
@@ -11,9 +11,8 @@
               <div class="farm-image-frame">
                 <v-img :src="profileImageUrl" class="farm-image-circle" cover />
               </div>
-              <div class="farm-text" style="margin-top: -100px; margin-left: 120px; text-align: start;">
+              <div class="farm-text" style="margin-top: -90px; margin-left: 110px; text-align: start;">
                 <span class="farm-name" style="margin-left: 10px;">{{ this.farmName }}</span><br>
-                <span style="font-size: 14px; color: grey; margin-left: 10px;"> 스크랩 수 {{ this.favoriteCount }}</span><br>
                 <span style="font-size: 14px; color: grey; margin-left: 10px;"> {{ this.farmIntro }}</span>
               </div>
             </v-row>
@@ -162,5 +161,9 @@ export default {
   margin: 0;
   font-size: 18px;
   font-weight: bold;
+}
+
+.banner-image {
+  image-rendering: crisp-edges;
 }
 </style>
