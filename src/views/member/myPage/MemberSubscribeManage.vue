@@ -249,6 +249,6 @@ export default {
 
 .payment-description {
     font-size: 12px;
-    color: #D4D4D4;
+    color: #5D5D5D;
 }
 </style>

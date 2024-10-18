@@ -175,7 +175,7 @@ export default {
             const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/for-sale/${this.farmList[i].id}`);
 
             console.log(res);
-            const packages = res.data;
+            const packages = res.data.slice(0, 10);
 
             this.farmList[i] = { ...this.farmList[i], "packages": packages };
         }
