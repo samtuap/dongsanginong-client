@@ -426,7 +426,6 @@ export default {
 
             this.loadingModal = true;
 
-            let orderId;
             try {
                 // 결제 요청
                 // 포트원 빌링키 결제 API 호출
@@ -442,12 +441,13 @@ export default {
                     }
                 }
                 const paymentResponse = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/order`, body);
-                orderId = paymentResponse.data.orderId;
+                const orderId = paymentResponse.data.orderId;
+                window.location.href(`${process.env.VUE_APP_MY_URL}/order/${orderId}`);
             } catch (e) {
                 console.log(e);
             }
 
-            this.$router.push(`/order/${orderId}`);
+            
         },
         getAmountWithFormat(amount) {
             let ret = "";
