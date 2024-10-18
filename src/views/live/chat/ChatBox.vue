@@ -5,7 +5,7 @@
         실시간 채팅
         <div class="participant-info">
           <v-icon class="mdi mdi-account-multiple" style="font-size: 18px"></v-icon>
-          <span>{{ participantCount +1000 }}</span>
+          <span>{{ participantCount - 1 }}</span>
         </div>
       </div>
       <div class="message-list" ref="messageList">
