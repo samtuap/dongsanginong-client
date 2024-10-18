@@ -26,6 +26,9 @@
                                         @click="addToWishList(pkg)"
                                         v-if="member"
                                     >
+                                    <div v-if="wishAnimation.get(pkg.id)" class="heart-emoji">
+                                        <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
+                                    </div>
                                         <svg-icon
                                             type="mdi"
                                             :path="wishlistItems[pkg.id] ? mdiHeart : mdiHeartOutline"
