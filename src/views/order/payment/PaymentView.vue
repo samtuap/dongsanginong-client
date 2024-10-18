@@ -38,7 +38,7 @@
                         <br>
                     </v-card>
                     <v-card class="pa-4 rectangle-card" style="margin-top: 20px;">
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <h3>쿠폰 적용</h3>
                             <div v-if="selectedCouponName == undefined">
                                 적용된 쿠폰이 없습니다.
@@ -52,7 +52,7 @@
                     </v-card>
 
                     <v-card class="pa-4 rectangle-card" style="margin-top: 20px;">
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <h3>주문자 정보</h3>
                             <p>{{ memberName }} / {{ memberPhone }}</p>
                         </div>
@@ -60,7 +60,7 @@
 
 
                     <v-card class="pa-4 rectangle-card" style="margin-top: 20px;">
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <h3>배송지 정보</h3>
                             <div v-if="memberAddress === undefined">
                                 <p>배송지 정보를 입력해주세요.</p>
@@ -77,7 +77,7 @@
                 <!-- Order Summary and Payment Methods -->
                 <v-col cols="12" md="5">
                     <v-card class="pa-4 rectangle-card" style="margin-bottom: 20px;">
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <!-- Order Summary -->
                             <h3>주문 요약</h3>
                             <span style="display: inline-block; width: 45%;" class="payment-info-title">상품 가격</span><span
@@ -102,7 +102,7 @@
                     </v-card>
                     <v-card class="pa-4 rectangle-card">
                         <!-- Payment Method -->
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <h3>결제 수단</h3>
                             <div v-if="paymentMethod === undefined">
                                 <p style="color: #234200;">결제 수단을 등록해주세요.</p>
@@ -116,8 +116,8 @@
                                 결제됩니다.</p>
 
 
-                            <v-checkbox label="전체 동의" v-model="termsAllAccepted"></v-checkbox>
-                            <v-checkbox size="small" label="구매조건 확인 및 결제진행에 동의" v-model="termsAccepted1" class="subcheckbox"></v-checkbox>
+                            <v-checkbox label="전체 동의" v-model="termsAllAccepted" style="margin-bottom: -25px;"></v-checkbox>
+                            <v-checkbox label="구매조건 확인 및 결제진행에 동의" v-model="termsAccepted1" class="subcheckbox"></v-checkbox>
                             <v-checkbox label="전자금융거래 이용약관 동의" v-model="termsAccepted2" class="subcheckbox"></v-checkbox>
                             <v-checkbox label="개인정보 수집 및 이용 동의" v-model="termsAccepted3" class="subcheckbox"></v-checkbox>
                             <v-checkbox label="개인정보 제 3자 제공 동의" v-model="termsAccepted4" class="subcheckbox"></v-checkbox>
@@ -125,7 +125,7 @@
                         </div>
 
                     </v-card>
-                    <v-btn @click="this.confirmPayModal = true" style="background-color: #BCC07B; width: 100%; height: 50px; text-align: center; display: flex; align-items: center; justify-content: center;">
+                    <v-btn @click="openConfirmPayModal" style="background-color: #BCC07B; width: 100%; height: 50px; text-align: center; display: flex; align-items: center; justify-content: center;">
                         <p>결제하기</p>
                     </v-btn>
                 </v-col>
@@ -414,18 +414,8 @@ export default {
         },
         async doPay() {
             this.confirmPayModal = false;
-            
-            if(this.termsAccepted1 != true 
-            || this.termsAccepted2 != true 
-            || this.termsAccepted3 != true
-            || this.termsAccepted4 != true 
-            || this.termsAccepted5 != true) {
-                alert("모든 동의 항목에 체크해주세요.");
-                return;
-            }
 
-            this.loadingModal = true;
-
+        
             try {
                 // 결제 요청
                 // 포트원 빌링키 결제 API 호출
@@ -442,9 +432,10 @@ export default {
                 }
                 const paymentResponse = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/order`, body);
                 const orderId = paymentResponse.data.orderId;
-                window.location.href(`${process.env.VUE_APP_MY_URL}/order/${orderId}`);
+                window.location.href = `${process.env.VUE_APP_MY_URL}/order/${orderId}`;
             } catch (e) {
                 console.log(e);
+                alert(e.response?.data?.message);
             }
 
             
@@ -461,6 +452,19 @@ export default {
             }
             return ret;
         },
+        openConfirmPayModal() {
+
+            if(this.termsAccepted1 != true 
+            || this.termsAccepted2 != true 
+            || this.termsAccepted3 != true
+            || this.termsAccepted4 != true 
+            || this.termsAccepted5 != true) {
+                alert("모든 동의 항목에 체크해주세요.");
+                return;
+            }
+
+            this.confirmPayModal = true;
+        }
     },
 
 }
@@ -479,6 +483,7 @@ h3 {
 .rectangle-card {
     border-radius: 0px;
     box-shadow: none;
+    padding-bottom: 40px;
 }
 
 .delivery-cost-div {
@@ -524,8 +529,16 @@ h3 {
 }
 
 .subcheckbox {
-    margin: 0px;
-    font-size: small;
+    margin-top: -20px;
+    margin-bottom: -20px;
+    font-size: 12px;
     margin-left: 30px;
+}
+
+.inner-div {
+    width: 95%;
+    margin: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 </style>
