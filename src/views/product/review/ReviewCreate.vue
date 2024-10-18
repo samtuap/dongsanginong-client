@@ -6,44 +6,23 @@
       </v-card-title>
       <v-card-text>
         <div class="review-form">
-
           <!-- 리뷰 설명 -->
           <div class="input-section label-and-rating">
             <label for="rating-text">이 상품 어떠셨나요?</label>
             <!-- 별점 -->
-            <v-rating
-              v-model="review.rating"
-              background-color="grey lighten-2"
-              color="yellow"
-              large
-              length="5"
-              rounded
-              class="custom-rating"
-            />
+            <v-rating v-model="review.rating" background-color="grey lighten-2" color="yellow" large length="5" rounded
+              class="custom-rating" />
           </div>
 
           <!-- 후기에 대한 요약 -->
           <div class="input-section input-summary">
             <label for="summary">어떤 점이 좋았나요?</label>
-            <input
-              type="text"
-              v-model="review.title"
-              id="summary"
-              placeholder="후기 요약"
-              required
-              class="custom-input"
-            />
+            <input type="text" v-model="review.title" id="summary" placeholder="후기 요약" required class="custom-input" />
           </div>
 
           <!-- 후기에 대한 내용 -->
           <div class="input-section input-content" style="margin-top: -30px;">
-            <textarea
-              v-model="review.contents"
-              id="content"
-              placeholder="후기 내용을 입력하세요"
-              required
-              class="custom-input"
-            />
+            <textarea v-model="review.contents" id="content" placeholder="후기 내용을 입력하세요" required class="custom-input" />
           </div>
 
           <!-- 이미지 첨부 -->
@@ -52,13 +31,7 @@
             <div @click="$refs.fileInput.click()" class="file-upload-box">
               <v-icon>mdi-plus</v-icon>
             </div>
-            <input 
-              type="file" 
-              ref="fileInput" 
-              class="hidden" 
-              @change="handleFileSelection" 
-              multiple 
-            />
+            <input type="file" ref="fileInput" class="hidden" @change="handleFileSelection" multiple />
           </div>
 
           <!-- 선택된 파일 미리보기 -->
@@ -75,7 +48,6 @@
               </li>
             </ul>
           </div>
-
         </div>
 
         <!-- 등록 및 닫기 버튼 -->
@@ -84,7 +56,7 @@
           <v-btn @click="validateAndSubmit" class="custom-button">
             등록
           </v-btn>
-          <v-btn @click="closeModalAndReset" class="custom-cancel-button"> <!-- 닫기 버튼 클릭 시 입력값 초기화 -->
+          <v-btn @click="showConfirmCloseModal" class="custom-cancel-button">
             닫기
           </v-btn>
         </v-card-actions>
@@ -108,12 +80,26 @@
     </v-card>
   </v-dialog>
 
-  <!-- 리뷰 생성 모달 열기 버튼 -->
-  <v-btn @click="dialog = true" class="open-modal-btn">리뷰 생성</v-btn>
+  <!-- 닫기 확인 모달 -->
+  <v-dialog v-model="confirmCloseModal" max-width="210px">
+    <v-card class="modal" style="text-align: center;">
+      <v-card-text>정말 닫으시겠습니까?</v-card-text>
+      <v-card-actions class="action-buttons" style="justify-content: center;">
+        <v-btn @click="closeModalAndReset" class="custom-button">닫기</v-btn>
+        <v-btn @click="confirmCloseModal = false" class="custom-cancel-button">취소</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 export default {
+  props: {
+    packageProductId: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       review: {
@@ -123,14 +109,27 @@ export default {
         imageUrls: [],
       },
       dialog: false,
+      selectedPackageProductId: null, // 선택된 패키지 상품 ID를 저장
       selectedFiles: [],
       filePreviews: [],
       alertModal: false,
       alertMessage: '',
       successModal: false,
+      confirmCloseModal: false, // 닫기 확인 모달 상태
     };
   },
   methods: {
+    // openDialog 메서드가 packageProductId를 인자로 받도록 수정
+    openDialog(packageProductId) {
+      this.selectedPackageProductId = packageProductId; // 전달받은 ID 저장
+      this.dialog = true;
+    },
+    closeDialog() {
+      this.dialog = false;
+    },
+    showConfirmCloseModal() {
+      this.confirmCloseModal = true;  // 닫기 버튼 클릭 시 확인 모달 열기
+    },
     handleFileSelection(event) {
       const files = Array.from(event.target.files);
       files.forEach(file => {
@@ -197,7 +196,7 @@ export default {
 
       const accessToken = localStorage.getItem('accessToken');
       try {
-        const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/${this.$route.params.packageProductId}/create`, {
+        const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/product-service/reviews/${this.selectedPackageProductId}/create`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -234,12 +233,14 @@ export default {
       this.dialog = false; // 성공 후 모든 모달 닫기
     },
     closeModalAndReset() {
+      // 확인 후 닫기 시 동작
       this.review.rating = 0;
       this.review.title = '';
       this.review.contents = '';
       this.selectedFiles = [];
       this.filePreviews = [];
       this.dialog = false; // 모달 닫기
+      this.confirmCloseModal = false; // 닫기 확인 모달도 닫기
     }
   },
 };
@@ -257,14 +258,16 @@ export default {
 .label-and-rating {
   display: flex;
   flex-direction: column;
-  gap: -100px; /* 별점과 라벨 사이의 간격 줄임 */
+  gap: -100px;
+  /* 별점과 라벨 사이의 간격 줄임 */
 }
 
 .input-content {
-  margin-bottom: 10px; /* 요약과 내용 간의 간격을 줄임 */
+  margin-bottom: 10px;
+  /* 요약과 내용 간의 간격을 줄임 */
 }
 
-.input-summary{
+.input-summary {
   margin-bottom: 15px;
   margin-top: 5px;
 }
@@ -285,9 +288,12 @@ textarea.custom-input {
 
 /* 별 크기 10% 확대 */
 ::v-deep .custom-rating .v-icon {
-  font-size: 40px !important; /* 별 크기를 40px로 설정 */
-  width: 40px !important; /* 별의 너비 설정 */
-  height: 40px !important; /* 별의 높이 설정 */
+  font-size: 40px !important;
+  /* 별 크기를 40px로 설정 */
+  width: 40px !important;
+  /* 별의 너비 설정 */
+  height: 40px !important;
+  /* 별의 높이 설정 */
 }
 
 .file-upload-box {

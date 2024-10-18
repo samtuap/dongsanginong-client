@@ -63,13 +63,24 @@
             등록
           </v-btn>
           <v-btn 
+            @click="showConfirmCloseModal"
             color="light_green" 
             class="custom-close-button"
             text 
-            @click="closeDialog"
           >
             닫기
           </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 닫기 확인 모달 -->
+    <v-dialog v-model="confirmCloseModal" max-width="210px">
+      <v-card class="modal" style="text-align: center;">
+        <v-card-text>정말 닫으시겠습니까?</v-card-text>
+        <v-card-actions style="justify-content: center;">
+          <v-btn @click="closeDialog" class="custom-button">닫기</v-btn>
+          <v-btn @click="confirmCloseModal = false" class="custom-close-button">취소</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -82,6 +93,7 @@
       </v-card>
     </v-dialog>
   </div>
+
 </template>
 
 <script>
@@ -94,6 +106,7 @@ export default {
         imageUrls: [] // 여러 이미지 URL을 담기 위한 배열
       },
       dialog: false, // 공지사항 생성 모달 상태
+      confirmCloseModal: false, // 닫기 확인 모달 상태 추가
       selectedFiles: [], // 선택된 파일을 저장하기 위한 배열
       filePreviews: [], // 파일 미리보기 URL을 저장하기 위한 배열
       alertModal: false, // 완료 메시지 모달 상태
@@ -208,9 +221,13 @@ export default {
       }
     },
 
+    showConfirmCloseModal() {
+      this.confirmCloseModal = true; // 닫기 확인 모달 열기
+    },
     // 모달 닫기 버튼을 눌렀을 때 값을 초기화
     closeDialog() {
       this.dialog = false;
+      this.confirmCloseModal = false;
       this.resetFormData(); // 입력된 데이터를 초기화하는 메서드 호출
     },
 
@@ -333,22 +350,30 @@ textarea.custom-input {
 }
 
 .custom-button {
-  color: black !important; /* 텍스트 색상 검정으로 설정 */
-  transition: background-color 0.3s ease; /* 배경색 변경 시 부드럽게 전환 */
-  border-radius: 50px; /* 모서리 둥글기 50px로 설정 */
+  background-color: #BCC07B;
+  color: black !important;
+  border-radius: 30px;
+  padding: 10px 30px;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
-.custom-button:hover {
+.custom-button {
   background-color: #BCC07B; /* 마우스 호버 시 배경색 변경 */
 }
 
 .custom-close-button {
-  color: black !important; /* 텍스트 색상 검정으로 설정 */
-  transition: background-color 0.3s ease; /* 배경색 변경 시 부드럽게 전환 */
-  border-radius: 50px; /* 모서리 둥글기 50px로 설정 */
+  background-color: #e0e0e0;
+  color: black !important;
+  border-radius: 30px;
+  padding: 10px 30px;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
-.custom-close-button:hover {
+.custom-close-button {
   background-color: #e0e0e0; /* 마우스 호버 시 배경색 변경 */
 }
 

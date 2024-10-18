@@ -78,7 +78,7 @@ export default {
   methods: {
     async getCouponList() {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/coupons/list`);
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/order-service/coupon/list`);
         this.couponList = response.data.sort((a, b) => b.id - a.id);
       } catch (error) {
         console.error('Error fetching coupon list:', error);

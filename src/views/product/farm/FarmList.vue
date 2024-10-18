@@ -96,24 +96,30 @@
                             </v-chip>
                         </div>
 
-                        <div style="line-height: 70px;">
-                            <v-chip class="like-chip" size="small" color="deep_orange"
+                        <div style="line-height: 70px; display: flex; justify-content: center; align-items: center;">
+                            <div v-if="likes.get(farm.id) == 2" class="heart-emoji">
+                                <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
+                            </div>
+
+                            <v-chip class="like-chip" size="small" variant="outlined"
                                 :class="{ 'selected-like-chip': likes.get(farm.id) == 1 || likes.get(farm.id) == 2 }"
                                 @click="clickLike(farm.id)">
-                                💛 {{ likeCount.get(farm.id) }}
+                                <svg-icon type="mdi"
+                                    :path="likes.get(farm.id) == 1 || likes.get(farm.id) == 2 ? mdiHeart : mdiHeartOutline"
+                                    :class="likes.get(farm.id) == 1 || likes.get(farm.id) == 2 ? 'icon-colored' : 'icon-trans'"></svg-icon>
+                                    <span style="font-weight: bold; font-size: 14px; padding-top: 2px">{{ likeCount.get(farm.id) }}</span>
                             </v-chip>
-
-                            <!-- 하트 이모지 애니메이션 -->
-                            <div v-if="likes[(4 * (n - 1) + index)] == 2" class="heart-emoji">💛</div>
                         </div>
+
+                        
                     </div>
 
                     <div class="package-info">
 
-                        <div style="margin-top: 10px; display: flex; border-radius: 10px;"
-                                class="package-images-box">
+                        <div style="margin-top: 10px; display: flex; border-radius: 10px;" class="package-images-box">
                             <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
-                                <img :src="product.imageUrl" class="package-img" @click="this.$router.push(`/product/${product.packageId}`)"/>
+                                <img :src="product.imageUrl" class="package-img"
+                                    @click="this.$router.push(`/product/${product.packageId}`)" />
                             </div>
                         </div>
                     </div>
@@ -124,14 +130,17 @@
         <!-- 농장 리스트 끝 -->
 
         <v-dialog v-model="this.loginModal" max-width="300px">
-            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+            <v-card class="modal"
+                style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
                 <v-card-text>
                     로그인이 필요한 서비스입니다.<br>
                     로그인 하시겠습니까?
                 </v-card-text>
                 <v-row>
-                    <v-btn @click="this.$router.push('/member/sign-in')" class="submit-btn" style="background-color: #BCC07B;">로그인하기</v-btn>
-                    <v-btn @click="this.loginModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
+                    <v-btn @click="this.$router.push('/member/sign-in')" class="submit-btn"
+                        style="background-color: #BCC07B;">로그인하기</v-btn>
+                    <v-btn @click="this.loginModal = false" class="submit-btn"
+                        style="background-color: #e0e0e0;">close</v-btn>
                 </v-row>
 
             </v-card>
@@ -139,12 +148,14 @@
 
 
         <v-dialog v-model="this.sellerModal" max-width="300px">
-            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+            <v-card class="modal"
+                style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
                 <v-card-text>
                     판매자 회원은 다른 농장을<br>즐겨찾기할 수 없습니다. 😢
                 </v-card-text>
                 <v-row>
-                    <v-btn @click="this.sellerModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
+                    <v-btn @click="this.sellerModal = false" class="submit-btn"
+                        style="background-color: #e0e0e0;">close</v-btn>
                 </v-row>
 
             </v-card>
@@ -154,7 +165,14 @@
 </template>
 <script>
 import axios from 'axios';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiHeartOutline } from '@mdi/js';
+import { mdiHeart } from '@mdi/js';
 export default {
+    name: "my-component",
+    components: {
+        SvgIcon
+    },
     data() {
         return {
             topFarmList: [],
@@ -174,7 +192,9 @@ export default {
             likes: new Map(), // 0: 안눌려있는 상태, 1: 눌려있는 상태, 2: 눌리고 있는 상태(애니메이션처리)
             likeCount: new Map(),
             loginModal: false,
-            sellerModal: false
+            sellerModal: false,
+            mdiHeart: mdiHeart,
+            mdiHeartOutline: mdiHeartOutline
         }
 
     },
@@ -362,12 +382,12 @@ export default {
                     return;
                 }
 
-                if(localStorage.getItem('role') == 'SELLER') {
+                if (localStorage.getItem('role') == 'SELLER') {
                     this.sellerModal = true;
                     return;
                 }
 
-                if(localStorage.getItem('memberId') == undefined) {
+                if (localStorage.getItem('memberId') == undefined) {
                     this.loginModal = true;
                     return;
                 }
@@ -400,6 +420,16 @@ export default {
 }
 </script>
 <style scoped>
+.icon-colored {
+    color: red;
+    transform: scale(0.8);
+
+}
+
+.icon-trans {
+    transform: scale(0.8);
+}
+
 .custom-container {
     max-width: 1200px !important;
     /* 원하는 최대 폭 */
@@ -599,12 +629,11 @@ export default {
 }
 
 .like-chip {
+    border: 1px solid white !important;
     border-radius: 3px;
+    color: black !important;
 }
 
-.selected-like-chip {
-    background-color: #FFE2A6;
-}
 
 .heart-emoji {
     position: absolute;
