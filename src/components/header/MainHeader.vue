@@ -30,11 +30,11 @@
                                 <span v-if="notifications.length > 0" class="notification-mark"></span>
                             </v-btn>
                         </template>
-                        <v-list style="background-color: #EAEAEA;">
+                        <v-list style="background-color: #EAEAEA; padding: 4px;">
                             <v-list-item v-if="notifications.length === 0">
                                 <v-list-item-title>새로운 알림이 없네요!</v-list-item-title>
                             </v-list-item>
-                            <v-card v-for="(notification, index) in notifications" :key="index" style="margin: 5px;"
+                            <v-card v-for="(notification, index) in notifications" :key="index" style="margin: 5px; padding-bottom: 5px;"
                                 @click="this.$router.push(`/notifications`)">
                                 <v-card-text style="font-weight: bold;">{{ notification.notification.title
                                     }}</v-card-text>
@@ -43,7 +43,7 @@
                                     10) }}</v-card-subtitle>
 
                             </v-card>
-                            <v-list-item v-if="notifications.length > 0" @click="markAsRead()">✅ 모두 읽음 표시
+                            <v-list-item v-if="notifications.length > 0" @click="markAsRead()" style="text-align: end; font-size: 15px;">✅ 모두 읽음 표시
                             </v-list-item>
                         </v-list>
                     </v-menu>
