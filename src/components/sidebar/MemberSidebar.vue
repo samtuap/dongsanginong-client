@@ -10,7 +10,7 @@
                     <v-btn class="cat_btn" :to="{path:'/member/update/info'}">내 정보 수정</v-btn><br>
                     <v-btn class="cat_btn" :to="{path: '/member/subscribe-management'}">정기구독 관리</v-btn><br>
                     <v-btn class="cat_btn" :to="{path:'/coupons/downloaded-coupons'}">보유한 쿠폰 조회</v-btn><br>
-                    <v-btn class="cat_btn" :to="{path:'/member/favorite'}">구독 조회 / 변경</v-btn><br>
+                    <v-btn class="cat_btn" :to="{path:'/member/favorite'}">스크랩 농장 / 위시리스트</v-btn><br>
                     <v-btn class="cat_btn" :to="{path:'/member/payment/list'}">결제 내역 조회</v-btn><br>
                     <v-btn class="cat_btn" :to="{path:'/member/delivery/list'}">배송 조회</v-btn><br>
                 </v-col>
