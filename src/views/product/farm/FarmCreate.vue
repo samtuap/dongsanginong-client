@@ -589,7 +589,7 @@ export default {
 }
 
 .save-btn:hover {
-  background-color: #a0a0a0;
+  background-color: #a8b05b;
 }
 
 .cancel-btn {
