@@ -348,6 +348,7 @@ export default {
   height: 87vh;
   background-color: white;
   padding-top: 5%;
+  padding-left: 4%;
 }
 
 .chat-room {
