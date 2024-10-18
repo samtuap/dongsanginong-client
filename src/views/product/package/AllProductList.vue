@@ -112,6 +112,9 @@
                             @click="addToWishList(pkg)"
                             v-if="member"
                         >
+                        <div v-if="wishAnimation.get(pkg.id)" class="heart-emoji">
+                            <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
+                        </div>
                             <svg-icon
                                 type="mdi"
                                 :path="wishlistItems[pkg.id] ? mdiHeart : mdiHeartOutline"
@@ -177,6 +180,8 @@ export default {
             mdiHeart: mdiHeart,
 
             member: localStorage.getItem("memberId"),
+
+            wishAnimation: new Map(),
         }
     },
     computed: {
@@ -317,6 +322,13 @@ export default {
                     }
                 });
                 this.wishlistItems[packageProduct.id] = !this.wishlistItems[packageProduct.id];
+                if (this.wishlistItems[packageProduct.id]) {
+                // 애니메이션 시작
+                this.wishAnimation.set(packageProduct.id, true);
+                setTimeout(() => {
+                    this.wishAnimation.set(packageProduct.id, false);
+                }, 1000); // 애니메이션 지속 시간 조절 가능
+            }
             } catch(e) {
                 console.log(e.message);
             }
@@ -382,4 +394,32 @@ export default {
     border-bottom: 3px solid #efefef; border-radius: 3px;
 }
 
+.icon-colored{
+    color: red;
+}
+
+.heart-emoji {
+    position: absolute;
+    top: -20px; /* 필요에 따라 위치 조정 */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    opacity: 0;
+    animation: popUp 1s ease-in-out forwards;
+}
+
+@keyframes popUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50px) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100px) scale(0);
+    }
+}
 </style>
