@@ -168,7 +168,7 @@
         <v-card class="modal"
             style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
             <v-card-text>
-                정기 결제 수단 등록에 실패했습니다.😢 <br>
+                정기 결제 수단 등록에 실패했습니다. <br>
                 다시 시도해주세요.
             </v-card-text>
             <v-row>
@@ -191,7 +191,7 @@
                         <v-radio :value="-1" label="선택 안함"></v-radio>
                     </div>
                     <div v-else>
-                        <p style="margin-top: 5px;">적용 가능한 쿠폰이 없어요. 😢</p>
+                        <p style="margin-top: 5px;">적용 가능한 쿠폰이 없어요. </p>
                     </div>
                         
                     <!-- </v-card> -->
@@ -216,9 +216,9 @@
                 </div>
                 </v-radio-group>
                 <div style="width: 100%; display: flex; justify-content: right; margin-top:-10px; margin-bottom: 10px; padding-right: 30px;" >
+                    <v-btn @click="changeCoupon" color="deep_green" class="submit-btn" style="background-color: #e0e0e0;">적용</v-btn>
                     <v-btn @click="this.couponModal = false;" class="submit-btn"
                     style="background-color: #e0e0e0; justify-self: right;">닫기</v-btn>
-                    <v-btn @click="changeCoupon" color="deep_green" class="submit-btn" style="background-color: #e0e0e0;">적용</v-btn>
                 </div>
             </div>
         </v-card>
