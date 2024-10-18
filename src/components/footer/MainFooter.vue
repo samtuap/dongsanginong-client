@@ -28,7 +28,7 @@
   };
   </script>
   
-  <style>
+  <style scoped>
   .footer {
     margin: 0;
     /*border-top: 1px solid #afafaf !important;*/

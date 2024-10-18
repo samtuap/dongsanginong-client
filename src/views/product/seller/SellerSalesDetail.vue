@@ -392,7 +392,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .chart-container {
     border: 1px solid #ccc;
     padding: 16px;
