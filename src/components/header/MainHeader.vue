@@ -86,7 +86,7 @@
                     style="margin-bottom: -15px;"
                     @input="debouncedSearch"
                 ></v-text-field>
-                <v-btn @click="performSearch" class="search-btn" style="margin-top: 17px;">검색</v-btn>
+                <!-- <v-btn @click="performSearch" class="search-btn" style="margin-top: 17px;">검색</v-btn> -->
             </v-row>
             <v-row style="justify-content: center;">
                 <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;"
@@ -125,7 +125,7 @@
                     </v-card>
                 </v-list>
                 <v-list v-else-if="products.length > 0 && selectedCategory === 'package'">
-                    <v-card v-for="product in products" :key="product.id" class="list-card">
+                    <v-card v-for="product in products" :key="product.id" class="list-card" @click="goToPackageDetail(product.id)">
                         <v-card-title style="font-size: 15px;">
                             <span v-html="highlightKeyword(product.packageName)"></span>
                         </v-card-title>
@@ -509,10 +509,11 @@ export default {
         // 농장 detail로 라우팅
         goToFarmDetail(farmId) {
             this.searchDialog = false;
-            this.$router.push({ path: `/farm/${farmId}` });
+            window.location.href=`${process.env.VUE_APP_MY_URL}/farm/${farmId}/packages`;
         },
-        goToPackageDetail() {
-            console.log("아직 라우팅 안됨");
+        goToPackageDetail(productId) {
+            this.searchPackageProduct = false;
+            window.location.href=`${process.env.VUE_APP_MY_URL}/product/${productId}`;
         },
         goToDetail(item) {
             if (item.farmName) {
