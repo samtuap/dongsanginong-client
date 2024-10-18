@@ -84,6 +84,7 @@
                     prepend-inner-icon="mdi-magnify"
                     outlined
                     style="margin-bottom: -15px;"
+                    @input="debouncedSearch"
                 ></v-text-field>
                 <v-btn @click="performSearch" class="search-btn" style="margin-top: 17px;">검색</v-btn>
             </v-row>
@@ -106,25 +107,31 @@
                 <v-list v-if="total.length > 0 && selectedCategory === 'all'">
                     <v-card v-for="item in total" :key="item.id" class="list-card" @click="goToDetail(item)">
                         <v-card-title style="font-size: 15px;">
-                            <strong>
-                                {{ item.farmName || item.packageName }}
-                            </strong>
+                            <span v-html="highlightKeyword(item.farmName || item.packageName)"></span>
                         </v-card-title>
                         <v-card-text style="font-size: 14px;">
-                            {{ item.farmIntro || item.productDescription }}
+                            <span v-html="highlightKeyword(item.farmIntro || item.productDescription)"></span>
                         </v-card-text>
                     </v-card>
                 </v-list>
                 <v-list v-else-if="farms.length > 0 && selectedCategory === 'farm'">
                     <v-card v-for="farm in farms" :key="farm.id" class="list-card" @click="goToFarmDetail(farm.id)">
-                        <v-card-title style="font-size: 15px;"><strong>{{ farm.farmName }}</strong></v-card-title>
-                        <v-card-text style="font-size: 14px;">{{ farm.farmIntro }}</v-card-text>
+                        <v-card-title style="font-size: 15px;">
+                            <span v-html="highlightKeyword(farm.farmName)"></span>
+                        </v-card-title>
+                        <v-card-text style="font-size: 14px;">
+                            <span v-html="highlightKeyword(farm.farmIntro)"></span>
+                        </v-card-text>
                     </v-card>
                 </v-list>
                 <v-list v-else-if="products.length > 0 && selectedCategory === 'package'">
                     <v-card v-for="product in products" :key="product.id" class="list-card">
-                        <v-card-title style="font-size: 15px;"><strong>{{ product.packageName }}</strong></v-card-title>
-                        <v-card-text style="font-size: 14px;">{{ product.productDescription }}</v-card-text>
+                        <v-card-title style="font-size: 15px;">
+                            <span v-html="highlightKeyword(product.packageName)"></span>
+                        </v-card-title>
+                        <v-card-text style="font-size: 14px;">
+                            <span v-html="highlightKeyword(product.productDescription)"></span>
+                        </v-card-text>
                     </v-card>
                 </v-list>
                 <v-list v-else>
@@ -173,6 +180,7 @@ import 'firebase/messaging';
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { mapGetters } from 'vuex';
+import debounce from 'lodash/debounce';
 
 export default {
     data() {
@@ -423,8 +431,18 @@ export default {
         },
         //  검색 버튼 
         async performSearch() {
-            this.total = [];
+            if (!this.selectedCategory) {
+                this.selectedCategory = 'all';
+            }
+            // 검색어 지우면 빈값 
+            if (!this.keyword) {
+                this.total = [];
+                this.farms = [];
+                this.products = [];
+                return;
+            }
 
+            this.total = [];
             if (this.selectedCategory === 'farm') {
                 await this.searchFarms();
                 this.total = [...this.farms];
@@ -441,6 +459,18 @@ export default {
                 this.total = [...this.farms, ...this.products];
             }
         },
+        debouncedSearch: debounce(function() {
+            this.performSearch();
+        }, 300), 
+
+        highlightKeyword(text) {
+            if (!this.keyword) {
+                return text;
+            }
+            const regex = new RegExp(`(${this.keyword})`, 'gi');
+            return text.replace(regex, '<strong>$1</strong>');
+        },
+            
         //  농장 카테고리로 검색
         async searchFarms() {
             try {
