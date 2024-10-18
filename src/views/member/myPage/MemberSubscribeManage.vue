@@ -55,7 +55,7 @@
                                                 packageProduct.packageName.substring(0, 10) }}...</span>
                                             <span v-else> {{ packageProduct.packageName }}</span>
                                             <div class="detail-container">
-                                                <a class="toDetail" @click="createReview(packageProduct.id)">후기 작성</a>
+                                                <a class="toDetail" @click="createReview(packageProduct.packageId)">후기 작성</a>
                                                 <a class="toDetail" @click="withdrawSubscribe">구독 취소</a>
                                             </div>
                                         </v-card-text>
@@ -69,7 +69,8 @@
                 </div>
             </v-card>
         </div>
-        <ReviewCreate v-if="reviewModal" :packageProductId="selectedPackageProductId" @close="reviewModal = false" />
+        <ReviewCreate ref="reviewCreate" :packageProductId="selectedPackageProductId" />
+
     </div>
     <br>
 </template>
@@ -139,8 +140,9 @@ export default {
             return this.subscriptionPackageProductList.slice(start, end);
         },
         createReview(packageProductId) {
+            console.log("packageProductId:", packageProductId);
             this.selectedPackageProductId = packageProductId;
-            this.reviewModal = true;
+            this.$refs.reviewCreate.openDialog(packageProductId);
         },
         withdrawSubscribe() {
             // 영수증 페이지로 보내주기

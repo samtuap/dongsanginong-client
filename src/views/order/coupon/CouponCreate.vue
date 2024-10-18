@@ -78,7 +78,7 @@
     </v-card>
 
     <!-- 날짜 선택 모달 -->
-    <v-dialog v-model="datePickerDialog" persistent max-width="330px">
+    <v-dialog v-model="datePickerDialog" max-width="330px">
       <v-card>
         <v-card-title class="headline">날짜 선택</v-card-title>
         <v-date-picker v-model="selectedDate" @update:model-value="openTimePicker" />
@@ -235,7 +235,7 @@ export default {
 
       try {
         await axios.post(
-          `${process.env.VUE_APP_API_BASE_URL}/order-service/coupons/create`,
+          `${process.env.VUE_APP_API_BASE_URL}/order-service/coupon/create`,
           requestData,
           {
             headers: {
