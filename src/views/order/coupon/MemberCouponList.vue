@@ -89,7 +89,11 @@ export default {
                         Authorization: `Bearer ${localStorage.getItem('accessToken')}`
                     }
                 });
-                this.couponList = response.data;
+                // 유효기간이 지난 쿠폰을 필터링하고 유효기간이 임박한 순서대로 정렬
+                const currentDateTime = new Date();
+                this.couponList = response.data
+                    .filter(coupon => new Date(coupon.expiration) > currentDateTime)
+                    .sort((a, b) => new Date(a.expiration) - new Date(b.expiration));
                 this.checkIfLastPage();
             } catch (error) {
                 console.error('쿠폰 리스트 로드 실패:', error);
@@ -132,6 +136,7 @@ export default {
 </script>
 
 <style scoped>
+/* 스타일 그대로 유지 */
 .member-page {
     background-color: #F3F3F3;
     display: flex;
@@ -181,14 +186,12 @@ export default {
 
 /* 유효기간 텍스트를 쿠폰 이미지 아래로 배치 */
 .coupon-expiration {
-    /* margin-top: 0px; */
     font-size: 13px;
     color: grey;
     margin-top: -5px;
     text-align: center;
 }
 
-/* 텍스트를 이미지 위에 가운데 정렬 */
 .coupon-name {
     font-size: 14px;
     margin-bottom: 10px;

@@ -30,7 +30,9 @@
               <td>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
               <td>{{ coupon.couponName }}</td>
               <td>{{ coupon.discountPercentage }}%</td>
-              <td>{{ formatDateTime(coupon.expiration) }}</td>
+              <td :class="{'expired-coupon': isExpired(coupon.expiration)}">
+                {{ formatDateTime(coupon.expiration) }}
+              </td>
             </tr>
           </tbody>
         </v-table>
@@ -89,6 +91,9 @@ export default {
       const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
       return date.toLocaleString(undefined, options);
     },
+    isExpired(expirationDate) {
+      return new Date(expirationDate) < new Date();
+    },
     openCouponCreateModal() {
       this.isCouponCreateModalOpen = true;
     },
@@ -126,4 +131,7 @@ export default {
   justify-content: center;
 }
 
+.expired-coupon {
+  color: lightgray;
+}
 </style>
