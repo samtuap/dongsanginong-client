@@ -1,7 +1,7 @@
 <template>
     <div style="background-color: #F3F3F3;">
 
-        <v-container style="padding-left: 120px; padding-right: 120px; padding-top: 50px;">
+        <v-container style="padding-left: 120px; padding-right: 120px; padding-top: 50px; padding-bottom: 50px;">
             <p style="font-size: 28px; margin-bottom: 40px; text-align: center;">결제하기</p>
             <v-row>
                 <v-col cols="12" md="7">
@@ -21,7 +21,7 @@
                                         <p
                                             style="color: #8C8C8C; font-size: 13px; margin-top: 3px; margin-bottom: 10px;">
                                             {{ packageProduct.productDescription }}</p>
-                                        <p>{{ packageProduct.price }}</p>
+                                        <p>{{ getAmountWithFormat(packageProduct.price) }}</p>
 
                                     </v-col>
                                 </div>
@@ -38,21 +38,25 @@
                         <br>
                     </v-card>
                     <v-card class="pa-4 rectangle-card" style="margin-top: 20px;">
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <h3>쿠폰 적용</h3>
                             <div v-if="selectedCouponName == undefined">
                                 적용된 쿠폰이 없습니다.
                             </div>
 
                             <div v-else>
-                                <p><span style="font-weight: 700; font-size: 25px;">{{ couponDiscountRate * 100 }}% </span> {{ selectedCouponName }}</p>
+                                <p><span style="font-weight: 700; font-size: 25px;">{{ couponDiscountRate * 100 }}%
+                                    </span> {{ selectedCouponName }}</p>
                             </div>
-                            <v-btn color="deep_green" class="mt-2" @click="this.couponModal = true" style="border-radius: 50px;">쿠폰 선택</v-btn>
+                            <div style="width: 100%; display: flex; justify-content: right;">
+                                <v-btn class="mt-2" @click="this.couponModal = true"
+                                    style="border-radius: 50px;">쿠폰 선택</v-btn>
+                            </div>
                         </div>
                     </v-card>
 
                     <v-card class="pa-4 rectangle-card" style="margin-top: 20px;">
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <h3>주문자 정보</h3>
                             <p>{{ memberName }} / {{ memberPhone }}</p>
                         </div>
@@ -60,7 +64,7 @@
 
 
                     <v-card class="pa-4 rectangle-card" style="margin-top: 20px;">
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <h3>배송지 정보</h3>
                             <div v-if="memberAddress === undefined">
                                 <p>배송지 정보를 입력해주세요.</p>
@@ -69,7 +73,9 @@
                                 <p>{{ memberAddress }}</p>
                                 <p>{{ memberAddressDetail }}</p>
                             </div>
-                            <v-btn color="deep_green" class="mt-2" style="border-radius: 50px;">배송지 변경</v-btn>
+                            <div style="width: 100%; display: flex; justify-content: right;">
+                                <v-btn class="mt-2" style="border-radius: 50px;">배송지 변경</v-btn>
+                            </div>
                         </div>
                     </v-card>
                 </v-col>
@@ -77,15 +83,17 @@
                 <!-- Order Summary and Payment Methods -->
                 <v-col cols="12" md="5">
                     <v-card class="pa-4 rectangle-card" style="margin-bottom: 20px;">
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <!-- Order Summary -->
                             <h3>주문 요약</h3>
-                            <span style="display: inline-block; width: 45%;" class="payment-info-title">상품 가격</span><span
-                                style="display: inline-block; width: 53%; text-align: right;"> {{ getAmountWithFormat(packageProduct.price)
+                            <span style="display: inline-block; width: 45%;" class="payment-info-title">상품
+                                가격</span><span style="display: inline-block; width: 53%; text-align: right;"> {{
+                                    getAmountWithFormat(packageProduct.price)
                                 }}원</span>
                             <!-- TODO: discountedPrice => 추후 수정 필요 -->
-                            <span style="display: inline-block; width: 45%;" class="payment-info-title">할인 금액</span><span
-                                style="display: inline-block; width: 53%; text-align: right;"> {{ getAmountWithFormat(discountedPrice)
+                            <span style="display: inline-block; width: 45%;" class="payment-info-title">할인
+                                금액</span><span style="display: inline-block; width: 53%; text-align: right;"> {{
+                                    getAmountWithFormat(discountedPrice)
                                 }}원</span>
                             <span style="display: inline-block; width: 45%;" class="payment-info-title">쿠폰 할인 금액</span>
                             <span style="display: inline-block; width: 53%; text-align: right;">
@@ -95,37 +103,44 @@
 
                             <div style="border-top: 1px #D4D4D4 solid; margin-top: 10px; padding-top: 10px;">
                                 <span style="display: inline-block; width: 45%;">합계</span>
-                                <span style="display: inline-block; width: 53%; text-align: right; font-weight: 700;"> {{ getAmountWithFormat(totalAmount) }}원</span>
+                                <span style="display: inline-block; width: 53%; text-align: right; font-weight: 700;">
+                                    {{ getAmountWithFormat(totalAmount) }}원</span>
                             </div>
 
                         </div>
                     </v-card>
                     <v-card class="pa-4 rectangle-card">
                         <!-- Payment Method -->
-                        <div style="width: 95%; margin: auto; padding-top: 10px;">
+                        <div class="inner-div">
                             <h3>결제 수단</h3>
                             <div v-if="paymentMethod === undefined">
                                 <p style="color: #234200;">결제 수단을 등록해주세요.</p>
                                 <v-btn color="deep_green" class="mt-2" @click="this.addPaymentMethod">결제수단 등록하기</v-btn>
                             </div>
                             <div v-else style="display: flex;">
-                                <img style="width: 50px;" :src="logoImage"/>
+                                <img style="width: 50px;" :src="logoImage" />
                                 <span>{{ paymentMethodValue }}</span>
                             </div>
                             <p style="font-size: 13px; margin-top: 10px; color: #5D5D5D;">등록하신 결제 수단으로 모든 정기 구독 상품이 자동
                                 결제됩니다.</p>
 
 
-                            <v-checkbox label="전체 동의" v-model="termsAllAccepted"></v-checkbox>
-                            <v-checkbox size="small" label="구매조건 확인 및 결제진행에 동의" v-model="termsAccepted1" class="subcheckbox"></v-checkbox>
-                            <v-checkbox label="전자금융거래 이용약관 동의" v-model="termsAccepted2" class="subcheckbox"></v-checkbox>
-                            <v-checkbox label="개인정보 수집 및 이용 동의" v-model="termsAccepted3" class="subcheckbox"></v-checkbox>
-                            <v-checkbox label="개인정보 제 3자 제공 동의" v-model="termsAccepted4" class="subcheckbox"></v-checkbox>
+                            <v-checkbox label="전체 동의" v-model="termsAllAccepted"
+                                style="margin-bottom: -25px;"></v-checkbox>
+                            <v-checkbox label="구매조건 확인 및 결제진행에 동의" v-model="termsAccepted1"
+                                class="subcheckbox"></v-checkbox>
+                            <v-checkbox label="전자금융거래 이용약관 동의" v-model="termsAccepted2"
+                                class="subcheckbox"></v-checkbox>
+                            <v-checkbox label="개인정보 수집 및 이용 동의" v-model="termsAccepted3"
+                                class="subcheckbox"></v-checkbox>
+                            <v-checkbox label="개인정보 제 3자 제공 동의" v-model="termsAccepted4"
+                                class="subcheckbox"></v-checkbox>
                             <v-checkbox label="정기과금 이용 동의" v-model="termsAccepted5" class="subcheckbox"></v-checkbox>
                         </div>
 
                     </v-card>
-                    <v-btn @click="this.confirmPayModal = true" style="background-color: #BCC07B; width: 100%; height: 50px; text-align: center; display: flex; align-items: center; justify-content: center;">
+                    <v-btn @click="openConfirmPayModal"
+                        style="background-color: #BCC07B; width: 100%; height: 50px; text-align: center; display: flex; align-items: center; justify-content: center;">
                         <p>결제하기</p>
                     </v-btn>
                 </v-col>
@@ -153,7 +168,7 @@
         <v-card class="modal"
             style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
             <v-card-text>
-                정기 결제 수단 등록에 실패했습니다.😢 <br>
+                정기 결제 수단 등록에 실패했습니다. <br>
                 다시 시도해주세요.
             </v-card-text>
             <v-row>
@@ -164,14 +179,30 @@
     </v-dialog>
 
     <v-dialog v-model="this.couponModal" max-width="300px">
-        <v-card class="coupon-select-modal" style="align-items: center; padding-bottom: 20px; display: flex;">
-            <div>
+        <v-card class="coupon-select-modal" style="align-items: center; padding-bottom: 10px; display: flex;">
+            <div style="width: 100%; text-align: center; padding: 20px;">
                 <v-radio-group v-model="this.selectedCoupon" class="mt-4 mb-4">
                     <v-card-title style="margin: auto;">
                         사용 가능한 쿠폰
                     </v-card-title>
-
-                    <v-card class="available-coupon-card" v-for="(coupon, index) in availableCoupons" :key="index">
+                    <div style="max-height: 500px; overflow-y: scroll">
+                    <!-- <v-card class="available-coupon-card"> -->
+                    <div v-if="availableCoupons.length > 0">
+                        <v-radio :value="-1" label="선택 안함"></v-radio>
+                    </div>
+                    <div v-else>
+                        <p style="margin-top: 5px;">적용 가능한 쿠폰이 없어요. </p>
+                    </div>
+                        
+                    <!-- </v-card> -->
+                    
+                    
+                    <v-card class="available-coupon-card"
+                    v-for="(coupon, index) in availableCoupons"
+                    :key="index"
+                    variant="outlined"
+                    style="text-align: left; border: #EAEAEA 1px solid;"
+                    >
                         <div>
                             <v-radio :value="index"></v-radio>
                         </div>
@@ -182,13 +213,13 @@
                         </div>
 
                     </v-card>
-
-                    <v-row>
-                        <v-btn @click="changeCoupon" class="submit-btn" style="background-color: #e0e0e0;">적용</v-btn>
-                        <v-btn @click="this.selectedCoupon = undefined; this.couponModal = false;" class="submit-btn"
-                            style="background-color: #e0e0e0;">닫기</v-btn>
-                    </v-row>
+                </div>
                 </v-radio-group>
+                <div style="width: 100%; display: flex; justify-content: right; margin-top:-10px; margin-bottom: 10px; padding-right: 30px;" >
+                    <v-btn @click="changeCoupon" color="deep_green" class="submit-btn" style="background-color: #e0e0e0;">적용</v-btn>
+                    <v-btn @click="this.couponModal = false;" class="submit-btn"
+                    style="background-color: #e0e0e0; justify-self: right;">닫기</v-btn>
+                </div>
             </div>
         </v-card>
     </v-dialog>
@@ -212,7 +243,8 @@
                     </v-card-text>
 
                     <v-row style="margin: auto;">
-                        <v-btn @click="this.confirmPayModal = false" class="submit-btn" style="background-color: #e0e0e0;">닫기</v-btn>
+                        <v-btn @click="this.confirmPayModal = false" class="submit-btn"
+                            style="background-color: #e0e0e0;">닫기</v-btn>
                         <v-btn @click="doPay" class="submit-btn" color="deep_green">결제</v-btn>
                     </v-row>
                 </v-radio-group>
@@ -237,24 +269,24 @@ export default {
             }
         },
         termsAccepted1: function () {
-            if (this.termsAccepted1 === true 
-            && this.termsAccepted2 === true 
-            && this.termsAccepted3 === true 
-            && this.termsAccepted4 === true
-            && this.termsAccepted5 === true
-        ) {
+            if (this.termsAccepted1 === true
+                && this.termsAccepted2 === true
+                && this.termsAccepted3 === true
+                && this.termsAccepted4 === true
+                && this.termsAccepted5 === true
+            ) {
                 this.termsAllAccepted = true;
             } else {
                 this.termsAllAccepted = false;
             }
         },
         termsAccepted2: function () {
-            if (this.termsAccepted1 === true 
-            && this.termsAccepted2 === true 
-            && this.termsAccepted3 === true 
-            && this.termsAccepted4 === true
-            && this.termsAccepted5 === true
-        ) {
+            if (this.termsAccepted1 === true
+                && this.termsAccepted2 === true
+                && this.termsAccepted3 === true
+                && this.termsAccepted4 === true
+                && this.termsAccepted5 === true
+            ) {
                 this.termsAllAccepted = true;
             } else {
                 this.termsAllAccepted = false;
@@ -313,7 +345,7 @@ export default {
             this.billingKey = paymentMethodRes.data.billingKey;
             this.logoImage = paymentMethodRes.data.logoImageUrl;
             console.log(this.logoImage);
-            
+
 
             // 멤버 정보 불러오기 (배송지를 위함)
             const memberRes = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/member-info`);
@@ -395,7 +427,12 @@ export default {
             return exp.getFullYear() + "년 " + (exp.getMonth() + 1) + "월 " + (exp.getDate()) + "일";
         },
         changeCoupon() {
-            if (this.selectedCoupon === undefined) {
+            if (this.selectedCoupon === undefined || this.selectedCoupon == -1) {
+                this.selectedCoupon = undefined;
+                this.selectedCouponName = undefined
+                this.coupon = undefined
+                this.couponDiscountRate = 0;
+                this.couponDiscountedAmount = 0;
                 this.couponModal = false;
                 return;
             }
@@ -414,24 +451,13 @@ export default {
         },
         async doPay() {
             this.confirmPayModal = false;
-            
-            if(this.termsAccepted1 != true 
-            || this.termsAccepted2 != true 
-            || this.termsAccepted3 != true
-            || this.termsAccepted4 != true 
-            || this.termsAccepted5 != true) {
-                alert("모든 동의 항목에 체크해주세요.");
-                return;
-            }
 
-            this.loadingModal = true;
 
-            let orderId;
             try {
                 // 결제 요청
                 // 포트원 빌링키 결제 API 호출
                 let body = undefined;
-                if(this.coupon === undefined) {
+                if (this.coupon === undefined) {
                     body = {
                         "packageId": this.packageProduct.id,
                     }
@@ -442,25 +468,40 @@ export default {
                     }
                 }
                 const paymentResponse = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/order`, body);
-                orderId = paymentResponse.data.orderId;
+                const orderId = paymentResponse.data.orderId;
+                window.location.href = `${process.env.VUE_APP_MY_URL}/order/${orderId}`;
             } catch (e) {
                 console.log(e);
+                alert(e.response?.data?.message);
             }
 
-            this.$router.push(`/order/${orderId}`);
+
         },
         getAmountWithFormat(amount) {
             let ret = "";
             let i = 0;
             amount = String(amount);
-            for(i=0; i<amount.length; i++) {
+            for (i = 0; i < amount.length; i++) {
                 ret = String(amount[amount.length - i - 1]) + ret;
-                if(i % 3 == 2 && i != amount.length-1) {
+                if (i % 3 == 2 && i != amount.length - 1) {
                     ret = ',' + ret
                 }
             }
             return ret;
         },
+        openConfirmPayModal() {
+
+            if (this.termsAccepted1 != true
+                || this.termsAccepted2 != true
+                || this.termsAccepted3 != true
+                || this.termsAccepted4 != true
+                || this.termsAccepted5 != true) {
+                alert("모든 동의 항목에 체크해주세요.");
+                return;
+            }
+
+            this.confirmPayModal = true;
+        }
     },
 
 }
@@ -479,6 +520,7 @@ h3 {
 .rectangle-card {
     border-radius: 0px;
     box-shadow: none;
+    padding-bottom: 40px;
 }
 
 .delivery-cost-div {
@@ -524,8 +566,16 @@ h3 {
 }
 
 .subcheckbox {
-    margin: 0px;
-    font-size: small;
+    margin-top: -20px;
+    margin-bottom: -20px;
+    font-size: 12px;
     margin-left: 30px;
+}
+
+.inner-div {
+    width: 95%;
+    margin: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 </style>

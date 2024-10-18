@@ -194,22 +194,27 @@ export default {
     },
     async created() {
         // Top 10 패키지 가져오기
-        const topPackagesResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
-        this.topPackageList = topPackagesResponse.data;
+        try {
+            const topPackagesResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
+            this.topPackageList = topPackagesResponse.data;
 
-        // 전체 패키지 리스트 가져오기
-        let params = {
-            page: this.currentPage,
-            size: this.pageSize,
-            sort: this.sortOptionMap.get(this.sortOption),
-            packageName: this.searchQuery
+            // 전체 패키지 리스트 가져오기
+            let params = {
+                page: this.currentPage,
+                size: this.pageSize,
+                sort: this.sortOptionMap.get(this.sortOption),
+                packageName: this.searchQuery
+            }
+            const packageListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth`, { params });
+            this.packageList = packageListResponse.data.content;
+            console.log(this.packageList)
+            // sortOptionMap 설정
+            this.sortOptionMap.set("최신순", "id,desc");
+            this.sortOptionMap.set("판매량 순", "orderCount,desc");
+        } catch(e) {
+            console.log(e);
         }
-        const packageListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth`, { params });
-        this.packageList = packageListResponse.data.content;
-        console.log(this.packageList)
-        // sortOptionMap 설정
-        this.sortOptionMap.set("최신순", "id,desc");
-        this.sortOptionMap.set("판매량 순", "orderCount,desc");
+
 
         // 페이지네이션을 위한 이벤트 리스너 추가
         window.addEventListener('scroll', this.scrollPagination); // 스크롤 이벤트

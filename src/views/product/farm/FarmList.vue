@@ -109,7 +109,7 @@
             <v-card class="modal"
                 style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
                 <v-card-text>
-                    판매자 회원은 다른 농장을<br>즐겨찾기할 수 없습니다. 😢
+                    판매자 회원은 다른 농장을<br>즐겨찾기할 수 없습니다.
                 </v-card-text>
                 <v-row>
                     <v-btn @click="this.sellerModal = false" class="submit-btn"
