@@ -1,7 +1,13 @@
 <template>
   <div class="chat-container">
     <div class="chat-room">
-      <div class="title">실시간 채팅</div>
+      <div class="title">
+        실시간 채팅
+        <div class="participant-info">
+          <v-icon class="mdi mdi-account-multiple" style="font-size: 18px"></v-icon>
+          <span>{{ participantCount - 1 }}</span>
+        </div>
+      </div>
       <div class="message-list" ref="messageList">
         <div
           v-for="(message, index) in filteredMessages"
@@ -56,6 +62,7 @@
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';
 import axios from 'axios';
+import '@mdi/font/css/materialdesignicons.css';
 
 export default {
   props: {
@@ -88,6 +95,7 @@ export default {
       kickConfirmModalVisible: false,
       messageToKick: null,
       kickedUserIds: [],
+      participantCount: 0 ,
     };
   },
   async mounted() {
@@ -156,10 +164,16 @@ export default {
         headers,
         () => {
           console.log("WebSocket 연결 성공");
+          this.getParticipantCount();
           this.subscription = this.stompClient.subscribe(`/topic/live/${this.liveId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
             console.log('Received Message:', receivedMessage);
             this.messages.push(receivedMessage);
+          });
+          // 참여 인원을 받기 위한 구독
+          this.stompClient.subscribe(`/topic/live/${this.liveId}/participants`, (message) => {
+            const count = parseInt(message.body);
+            this.participantCount = count;
           });
 
           // 강퇴 메시지를 받기 위한 구독
@@ -202,6 +216,11 @@ export default {
                 this.$emit('kicked');
               }
             });
+
+            this.stompClient.subscribe(`/topic/live/${this.liveId}/participants`, (message) => {
+              const count = parseInt(message.body);
+              this.participantCount = count;
+          });
         },
         (error) => {
           console.error('WebSocket connection error:', error);
@@ -251,6 +270,16 @@ export default {
         console.error('WebSocket is not connected yet');
       }
     },
+
+    async getParticipantCount() {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/live-service/live/${this.liveId}/participants`);
+        this.participantCount = response.data;
+      } catch (error) {
+        console.error('Error getting participant count:', error);
+      }
+    },
+
     scrollToBottom() {
       const messageList = this.$refs.messageList;
       if (messageList) {
@@ -360,6 +389,9 @@ export default {
 }
 
 .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-left: 3%;
   font-size: 15px;
 }
@@ -482,5 +514,16 @@ export default {
 
 .submit-btn:hover {
   background-color: #a8b05b;
+}
+
+.mdi-account-multiple {
+  width: 5px;
+  height: 5px;
+}
+
+.participant-info {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
 }
 </style>
