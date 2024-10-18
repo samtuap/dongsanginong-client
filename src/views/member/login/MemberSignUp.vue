@@ -33,18 +33,18 @@
             </div>
             <div class="form-group">
                 <label for="zipcode">우편번호</label>
-                <input type="text" id="zipcode" v-model="zipcode" placeholder="우편번호를 입력하세요 (ex. 12345)" required />
+                <input type="text" readonly id="zipcode" v-model="zipcode" placeholder="우편번호를 입력하세요 (ex. 03045)" required />
             </div>
             <div class="form-group">
                 <input type="button" class="find-postal" @click="execDaumPostcode" value="우편번호 찾기" />
             </div>
             <div class="form-group">
                 <label for="address">주소</label>
-                <input type="text" id="address" v-model="address" placeholder="도로명 주소를 입력하세요 (ex. 서울시 노원구)" required />
+                <input type="text" readonly id="address" v-model="address" placeholder="도로명 주소를 입력하세요 (ex.  서울 동작구 보라매로)" required />
             </div>
             <div class="form-group">
                 <label for="address-detail">상세 주소</label>
-                <input type="text" id="address-detail" v-model="addressDetail" placeholder="상세 주소를 입력하세요 (ex. 101호)" required ref="addressDetail" />
+                <input type="text" id="address-detail" v-model="addressDetail" placeholder="상세 주소를 입력하세요 (ex. 401호)" required ref="addressDetail" />
             </div>
             <button type="submit" class="submit-btn">회원 가입 하기</button>
         </form>
