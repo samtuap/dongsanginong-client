@@ -443,7 +443,6 @@ export default {
                 }
                 const paymentResponse = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/order-service/order`, body);
                 orderId = paymentResponse.data.orderId;
-                // console.log(paymentResponse);
             } catch (e) {
                 console.log(e);
             }

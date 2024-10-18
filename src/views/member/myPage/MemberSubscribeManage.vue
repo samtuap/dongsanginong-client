@@ -72,6 +72,17 @@
         <ReviewCreate v-if="reviewModal" :packageProductId="selectedPackageProductId" @close="reviewModal = false" />
     </div>
     <br>
+
+
+    <v-dialog v-model="failModal" max-width="300px">
+        <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; 
+        overflow-y: hidden;">
+            <v-card-text style="margin-top: 10%;">결제 수단 등록에 실패했습니다.</v-card-text>
+            <v-btn @click="handleLogout" class="submit-btn">닫기</v-btn>
+        </v-card>
+    </v-dialog>
+
+
 </template>
 
 <script>
@@ -98,6 +109,7 @@ export default {
             billingKey: "",
             paymentMethodType: "",
             paymentMethodImageUrl: "",
+            failModal: false,
         }
     },
     computed: {
@@ -174,6 +186,14 @@ export default {
                     },
                 });
 
+                console.log("line 189 >>>>>>>");
+
+                if(res.code === 'FAILURE_TYPE_PG') {
+                    this.failModal = true;
+                    return;
+                }
+
+                console.log(res);
 
                 this.billingKey = res.billingKey;
                 this.successModal = true;
@@ -181,14 +201,17 @@ export default {
 
                 const body = {
                     'billingKey': this.billingKey,
-                    'paymentMethodType': this.paymentMethod
+                    'paymentMethodType': 'KAKAOPAY'
                 }
 
                 await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/subscription/payment/method`, body);
+                
             } catch (e) {
                 this.failModal = true;
                 console.log(e);
             }
+
+            // window.location.reload();
         },
     }
 }

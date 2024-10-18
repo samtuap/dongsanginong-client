@@ -104,7 +104,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .loader-container {
     display: flex;
     justify-content: center;
