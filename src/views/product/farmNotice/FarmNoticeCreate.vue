@@ -75,9 +75,10 @@
     </v-dialog>
 
     <!-- 닫기 확인 모달 -->
-    <v-dialog v-model="confirmCloseModal" max-width="210px">
+    <v-dialog v-model="confirmCloseModal" max-width="270px">
       <v-card class="modal" style="text-align: center;">
-        <v-card-text>정말 닫으시겠습니까?</v-card-text>
+        <v-card-text style="margin-top: 3px; margin-bottom: 6px">정말 닫으시겠습니까?</v-card-text>
+        <span style="color: gray; font-size: 12px; margin-top: -10px">현재 작성중인 내용은 저장되지 않습니다.</span>
         <v-card-actions style="justify-content: center;">
           <v-btn @click="closeDialog" class="custom-button">닫기</v-btn>
           <v-btn @click="confirmCloseModal = false" class="custom-close-button">취소</v-btn>
@@ -354,8 +355,7 @@ textarea.custom-input {
   color: black !important;
   border-radius: 30px;
   padding: 10px 30px;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -368,8 +368,7 @@ textarea.custom-input {
   color: black !important;
   border-radius: 30px;
   padding: 10px 30px;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 12px;
   line-height: 1.5;
 }
 
