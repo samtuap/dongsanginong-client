@@ -68,9 +68,7 @@
                     </div>
 
                     <div class="package-info">
-
-                        <div style="margin-top: 10px; display: flex; border-radius: 10px;"
-                                class="package-images-box">
+                        <div class="package-images-box">
                             <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
                                 <img :src="product.imageUrl" class="package-img" @click="this.$router.push(`/product/${product.packageId}`)"/>
                             </div>
@@ -478,10 +476,11 @@ export default {
     line-height: 70px;
 }
 
+
+
 .package-img {
     height: 200px;
-    width: auto;
-    border-radius: 5px;
+    width: 200px;
 }
 
 .package-img:hover {
@@ -499,33 +498,21 @@ export default {
     cursor: pointer;
 }
 
-.package-images-box {
-    height: 300px;
-    width: 100%;
-    margin-top: 10px;
-    display: flex;
-    border-radius: 10px;
-    overflow-x: scroll;
-    transition: all 0.3s ease;
-    /* 부드러운 트랜지션 효과 */
-}
+
 
 .product-image-frame {
-    height: 200px;
-    width: 200px;
+    height: 200px !important;
+    width: 200px !important;
+    min-width: 200px !important;
     overflow: hidden;
     border-radius: 5px;
     margin-right: 6px;
-    /* 영역을 넘어가는 부분을 잘라냄 */
     transition: transform 0.3s ease;
     border-radius: 5px;
-    /* 이미지 확대 시 부드러운 트랜지션 */
 }
 
 
 .product-image-frame img {
-    height: 100%;
-    width: auto;
     border-radius: 5px;
     transition: transform 0.3s ease;
     /* 이미지 확대 시 부드러운 트랜지션 */
@@ -539,7 +526,14 @@ export default {
 
 
 .package-images-box {
+    height: 300px;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    border-radius: 10px;
     padding: 3px;
+    overflow-y: hidden;
+    overflow-x: scroll;
     -ms-overflow-style: none;
 }
 
@@ -585,7 +579,6 @@ export default {
 .hr-style {
     border-bottom: 3px solid #efefef; border-radius: 3px;
   }
-
 
 @keyframes popUp {
     0% {
