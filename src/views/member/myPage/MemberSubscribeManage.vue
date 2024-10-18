@@ -126,8 +126,6 @@ export default {
         this.billingKey = response.data.billingKey;
         this.paymentMethodType = response.data.paymentMethodValue;
         this.paymentMethodImageUrl = response.data.logoImageUrl;
-
-        console.log(response);
     },
     methods: {
         async fetchSubscriptionPackageProducts() {
@@ -186,18 +184,16 @@ export default {
                     },
                 });
 
-                console.log("line 189 >>>>>>>");
 
+                // 결제 수단 등록 프로세스 중단
                 if(res.code === 'FAILURE_TYPE_PG') {
                     this.failModal = true;
                     return;
                 }
 
-                console.log(res);
-
                 this.billingKey = res.billingKey;
                 this.successModal = true;
-                this.paymentMethod = 'KAKAOPAY'; // TODO: 추후 확장 가능성
+                this.paymentMethod = 'KAKAOPAY'; // TODO: 추후 확장 가능성 있음
 
                 const body = {
                     'billingKey': this.billingKey,
