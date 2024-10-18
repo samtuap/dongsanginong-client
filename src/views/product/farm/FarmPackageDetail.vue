@@ -4,7 +4,7 @@
       <!-- 왼쪽: 이미지 슬라이더 -->
       <v-col cols="12" md="5" class="image-container">
         <v-card v-if="packageProduct && packageProduct.imageUrls && packageProduct.imageUrls.length" flat>
-          <v-carousel height="480px" show-arrows="false">
+          <v-carousel hide-delimiters height="480px" show-arrows="false">
             <v-carousel-item v-for="(image, index) in packageProduct.imageUrls" :key="index">
               <v-img :src="image" alt="Package image" height="480px" contain style="border-radius: 10px;"></v-img>
             </v-carousel-item>
