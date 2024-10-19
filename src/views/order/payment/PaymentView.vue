@@ -232,7 +232,7 @@
 
 
     <v-dialog v-model="this.confirmPayModal">
-        <v-card class="coupon-select-modal modal" style="align-items: center; width: 380px; padding-bottom: 20px; display: flex;">
+        <v-card class="coupon-select-modal modal" style="align-items: center; width: 380px; padding-bottom: 10px; display: flex;">
             <div>
                 <v-radio-group v-model="this.selectedCoupon" class="mt-4 mb-4">
                     <v-card-title style="margin: auto;">
@@ -242,10 +242,10 @@
                         아래 "결제" 버튼을 누르면 자동으로 결제되며,<br>정기 구독 상품의 특성 상 환불이 불가합니다.
                     </v-card-text>
 
-                    <v-row style="margin: auto;">
+                    <v-row style="margin: auto; padding-bottom: 0px;">
+                        <v-btn @click="doPay" class="submit-btn" color="deep_green">결제</v-btn>
                         <v-btn @click="this.confirmPayModal = false" class="submit-btn"
                             style="background-color: #e0e0e0;">닫기</v-btn>
-                        <v-btn @click="doPay" class="submit-btn" color="deep_green">결제</v-btn>
                     </v-row>
                 </v-radio-group>
             </div>
@@ -561,7 +561,7 @@ h3 {
 
 .coupon-select-modal {
     width: 500px;
-    height: auto;
+    height: 260px;
 }
 
 .payment-info-title {
