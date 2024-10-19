@@ -20,7 +20,7 @@
                         <span style="font-size: 14px;">{{ wishlistItems[item.id] ? '위시리스트 취소' : '위시리스트 담기' }}</span>
                     </v-btn>
                     <div class="item-info">
-                        <h2>{{ item.packageName }}</h2>
+                        <p style="font-size: medium; color: black;">{{ item.packageName }}</p>
                         <p>{{ getAmountWithFormat(item.price) }}원</p>
                         <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
                             getAmountWithFormat(getPerCyclePrice(item.price, item.deliveryCycle)) }} </span>
