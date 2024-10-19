@@ -151,7 +151,7 @@
 
     <v-dialog v-model="this.successModal" max-width="300px">
         <v-card class="modal"
-            style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+            style="align-items: center; text-align: center; width: 260px; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
             <v-card-text>
                 정기 결제 수단이<br>
                 성공적으로 등록되었습니다!
@@ -166,7 +166,7 @@
 
     <v-dialog v-model="this.failModal" max-width="300px">
         <v-card class="modal"
-            style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+            style="align-items: center; text-align: center; width: 300px; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
             <v-card-text>
                 정기 결제 수단 등록에 실패했습니다. <br>
                 다시 시도해주세요.
@@ -179,7 +179,7 @@
     </v-dialog>
 
     <v-dialog v-model="this.couponModal" max-width="300px">
-        <v-card class="coupon-select-modal" style="align-items: center; padding-bottom: 10px; display: flex;">
+        <v-card class="coupon-select-modal modal" style="align-items: center; padding-bottom: 10px; display: flex;">
             <div style="width: 100%; text-align: center; padding: 20px;">
                 <v-radio-group v-model="this.selectedCoupon" class="mt-4 mb-4">
                     <v-card-title style="margin: auto;">
@@ -224,15 +224,15 @@
         </v-card>
     </v-dialog>
 
-    <v-dialog v-model="this.loadingModal" max-width="300px">
-        <v-card class="coupon-select-modal" style="align-items: center; padding-bottom: 20px; display: flex;">
+    <v-dialog v-model="this.loadingModal">
+        <v-card class="coupon-select-modal modal" style="align-items: center; padding-bottom: 20px; display: flex;">
             <v-card-title>결제가 진행 중입니다.</v-card-title>
         </v-card>
     </v-dialog>
 
 
-    <v-dialog v-model="this.confirmPayModal" max-width="300px">
-        <v-card class="coupon-select-modal" style="align-items: center; padding-bottom: 20px; display: flex;">
+    <v-dialog v-model="this.confirmPayModal">
+        <v-card class="coupon-select-modal modal" style="align-items: center; width: 380px; padding-bottom: 20px; display: flex;">
             <div>
                 <v-radio-group v-model="this.selectedCoupon" class="mt-4 mb-4">
                     <v-card-title style="margin: auto;">
@@ -406,9 +406,12 @@ export default {
                     },
                 });
 
+                if(res.code === "FAILURE_TYPE_PG") {
+                    this.failModal = true;
+                    return;
+                }
 
                 this.billingKey = res.billingKey;
-                this.successModal = true;
                 this.paymentMethod = 'KAKAOPAY'; // TODO: 추후 확장 가능성
 
                 const body = {
@@ -417,6 +420,8 @@ export default {
                 }
 
                 await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/subscription/payment/method`, body);
+
+                this.successModal = true;
             } catch (e) {
                 this.failModal = true;
                 console.log(e);
@@ -577,5 +582,12 @@ h3 {
     margin: auto;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>
