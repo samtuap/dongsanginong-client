@@ -1,10 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" max-width="600" class="custom-dialog">
-    <v-card class="custom-card">
+  <v-dialog v-model="dialog" max-width="550" class="custom-dialog">
+    <v-card class="custom-card" style="padding-top: 20px; font-size: 15px;">
       <v-card-title class="custom-title">
-        <span class="headline">커뮤니티 수정</span>
+        <span class="headline" style="font-size: 18px;">커뮤니티 수정</span>
       </v-card-title>
-      <v-card-text>
+      <v-card-text style="font-size: 15px;">
         <form @submit.prevent="updateNotice">
           <div>
             <input 
@@ -32,7 +32,7 @@
               multiple />
           </div>
           <div v-if="filePreviews.length">
-            <h3>선택된 파일:</h3>
+            <p style="font-weight: 400;">선택된 파일:</p>
             <ul class="preview-list">
               <li v-for="(preview, index) in filePreviews" :key="index" class="preview-container">
                 <div class="image-wrapper">
@@ -49,17 +49,16 @@
       <v-card-actions class="action-buttons">
         <v-spacer />
         <v-btn 
-          color="light_green" 
           class="custom-button"
           @click="updateNotice"
+          style="background-color: #BCC07B; margin-right: 10px;"
         >
           수정
         </v-btn>
         <v-btn 
-          color="light_green" 
           class="custom-button" 
-          text 
           @click="dialog = false"
+          style="background-color: #e0e0e0; margin-right: 15px;"
         >
           닫기
         </v-btn>
@@ -268,21 +267,21 @@ textarea.custom-input {
 
 /* 모달 커스텀 스타일 */
 .custom-dialog {
-  padding: 20px; /* 모달 내부 패딩 */
+  padding: 10px; /* 모달 내부 패딩 */
 }
 
 .custom-card {
   border-radius: 30px; /* 모달 테두리 둥글기 더 둥글게 수정 */
-  padding: 20px; /* 모달 내부 패딩 */
+  padding: 10px; /* 모달 내부 패딩 */
 }
 
 .custom-title {
   background-color: #BCC07B;
-  border-radius: 30px; /* 상단과 하단 모두 둥글게 */
+  border-radius: 10px; /* 상단과 하단 모두 둥글게 */
   text-align: center;
   width: calc(97% - 30px); /* 좌우 여백 맞추기 */
   margin: 0 auto; /* 가운데 정렬 */
-  padding: 10px;
+  padding: 7px;
 }
 
 .action-buttons {
@@ -294,10 +293,6 @@ textarea.custom-input {
   color: black !important; /* 텍스트 색상 검정으로 설정 */
   transition: background-color 0.3s ease; /* 배경색 변경 시 부드럽게 전환 */
   border-radius: 50px; /* 모서리 둥글기 50px로 설정 */
-}
-
-.custom-button:hover {
-  background-color: #BCC07B; /* 마우스 호버 시 배경색 변경 */
 }
 
 /* 완료 메시지 모달 */

@@ -71,9 +71,9 @@
 
       <!-- 삭제 완료 모달 -->
       <v-dialog v-model="alertModal" max-width="260px">
-        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-          <v-card-text>리뷰가 삭제되었습니다.</v-card-text>
-          <v-btn @click="closeAlertModal" class="submit-btn">close</v-btn>
+        <v-card class="modal" style="padding: 10px; padding-bottom: 12px; text-align: center;">
+          <v-card-text style="text-align: center;">리뷰가 삭제되었습니다.</v-card-text>
+          <v-btn @click="closeAlertModal" class="submit-btn" style="margin-top: -10px; margin-right: 10px;">닫기</v-btn>
         </v-card>
       </v-dialog>
     </v-card>
@@ -252,13 +252,13 @@ export default {
 }
 
 .scroll-button {
-  color: black;
+  color: rgb(97, 97, 97);
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
   z-index: 1;
-  font-size: 24px;
+  font-size: 14px;
   border-radius: 50%;
   display: flex;
   justify-content: center;

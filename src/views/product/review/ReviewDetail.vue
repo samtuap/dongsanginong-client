@@ -273,14 +273,14 @@ export default {
 }
 
 .scroll-button {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  background-color: white;
+  color: rgb(94, 94, 94);
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
   z-index: 1;
-  font-size: 24px;
+  font-size: 12px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
