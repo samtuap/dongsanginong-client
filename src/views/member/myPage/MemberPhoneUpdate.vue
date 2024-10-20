@@ -2,9 +2,9 @@
     <!-- 완료 모달 -->
     <v-dialog v-model="alertModal" max-width="300px">
         <v-card class="modal"
-            style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+            style="align-items: center; text-align: center; height: 120px; padding-bottom: 12px; overflow-y: hidden;">
             <v-card-text>{{ modalMessage }}</v-card-text>
-            <v-btn @click="handleAlertClose" class="submit-btn">확인</v-btn>
+            <v-btn @click="handleAlertClose" class="submit-btn" style="margin-top: -15px;">확인</v-btn>
         </v-card>
     </v-dialog>
 

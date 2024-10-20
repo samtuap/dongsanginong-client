@@ -523,7 +523,6 @@ export default {
     border-radius: 50px;
     float: right;
     margin-right: 30px;
-    font-weight: 700;
 }
 .live-card-fav {
   border-radius: 50%;

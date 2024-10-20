@@ -14,7 +14,7 @@
                 <farm-notice-update :notice-id="noticeId" ref="editModal" @notice-updated="farmNoticeDetail" />
 
                 <v-card class="notice-class elevation-0" outlined>
-                    <v-card-title style="font-size: 17px;"> {{ title }} </v-card-title>
+                    <v-card-title style="font-size: 16px;"> {{ title }} </v-card-title>
 
                     <v-card-text>{{ content }}</v-card-text>
 
@@ -26,27 +26,28 @@
                 </v-card>
 
                 <!-- 댓글 조회 -->
-                <br>
-                <h3 class="comment-title">댓글 {{ commentCnt }}개</h3>
-                <br>
+                <div style="margin-left: 7%; padding: 0; justify-content: center; width: 100%;">
+                    <br>
+                    <h3 class="comment-title">댓글 {{ commentCnt }}개</h3>
+                    <br>
+                    <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
+                        <v-row>
+                            <v-card-text>@{{ comment.name }}&nbsp;&nbsp;
+                                <span style="font-size: 12px; color: grey;">({{ comment.formattedDate }})</span></v-card-text>
+                        </v-row>
+                        <v-card-text class="centered-comment">&nbsp;{{ comment.contents }}</v-card-text>
+                        <hr class="hr-style">
+                    </v-card>
 
-                <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
-                    <v-row>
-                        <v-card-text>&nbsp;&nbsp;&nbsp;<strong>@{{ comment.name }}</strong>&nbsp;&nbsp;
-                            <span style="font-size: 12px;">({{ comment.formattedDate }})</span></v-card-text>
-                    </v-row>
-                    <v-card-text class="centered-comment">{{ comment.contents }}</v-card-text>
-                    <hr class="hr-style">
-                </v-card>
-
-                <!-- 페이징 처리 -->
-                <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+                    <!-- 페이징 처리 -->
+                    <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+                </div>
 
                 <!-- 삭제 완료 모달 -->
                 <v-dialog v-model="alertModal" max-width="260px">
-                    <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-                        <v-card-text>완료되었습니다.</v-card-text>
-                        <v-btn @click="closeModal" class="submit-btn">close</v-btn>
+                    <v-card class="modal" style="padding: 15px; text-align: center;">
+                        <v-card-text style="text-align: center;">완료되었습니다.</v-card-text>
+                        <v-btn @click="closeModal" class="submit-btn" style="margin-top: -2px; margin-right: 10px;">닫기</v-btn>
                     </v-card>
                 </v-dialog>
             </v-col>
@@ -150,7 +151,6 @@ export default {
 </script>
 
 <style scoped>
-
 .notice-class {
     margin-top: 20px;
     width: 800px;
@@ -163,40 +163,30 @@ export default {
 }
 
 .edit-btn {
-    margin-right: -65px ;
     background-color: #BCC07B;
     color: black;
     border-radius: 30px;
-    padding: 10px 20px;
-    font-size: 12px;
-    font-weight: bold;
+    padding: 7px 20px;
+    font-size: 14px;
     line-height: 1.5;
     box-shadow: none;
+    margin-right: 10px;
 }
 .delete-btn{
-    margin-right: -65px ;
+    margin-right: -80px ;
     background-color: #e0e0e0;
     color: black;
     border-radius: 30px;
-    padding: 10px 20px;
-    font-size: 12px;
-    font-weight: bold;
+    padding: 7px 20px;
     line-height: 1.5;
     box-shadow: none;
+    font-size: 14px;
 }
-
-.edit-btn {
-    margin-right: 10px;
-}
-
-.comment-class {
-    padding-left: 12px;
-}
-
 .hr-style {
   border: none;
   border-top: 0.9px solid lightgray;
-  margin-top: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 .modal-btn {
@@ -219,18 +209,8 @@ export default {
     border-radius: 50px;
 }
 
-.comment-title {
-    padding-left: 10%;
-    text-align: left;
-}
-
-.comment-class {
-    padding-left: 10%;
-    text-align: left;
-}
-
-.centered-comment {
-    padding-left: 5%;
-    text-align: left;
+.comment-title, .centered-comment {     
+  padding-left: 0%;    
+  text-align: left; 
 }
 </style>
