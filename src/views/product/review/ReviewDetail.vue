@@ -57,6 +57,7 @@
               <button v-if="review.imageUrls.length > imagesPerPage" @click="scrollRight" class="scroll-button right-button">›</button>
             </div>
           </div>
+          <br>
         </v-col>
       </v-row>
 
@@ -241,7 +242,7 @@ export default {
   margin-top: 10px;
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .review-text {
