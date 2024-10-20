@@ -232,7 +232,8 @@
 
 
     <v-dialog v-model="this.confirmPayModal">
-        <v-card class="coupon-select-modal modal" style="align-items: center; width: 380px; padding-bottom: 10px; display: flex;">
+        <v-card class="coupon-select-modal modal" style="align-items: center; width: 400px; padding-bottom: 10px; display: flex;
+        overflow-y: hidden;">
             <div>
                 <v-radio-group v-model="this.selectedCoupon" class="mt-4 mb-4">
                     <v-card-title style="margin: auto;">
