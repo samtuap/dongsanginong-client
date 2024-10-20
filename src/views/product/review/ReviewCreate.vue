@@ -66,17 +66,17 @@
 
   <!-- 에러 모달 -->
   <v-dialog v-model="alertModal" max-width="380px">
-    <v-card class="modal" style="padding: 15px; padding-right: 20px; text-align: center;">
-      <v-card-text>{{ alertMessage }}</v-card-text>
-      <v-btn @click="alertModal = false;" class="submit-btn" style="margin-top: -2px;">확인</v-btn>
+    <v-card class="modal" style="padding: 15px; text-align: center;">
+      <v-card-text style="text-align: center;">{{ alertMessage }}</v-card-text>
+      <v-btn @click="alertModal = false;" class="submit-btn" style="margin-top: -2px; margin-right: 10px;">확인</v-btn>
     </v-card>
   </v-dialog>
 
   <!-- 성공 모달 -->
   <v-dialog v-model="successModal" max-width="260px">
-      <v-card class="modal" style="padding: 15px; padding-right: 20px; text-align: center;">
-          <v-card-text>완료되었습니다.</v-card-text>
-          <v-btn @click="closeModals" class="submit-btn" style="margin-top: -2px;">확인</v-btn>
+      <v-card class="modal" style="padding: 15px; text-align: center;">
+          <v-card-text style="text-align: center;">완료되었습니다.</v-card-text>
+          <v-btn @click="closeModals" class="submit-btn" style="margin-top: -2px; margin-right: 10px;">확인</v-btn>
       </v-card>
   </v-dialog>
 

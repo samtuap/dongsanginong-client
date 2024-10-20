@@ -26,7 +26,7 @@
 
           <!-- 수정/삭제 버튼: 현재 로그인한 유저와 리뷰 작성자가 같을 경우에만 표시 -->
           <v-row class="button-row">
-            <v-col v-if="isReviewOwner" cols="12" class="action-buttons">
+            <v-col v-if="isReviewOwner" cols="12" class="action-buttons" style="margin-top: 1px;">
               <v-btn @click="openEditDialog" class="edit-btn">수정</v-btn>
               <v-btn @click="openDeleteConfirmation" class="delete-btn">삭제</v-btn>
             </v-col>
