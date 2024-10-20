@@ -99,9 +99,9 @@
 
         <!-- 수정 / 삭제 완료 모달 -->
         <v-dialog v-model="alertModal" max-width="260px">
-            <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
+            <v-card class="modal" style="padding: 15px; padding-right: 20px; text-align: center;">
                 <v-card-text>완료되었습니다.</v-card-text>
-                <v-btn @click="alertModal= false;" class="submit-btn">close</v-btn>
+                <v-btn @click="alertModal= false;" class="submit-btn" style="margin-top: -2px;">닫기</v-btn>
             </v-card>
         </v-dialog>
     </v-container>
