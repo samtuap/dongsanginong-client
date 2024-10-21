@@ -18,30 +18,36 @@
         <!-- 패키지 리스트 -->
         <v-container style="width: 100%; text-align: start;">
 
-            <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🥦 패키지 살펴보기 </span>
+            <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;"> 🥦 패키지 살펴보기 </span>
             </v-card-title>
 
             <v-row style="margin-top: 20px; padding-right:1.8%">
                 <v-col cols="6"></v-col>
                 <v-col cols="2">
                     <div class="select-wrapper">
-                        <select v-model="sortOption" class="sort-select">
+                        <select v-model="sortOption" class="sort-select" @change="onSearch"> <!-- 변경 이벤트 추가 -->
                             <option v-for="option in sortOptions" :key="option" :value="option">{{ option }}</option>
                         </select>
                         <svg-icon type="mdi" :path="mdiMenuDown" class="dropdown-icon"></svg-icon>
                     </div>
                 </v-col>
                 <v-col cols="4">
-                    <form class="searchbar" @submit.prevent="onSearch">
-                        <input style="width:100%; margin-left: 15px;" placeholder="구독 패키지를 검색해보세요!"
-                            v-model="searchQuery">
-                        <button type="submit">
+                    <form class="searchbar">
+                        <input 
+                            style="width:100%; margin-left: 15px;" 
+                            placeholder="구독 패키지를 검색해보세요!"
+                            v-model="searchQuery" 
+                            @input="onSearch"
+                        />
+                        <button type="submit" @click.prevent="onSearch">
                             <img style="margin-right:15px; margin-top: 8px"
                                 src="https://d3cpiew7rze14b.cloudfront.net/assets/svg/Search-icon-24x-24_qnmx4o57C.svg"
                                 alt="검색">
                         </button>
                     </form>
                 </v-col>
+                
+                
             </v-row>
 
             <v-container class="d-flex custom-card-container">
