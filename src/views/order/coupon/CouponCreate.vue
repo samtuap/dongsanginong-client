@@ -1,8 +1,8 @@
 <template>
-  <v-dialog :model-value="dialog" persistent max-width="600px" @update:model-value="updateDialog">
-    <v-card class="custom-card">
+  <v-dialog :model-value="dialog" persistent max-width="530px" @update:model-value="updateDialog">
+    <v-card class="custom-card" style="font-size: 15px;">
       <v-card-title class="custom-title">
-        <span class="headline">쿠폰 생성</span>
+        <span class="headline" style="font-size: 18px;">쿠폰 생성</span>
       </v-card-title>
       <v-card-text>
         <div class="coupon-form no-border">
@@ -79,16 +79,16 @@
 
     <!-- 날짜 선택 모달 -->
     <v-dialog v-model="datePickerDialog" max-width="330px">
-      <v-card>
-        <v-card-title class="headline">날짜 선택</v-card-title>
+      <v-card style="padding-top: 10px;">
+        <v-card-title class="headline" style="font-size: 17px;">날짜 선택</v-card-title>
         <v-date-picker v-model="selectedDate" @update:model-value="openTimePicker" />
       </v-card>
     </v-dialog>
 
     <!-- 시간 선택 모달 -->
     <v-dialog v-model="timePickerDialog" max-width="350px">
-      <v-card>
-        <v-card-title class="headline">시간 선택</v-card-title>
+      <v-card style="padding-top: 10px;">
+        <v-card-title class="headline" style="font-size: 17px;">시간 선택</v-card-title>
         <div class="form-group time-input">
           <div class="time-picker-container">
             <input
@@ -108,12 +108,21 @@
     </v-dialog>
 
     <!-- 알림 모달 -->
-    <v-dialog v-model="alertDialog" max-width="400px">
-      <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-        <v-card-text>{{ alertMessage }}</v-card-text>
-        <v-btn @click="closeAllModals" class="submit-btn">close</v-btn>
+    <v-dialog v-model="alertDialog" max-width="350px">
+      <v-card class="modal" style="padding: 10px; padding-bottom: 15px; text-align: center;">
+        <v-card-text style="text-align: center;">{{ alertMessage }}</v-card-text>
+        <v-btn @click="closeAllModals" style=" margin-top: -10px; border-radius: 50px; width: 90%; margin-left: 5%;
+        background-color: #BCC07B">닫기</v-btn>
       </v-card>
     </v-dialog>
+  </v-dialog>
+
+  <!--  완료 모달  -->
+  <v-dialog v-model="successModal" max-width="260px">
+    <v-card class="modal" style="padding: 10px; text-align: center;">
+          <v-card-text style="text-align: center;">등록이 완료되었습니다.</v-card-text>
+          <v-btn @click="closeSuccessModal" class="submit-btn">확인</v-btn>
+      </v-card>
   </v-dialog>
 </template>
 
@@ -144,6 +153,7 @@ export default {
       timePickerDialog: false,
       alertDialog: false,
       alertMessage: '',
+      successModal: false,
     };
   },
   methods: {
@@ -244,42 +254,39 @@ export default {
             },
           }
         );
-        this.showAlert('쿠폰이 성공적으로 생성되었습니다.');
+        this.successModal = true;
+        // this.showAlert('쿠폰이 성공적으로 생성되었습니다.');
       } catch (error) {
         console.error('쿠폰 생성 실패:', error.response?.data || error.message);
         this.showAlert('쿠폰 생성에 실패했습니다.');
       }
     },
     closeAllModals() {
-      // 모든 모달 상태를 닫음
-      this.$emit('update:dialog', false); // dialog 값을 상위 컴포넌트로 emit
-      this.datePickerDialog = false;
-      this.timePickerDialog = false;
       this.alertDialog = false;
-      window.location.reload();
     },
+    closeSuccessModal() {
+      this.successModal = false;
+      this.updateDialog(false);
+      window.location.reload();
+    }
   },
 };
 </script>
 
 <style scoped>
-.coupon-form-container {
-  padding: 50px;
-  background-color: white;
-}
-
 .custom-card {
   border-radius: 30px;
-  padding: 20px;
+  padding: 10px;
+  padding-top: 20px;
 }
 
 .custom-title {
   background-color: #BCC07B;
-  border-radius: 30px;
+  border-radius: 10px;
   text-align: center;
   width: calc(97% - 30px);
   margin: 0 auto;
-  padding: 10px;
+  padding: 7px;
 }
 
 .form-group {
@@ -289,9 +296,6 @@ export default {
 }
 
 .form-label {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
   color: #333;
 }
 
@@ -350,15 +354,15 @@ export default {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  margin-top: -10px;
 }
 
 .custom-button {
   background-color: #BCC07B;
   color: black;
   border-radius: 30px;
-  padding: 10px 30px;
-  font-size: 13px;
-  font-weight: bold;
+  padding: 7px 30px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -366,9 +370,8 @@ export default {
   background-color: #e0e0e0;
   color: black;
   border-radius: 30px;
-  padding: 10px 30px;
-  font-size: 13px;
-  font-weight: bold;
+  padding: 7px 30px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -380,11 +383,11 @@ export default {
 }
 
 .submit-btn {
-  margin-left: 100px;
-  margin-top: 20px;
+  margin-top: -10px;
   background-color: #BCC07B;
   color: black;
   border-radius: 50px;
-  width: 50%; /* 가로 크기를 절반으로 줄임 */
+  width: 50%;
+  margin-left: 27%;
 }
 </style>

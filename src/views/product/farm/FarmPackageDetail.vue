@@ -83,7 +83,13 @@
             </div>
             <div class="review-date">{{ formatDate(review.updateAt) }}</div>
           </div>
-          <div class="review-title">
+          <!-- 내 리뷰면 -->
+          <div class="review-title" v-if="review.memberId == this.memberId">
+            <strong>{{ review.title }}</strong>&nbsp;&nbsp;
+            <span lclass="my-review" style="background-color: #eee; padding: 3px 5px; border-radius: 10px; font-size: 13px;
+            margin-bottom: 5px; color: blue;">내 리뷰</span>
+          </div>
+          <div class="review-title" v-else>
             <strong>{{ review.title }}</strong>
           </div>
           <!-- 첫 번째 리뷰 이미지, 이미지가 없으면 빈 div로 공간 확보 -->
@@ -148,8 +154,8 @@
         </v-row>
 
         <!-- 삭제 확인 모달 -->
-        <v-dialog v-model="deleteModal" max-width="400">
-          <v-card class="modal">
+        <v-dialog v-model="deleteModal" max-width="300">
+          <v-card class="modal" style="padding: 10px; padding-bottom: 5px;">
             <v-card-title class="modal-title">정말 삭제하시겠습니까?</v-card-title>
             <v-card-actions class="modal-actions">
               <v-spacer></v-spacer>
@@ -157,6 +163,13 @@
               <v-btn @click="closeDeleteModal" class="cancel-btn">닫기</v-btn>
             </v-card-actions>
           </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="successModal" max-width="260px">
+          <v-card class="modal" style="padding: 10px; text-align: center;">
+                <v-card-text style="text-align: center;">삭제가 완료되었습니다.</v-card-text>
+                <v-btn @click="closeModals" class="submit-btn" style="margin-right: 10px;">확인</v-btn>
+            </v-card>
         </v-dialog>
 
         <!-- 리뷰 수정 모달 -->
@@ -196,6 +209,8 @@ export default {
       currentImageIndex: 0,
       imagesPerPage: 2,
       deleteModal: false, // 삭제 확인 모달 상태
+      memberId: localStorage.getItem('memberId'),
+      successModal: false,
     };
   },
   computed: {
@@ -288,14 +303,13 @@ export default {
       this.currentImageIndex = Math.min(this.currentImageIndex + this.imagesPerPage, maxIndex);
     },
     openEditDialog() {
-  if (this.selectedReview && this.selectedReview.id) {
-    console.log("Opening Edit Dialog for Review ID:", this.selectedReview.id);
-    this.$refs.editModal.openEditDialog();
-  } else {
-    console.error("No selected review found!");
-  }
-},
-
+      if (this.selectedReview && this.selectedReview.id) {
+        console.log("Opening Edit Dialog for Review ID:", this.selectedReview.id);
+        this.$refs.editModal.openEditDialog();
+      } else {
+        console.error("No selected review found!");
+      }
+    },
     openDeleteConfirmation() {
       this.deleteModal = true;
     },
@@ -314,12 +328,17 @@ export default {
           }
         );
         this.deleteModal = false;
-        this.reviewModal = false;
-        this.fetchReviews(); // 리뷰 목록을 다시 불러옴
+        this.successModal = true;
+        // this.fetchReviews(); // 리뷰 목록을 다시 불러옴
       } catch (error) {
         console.error('리뷰 삭제 실패:', error);
       }
     },
+    closeModals() {
+      this.successModal = false;
+      this.reviewModal = false;
+      window.location.reload();
+    }
   },
 };
 </script>
@@ -543,14 +562,13 @@ export default {
 }
 
 .scroll-button {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: rgb(78, 78, 78);
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
   z-index: 1;
-  font-size: 24px;
+  font-size: 25px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -579,5 +597,32 @@ export default {
   position: relative;
   width: 100%;
   margin-top: 20px;
+}
+.modal-title {
+  font-size: 16px;
+  text-align: center;
+}
+.delete-confirm-btn {
+  background-color: #BCC07B;
+  color: black;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 13px;
+  max-width: 200px;
+}
+.cancel-btn {
+  background-color: #e0e0e0;
+  color: black;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 13px;
+  max-width: 200px;
+}
+.submit-btn {
+    margin-left: 10px;
+    margin-top: 8px;
+    background-color: #BCC07B;
+    color: black;
+    border-radius: 50px;
 }
 </style>

@@ -11,7 +11,7 @@
               <div class="farm-image-frame">
                 <v-img :src="profileImageUrl" class="farm-image-circle" cover />
               </div>
-              <div class="farm-text" style="margin-top: -90px; margin-left: 110px; text-align: start;">
+              <div class="farm-text" style="margin-top: -40px; margin-left: 170px; text-align: start;">
                 <span class="farm-name" style="margin-left: 10px;">{{ this.farmName }}</span><br>
                 <span style="font-size: 14px; color: grey; margin-left: 10px;"> {{ this.farmIntro }}</span>
               </div>
@@ -19,6 +19,7 @@
           </div>
          </v-row>
 
+         <br><br>
         <v-row justify="center" class="mt-5 menubar" style="line-height: 15px;">
             <v-col cols="3" class="text-center">
                 <span
@@ -140,13 +141,13 @@ export default {
 }
 .farm-image-circle {
     border-radius: 200px;
-    width: 200px;
-    height: 200px;
+    width: 120px;
+    height: 120px;
     border: solid 0.5px #D4D4D4;
     background-position: center;
     background-size: cover;
     transition: background-size 0.5s ease;
-    bottom: 85px;
+    bottom: 50px;
     left: 120px; 
 }
 .farm-info {
@@ -155,11 +156,11 @@ export default {
   margin-bottom: -60px;
 }
 .farm-image-frame {
-  margin-right: 10px;
+  margin-right: -50px;
 }
 .farm-name {
   margin: 0;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
 }
 

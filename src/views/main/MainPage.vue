@@ -46,9 +46,25 @@
         </div>
         <BestPackageSlide />
 
+        <br><br>
+        <div class="hr-style"></div>
+        <br>
     </v-container>
     <!-- 인기 패키지 끝 -->
 
+    <!-- 시청자 순 라이브 목록 -->
+    <v-container>
+        <v-col cols="12">
+            <div class="text-center slide-title" @click="this.$router.push('/live/list')">
+                📺 Live 📺
+                <v-icon icon="mdi-chevron-right" style="font-size: 46px;"/>
+            </div>
+            <p class="text-center" style="color: grey; font-size: 16px;">시청자가 가장 많은 라이브 목록입니다.</p>
+        </v-col>
+        <br>
+        <LiveListBest ref="liveListBest" :autoStart="false" />
+    </v-container>
+    <!-- 라이브 목록 끝  -->
 
     <v-dialog v-model="this.loginModal" max-width="300px">
         <v-card class="modal"
@@ -86,13 +102,15 @@
 <script>
 import BestFarmSlide from '@/components/slide/BestFarmSlide.vue';
 import BestPackageSlide from '@/components/slide/BestPackageSlide.vue';
+import LiveListBest from '../live/live/LiveListBest.vue';
 import axios from 'axios';
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
 export default {
     components: {
         BestPackageSlide,
-        BestFarmSlide
+        BestFarmSlide,
+        LiveListBest,
     },
     icons: {
         defaultSet: 'mdi',
@@ -110,8 +128,15 @@ export default {
             farmList: [],
             farmOnboarding: 1,
             likes: [], // 0: 안눌려있는 상태, 1: 눌려있는 상태, 2: 눌리고 있는 상태(애니메이션처리)
-            likeCount: []
+            likeCount: [],
+            isLiveListInView: false,
         }
+    },
+    mounted() {
+        window.addEventListener('scroll', this.handleScroll);
+    },
+    beforeUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
     },
     methods: {
         saveScrollPosition() {
@@ -150,15 +175,38 @@ export default {
                 console.log(e);
 
             }
-        }
+        },
+        handleScroll() {
+            const liveListComponent = this.$refs.liveListBest;
+            if (liveListComponent && liveListComponent.$el) {
+                const rect = liveListComponent.$el.getBoundingClientRect();
+                const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+
+                if (rect.top <= windowHeight && rect.bottom >= 0) {
+                    // LiveListBest가 뷰포트 안에 있음
+                    if (!this.isLiveListInView) {
+                        this.isLiveListInView = true;
+                        liveListComponent.playPreviewAll();
+                    }
+                } else {
+                    // LiveListBest가 뷰포트 밖에 있음
+                    if (this.isLiveListInView) {
+                        this.isLiveListInView = false;
+                        liveListComponent.stopAllPreviews();
+                    }
+                }
+            }
+        },
     },
     async created() {
         // 테스트용 임시 데이터
         this.images = [
             // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/0dac11a7-7643-4fd0-a591-e6fb84ed7796inong1", "alt": "배너사진1", "link": "/event1" },
-            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/7b389588-8eda-4eee-9502-703efca9d648inong2", "alt": "배너사진2", "link": "/event2" },
             { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/a591fdfe-4151-4b7f-932a-d5afff886ae5banner2", "alt": "배너사진3", "link": "/event2" },
-            // { "src:": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/local/desktop+wallpaper.jpeg", "alt": "배너사진4", "link": "/event2" },
+            { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/farm/c556f77b-55c7-484e-b923-ce7fb7b00a01banner6", "alt": "배너사진4", "link": "/event2" },
+            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/7b389588-8eda-4eee-9502-703efca9d648inong2", "alt": "배너사진2", "link": "/event2" },
+            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/mainpage/a591fdfe-4151-4b7f-932a-d5afff886ae5banner2", "alt": "배너사진3", "link": "/event2" },
+            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/farm/c556f77b-55c7-484e-b923-ce7fb7b00a01banner6", "alt": "배너사진4", "link": "/event2" },
             // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/local/desktop+wallpaper.jpeg", "alt": "배너사진5", "link": "/event2" }
         ];
 

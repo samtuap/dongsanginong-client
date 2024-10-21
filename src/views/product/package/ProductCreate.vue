@@ -81,7 +81,7 @@
         <v-card-text>
           상품이 성공적으로<br>등록되었습니다.
         </v-card-text>
-        <v-btn @click="closeSuccessModal" class="submit-btn" style="font-weight: bold;">확인</v-btn>
+        <v-btn @click="closeSuccessModal" class="submit-btn">확인</v-btn>
       </v-card>
     </v-dialog>
 

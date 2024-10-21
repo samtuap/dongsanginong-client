@@ -2,7 +2,7 @@
   <FarmMenuComponent :currentMenu="3" />
     <br><br>
     <div class="review-container">
-      <h4 class="review-header" style="margin-left: 30px;">전체 리뷰({{ reviews.length }})</h4>
+      <h4 class="review-header" style="margin-left: 11%;">전체 리뷰({{ reviews.length }})</h4>
   
       <!-- 리뷰 목록 -->
       <v-row v-if="paginatedReviews.length > 0" class="review-row" justify="center">
@@ -30,7 +30,12 @@
             </div>
   
             <!-- 상품 이름 표시 (회색) -->
-            <div class="package-name">
+            <div class="package-name" v-if="review.memberId == this.memberId">
+              상품명: {{ review.packageName }}&nbsp;&nbsp;
+              <span lclass="my-review" style="background-color: #eee; padding: 3px 5px; border-radius: 10px; font-size: 13px;
+            margin-bottom: 5px; color: blue;">내 리뷰</span>
+            </div>
+            <div class="package-name" v-else>
               상품명: {{ review.packageName }}
             </div>
             <br>
@@ -75,6 +80,7 @@
         currentPage: 1,
         reviewsPerPage: 5,
         paginatedReviews: [],
+        memberId: localStorage.getItem('memberId'),
       };
     },
     computed: {
@@ -153,10 +159,10 @@
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9;
   margin-bottom: 20px;
-  width: 93%;
+  width: 85%;
   /* max-width: 800px; */
   cursor: pointer;
-  margin-left: 4%;
+  margin-left: 7%;
 }
 
 .card-header {

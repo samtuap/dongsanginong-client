@@ -76,22 +76,22 @@
       </div>
   
       <!-- 성공 모달 -->
-      <v-dialog v-model="successModal" max-width="260px">
-        <v-card class="successModal" style="padding: 10px; padding-right: 20px; text-align: center;">
-          <v-card-text>
+      <v-dialog v-model="successModal" max-width="300px">
+        <v-card class="successModal" style="padding: 7px; padding-bottom: 12px; text-align: center;">
+          <v-card-text style="text-align: center;">
             상품이 성공적으로<br>수정되었습니다.
           </v-card-text>
-          <v-btn @click="closeSuccessModal" class="submit-btn">확인</v-btn>
+          <v-btn @click="closeSuccessModal" class="submit-btn" style="margin-top: -10px; margin-right: 10px;">확인</v-btn>
         </v-card>
       </v-dialog>
   
       <!-- 검증 실패 모달 -->
-      <v-dialog v-model="validationModal" max-width="260px">
-        <v-card class="validationModal" style="padding: 10px; padding-right: 20px; text-align: center;">
-          <v-card-text style="font-weight: bold;">
+      <v-dialog v-model="validationModal" max-width="340px">
+        <v-card class="validationModal" style="padding: 7px; padding-bottom: 12px; text-align: center;">
+          <v-card-text>
             {{ validationMessage }}
           </v-card-text>
-          <v-btn @click="closeValidationModal" class="submit-btn">확인</v-btn>
+          <v-btn @click="closeValidationModal" class="submit-btn" style="margin-top: -8px; margin-right: 10px;">확인</v-btn>
         </v-card>
       </v-dialog>
     </div>

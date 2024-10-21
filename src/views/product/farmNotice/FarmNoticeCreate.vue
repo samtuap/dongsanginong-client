@@ -1,14 +1,14 @@
 <template>
   <div>
-    <v-btn @click="openDialog" class="custom-create-button">공지 생성</v-btn> <!-- 버튼 클릭 시 모달 열림 -->
+    <v-btn @click="openDialog" class="custom-create-button">공지 작성</v-btn> <!-- 버튼 클릭 시 모달 열림 -->
 
     <!-- 모달 -->
-    <v-dialog v-model="dialog" max-width="600" class="custom-dialog">
-      <v-card class="custom-card">
+    <v-dialog v-model="dialog" max-width="550" class="custom-dialog">
+      <v-card class="custom-card" style="padding-top: 20px;">
         <v-card-title class="custom-title">
           <span class="headline">커뮤니티</span>
         </v-card-title>
-        <v-card-text>
+        <v-card-text style="font-size: 15px;">
           <form @submit.prevent="createNotice">
             <div>
               <input 
@@ -75,16 +75,16 @@
     </v-dialog>
 
     <!-- 닫기 확인 모달 -->
-    <v-dialog v-model="confirmCloseModal" max-width="270px">
-      <v-card class="modal" style="text-align: center;">
-        <v-card-text style="margin-top: 3px; margin-bottom: 6px">정말 닫으시겠습니까?</v-card-text>
-        <span style="color: gray; font-size: 12px; margin-top: -10px">현재 작성중인 내용은 저장되지 않습니다.</span>
-        <v-card-actions style="justify-content: center;">
-          <v-btn @click="closeDialog" class="custom-button">닫기</v-btn>
-          <v-btn @click="confirmCloseModal = false" class="custom-close-button">취소</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <v-dialog v-model="confirmCloseModal" max-width="300px">
+    <v-card class="modal" style="text-align: center;">
+      <v-card-text style="margin-top: 3px;">정말 닫으시겠습니까?</v-card-text>
+      <span style="color: gray; font-size: 13px; margin-top: -10px">현재 작성중인 내용은 저장되지 않습니다.</span><br>
+      <v-card-actions class="action-buttons" style="justify-content: center; margin-left: 2%; margin-top: -6%;">
+        <v-btn @click="closeDialog" class="custom-button">닫기</v-btn>
+        <v-btn @click="confirmCloseModal = false" class="custom-close-button">취소</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
     <!-- 완료 메시지 모달 -->
     <v-dialog v-model="alertModal" max-width="260px">
@@ -333,29 +333,32 @@ textarea.custom-input {
 
 .custom-card {
   border-radius: 30px; /* 모달 테두리 둥글기 더 둥글게 수정 */
-  padding: 20px; /* 모달 내부 패딩 */
+  padding: 10px; /* 모달 내부 패딩 */
 }
 
 .custom-title {
   background-color: #BCC07B;
-  border-radius: 30px; /* 상단과 하단 모두 둥글게 */
+  border-radius: 10px; /* 상단과 하단 모두 둥글게 */
   text-align: center;
   width: calc(97% - 30px); /* 좌우 여백 맞추기 */
   margin: 0 auto; /* 가운데 정렬 */
-  padding: 10px;
+  padding: 7px;
+  font-size: 17px;
 }
 
 .action-buttons {
   margin-bottom: 10px; /* 버튼들 아래쪽 여백을 줄임 */
   gap: 5px; /* 버튼 간격을 좁게 조정 */
+  margin-right: 3%;
+  margin-top: -5px;
 }
 
 .custom-button {
   background-color: #BCC07B;
   color: black !important;
   border-radius: 30px;
-  padding: 10px 30px;
-  font-size: 12px;
+  padding: 7px 30px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -367,8 +370,8 @@ textarea.custom-input {
   background-color: #e0e0e0;
   color: black !important;
   border-radius: 30px;
-  padding: 10px 30px;
-  font-size: 12px;
+  padding: 7px 30px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -399,7 +402,6 @@ textarea.custom-input {
   border-radius: 30px;
   padding: 10px 20px;
   font-size: 13px;
-  font-weight: bold;
   line-height: 1.5;
 }
 </style>

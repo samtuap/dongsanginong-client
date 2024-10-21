@@ -26,7 +26,7 @@
 
           <!-- 수정/삭제 버튼: 현재 로그인한 유저와 리뷰 작성자가 같을 경우에만 표시 -->
           <v-row class="button-row">
-            <v-col v-if="isReviewOwner" cols="12" class="action-buttons">
+            <v-col v-if="isReviewOwner" cols="12" class="action-buttons" style="margin-top: 1px;">
               <v-btn @click="openEditDialog" class="edit-btn">수정</v-btn>
               <v-btn @click="openDeleteConfirmation" class="delete-btn">삭제</v-btn>
             </v-col>
@@ -57,6 +57,7 @@
               <button v-if="review.imageUrls.length > imagesPerPage" @click="scrollRight" class="scroll-button right-button">›</button>
             </div>
           </div>
+          <br>
         </v-col>
       </v-row>
 
@@ -241,7 +242,7 @@ export default {
   margin-top: 10px;
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .review-text {
@@ -272,14 +273,14 @@ export default {
 }
 
 .scroll-button {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  background-color: white;
+  color: rgb(94, 94, 94);
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
   z-index: 1;
-  font-size: 24px;
+  font-size: 12px;
   border-radius: 50%;
   display: flex;
   justify-content: center;

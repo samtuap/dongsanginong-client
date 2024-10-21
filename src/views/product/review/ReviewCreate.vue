@@ -1,11 +1,11 @@
 <template>
   <v-dialog v-model="dialog" max-width="480" class="custom-dialog">
     <v-card class="custom-card">
-      <v-card-title class="custom-title" style="margin-top: 20px;">
-        리뷰 생성
+      <v-card-title class="custom-title" style="margin-top: 20px; font-size: 17px;">
+        리뷰 작성하기
       </v-card-title>
       <v-card-text>
-        <div class="review-form">
+        <div class="review-form" style="font-size: 15px;">
           <!-- 리뷰 설명 -->
           <div class="input-section label-and-rating">
             <label for="rating-text">이 상품 어떠셨나요?</label>
@@ -17,12 +17,12 @@
           <!-- 후기에 대한 요약 -->
           <div class="input-section input-summary">
             <label for="summary">어떤 점이 좋았나요?</label>
-            <input type="text" v-model="review.title" id="summary" placeholder="후기 요약" required class="custom-input" />
+            <input type="text" v-model="review.title" id="summary" placeholder="제목을 입력하세요." required class="custom-input" />
           </div>
 
           <!-- 후기에 대한 내용 -->
           <div class="input-section input-content" style="margin-top: -30px;">
-            <textarea v-model="review.contents" id="content" placeholder="후기 내용을 입력하세요" required class="custom-input" />
+            <textarea v-model="review.contents" id="content" placeholder="후기 내용을 입력하세요." required class="custom-input" />
           </div>
 
           <!-- 이미지 첨부 -->
@@ -65,26 +65,26 @@
   </v-dialog>
 
   <!-- 에러 모달 -->
-  <v-dialog v-model="alertModal" max-width="260px">
-    <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-      <v-card-text>{{ alertMessage }}</v-card-text>
-      <v-btn @click="alertModal = false;" class="submit-btn">확인</v-btn>
+  <v-dialog v-model="alertModal" max-width="380px">
+    <v-card class="modal" style="padding: 15px; text-align: center;">
+      <v-card-text style="text-align: center;">{{ alertMessage }}</v-card-text>
+      <v-btn @click="alertModal = false;" class="submit-btn" style="margin-top: -2px; margin-right: 10px;">확인</v-btn>
     </v-card>
   </v-dialog>
 
   <!-- 성공 모달 -->
   <v-dialog v-model="successModal" max-width="260px">
-    <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-      <v-card-text>등록이 완료되었습니다.</v-card-text>
-      <v-btn @click="closeModals" class="submit-btn">확인</v-btn>
-    </v-card>
+      <v-card class="modal" style="padding: 15px; text-align: center;">
+          <v-card-text style="text-align: center;">완료되었습니다.</v-card-text>
+          <v-btn @click="closeModals" class="submit-btn" style="margin-top: -2px; margin-right: 10px;">확인</v-btn>
+      </v-card>
   </v-dialog>
 
   <!-- 닫기 확인 모달 -->
-  <v-dialog v-model="confirmCloseModal" max-width="270px">
-    <v-card class="modal" style="text-align: center;">
+  <v-dialog v-model="confirmCloseModal" max-width="300px">
+    <v-card class="modal" style="text-align: center; padding-bottom: 7px;">
       <v-card-text style="margin-top: 3px;">정말 닫으시겠습니까?</v-card-text>
-      <span style="color: gray; font-size: 12px; margin-bottom: 10px">현재 작성중인 내용은 저장되지 않습니다.</span>
+      <span style="color: gray; font-size: 13px; margin-top: -10px">현재 작성중인 내용은 저장되지 않습니다.</span><br>
       <v-card-actions class="action-buttons" style="justify-content: center;">
         <v-btn @click="closeModalAndReset" class="custom-button">닫기</v-btn>
         <v-btn @click="confirmCloseModal = false" class="custom-cancel-button">취소</v-btn>
@@ -348,19 +348,19 @@ textarea.custom-input {
 
 .custom-title {
   background-color: #BCC07B;
-  border-radius: 30px;
+  border-radius: 10px;
   text-align: center;
   width: calc(97% - 30px);
   margin: 0 auto;
-  padding: 10px;
+  padding: 7px;
 }
 
 .custom-button {
   background-color: #BCC07B;
   color: black;
   border-radius: 30px;
-  padding: 10px 30px;
-  font-size: 12px;
+  padding: 7px 30px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -368,8 +368,8 @@ textarea.custom-input {
   background-color: #e0e0e0;
   color: black;
   border-radius: 30px;
-  padding: 10px 30px;
-  font-size: 12px;
+  padding: 7px 30px;
+  font-size: 14px;
   line-height: 1.5;
 }
 

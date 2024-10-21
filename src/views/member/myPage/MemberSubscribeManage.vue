@@ -56,7 +56,7 @@
                                             <span v-else> {{ packageProduct.packageName }}</span>
                                             <div class="detail-container">
                                                 <a class="toDetail" @click="createReview(packageProduct.packageId)">후기 작성</a>
-                                                <a class="toDetail" @click="withdrawSubscribe">구독 취소</a>
+                                                <a class="toDetail" @click="openCancelModal(packageProduct.id)">구독 취소</a>
                                             </div>
                                         </v-card-text>
                                     </v-card>
@@ -80,6 +80,25 @@
         overflow-y: hidden;">
             <v-card-text style="margin-top: 10%;">⚠️ 결제 수단 등록에 실패했습니다.</v-card-text>
             <v-btn @click="closeWarningAndReload" class="submit-btn">닫기</v-btn>
+        </v-card>
+    </v-dialog>
+
+    <!-- 구독취소 확인 모달 -->
+    <v-dialog v-model="cancelSub" max-width="300">
+        <v-card class="modal" style="padding: 10px; padding-bottom: 5px;">
+            <v-card-title class="modal-title">정말 취소하시겠습니까?</v-card-title>
+            <v-card-actions class="modal-actions">
+                <v-spacer></v-spacer>
+                <v-btn @click="withdrawSubscribe(selectedSubscriptionId)" class="delete-confirm-btn">확인</v-btn>
+                <v-btn @click="cancelSub = false;" class="cancel-btn">닫기</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="alertModal" max-width="330px">
+        <v-card class="modal" style="padding: 15px; text-align: center; height: 120px; overflow-y: hidden;">
+            <v-card-text style="text-align: center;">구독 취소가 완료되었습니다.</v-card-text>
+            <v-btn @click="closeModal" class="submit-btn" style="margin-top: -10px; margin-right: 10px;">확인</v-btn>
         </v-card>
     </v-dialog>
 
@@ -111,6 +130,9 @@ export default {
             paymentMethodType: "",
             paymentMethodImageUrl: "",
             failModal: false,
+            alertModal: false,
+            cancelSub: false,
+            selectedSubscriptionId: null,
         }
     },
     computed: {
@@ -132,6 +154,8 @@ export default {
         async fetchSubscriptionPackageProducts() {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/subscription/list`);
             this.subscriptionPackageProductList = response.data;
+            console.log(this.subscriptionPackageProductList);
+            // console.log(">>>>>>구독id: " + this.subscriptionPackageProductList[0].id + "  >>>>>>>상품id: " + this.subscriptionPackageProductList[0].packageId)
         },
         nextProduct() {
             if (this.canGoToNextProduct) {
@@ -154,8 +178,19 @@ export default {
             this.selectedPackageProductId = packageProductId;
             this.$refs.reviewCreate.openDialog(packageProductId);
         },
-        withdrawSubscribe() {
-            // 영수증 페이지로 보내주기
+        openCancelModal(subscriptionId) {
+            this.selectedSubscriptionId = subscriptionId;
+            this.cancelSub = true;
+        },
+        async withdrawSubscribe(subId) {
+            try {
+                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/subscription/cancel?id=${subId}`);
+                console.log(">>>>>response: ", response.data);
+                this.cancelSub = false;
+                this.alertModal = true;
+            } catch(e) {
+                console.log(e.message);
+            }
         },
         async addPaymentMethod() {
 
@@ -185,8 +220,6 @@ export default {
                         email: "clearrworld@gmail.com",
                     },
                 });
-
-
                 // 결제 수단 등록 프로세스 중단
                 if(res.code === 'FAILURE_TYPE_PG') {
                     this.failModal = true;
@@ -209,11 +242,13 @@ export default {
                 this.failModal = true;
                 console.log(e);
             }
-
-
         },
         closeWarningAndReload() {
             this.failModal = false;
+            window.location.reload();
+        },
+         closeModal() {
+            this.alertModal = false; 
             window.location.reload();
         }
         
@@ -285,5 +320,25 @@ export default {
     background-color: #BCC07B;
     color: black;
     border-radius: 50px;
+}
+.modal-title {
+  font-size: 16px;
+  text-align: center;
+}
+.delete-confirm-btn {
+  background-color: #BCC07B;
+  color: black;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 13px;
+  max-width: 200px;
+}
+.cancel-btn {
+  background-color: #e0e0e0;
+  color: black;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 13px;
+  max-width: 200px;
 }
 </style>

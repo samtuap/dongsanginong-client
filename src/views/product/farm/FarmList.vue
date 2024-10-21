@@ -5,9 +5,7 @@
             <v-card-title style="font-size: 20px; margin-bottom: 30px;"> <span style="font-weight: bold;">🏆 BEST 10 </span>
                 <span style="font-size: 15px; color: grey;"> 즐겨찾기 수가 많은 농장들입니다. </span>
             </v-card-title>
-            <!-- <div style="display: flex; justify-content: center; align-items:center;"> -->
                 <BestFarmMovingSlide />
-            <!-- </div> -->
         </v-card>
         <!-- top 10 끝 -->
 
@@ -36,41 +34,47 @@
             </v-row>
             <v-row>
                 <div v-for="(farm, index) in farmList" :key="index" class="farm-card-outer">
-
                     <div class="farm-info">
-                        <!-- 사진 영역 -->
-                        <div class="farm-image-frame">
-                            <v-img :src="farm.imageUrl" class="farm-image-circle"
-                            @click="this.$router.push(`/farm/${farm.id}/packages`)" cover />
-                        </div>
-                        <!-- 제목 영역 -->
-                        <div class="farm-description">
-                            <p style="font-size: 15px; font-weight: 600; font-size: 16px;">{{ farm.farmName }}</p>
-                        </div>
+                        <v-row>
+                            <v-col cols="1">
+                                <!-- 사진 영역 -->
+                                <div class="farm-image-frame">
+                                    <v-img :src="farm.imageUrl" class="farm-image-circle"
+                                    @click="this.$router.push(`/farm/${farm.id}/packages`)" cover />
+                                </div>
+                            </v-col>
 
-                        <!-- 즐겨찾기 영역 -->
-                        <div class="order-count-box">
-                            <v-chip class="order-count-chip" size="small">
-                                판매 {{ farm.orderCount }}개
-                            </v-chip>
-                        </div>
+                            <v-col style="justify-content: start;">
+                                <v-row>
+                                    <!-- 제목 영역 -->
+                                    <div class="farm-description">
+                                        <p style="font-size: 15px; font-weight: 600; font-size: 16px;">{{ farm.farmName }}</p>
+                                    </div>
+                                    <!-- 즐겨찾기 영역 -->
+                                    <div style="line-height: 70px; display: flex; justify-content: center; align-items: center;">
+                                        <div v-if="likes.get(farm.id) == 2" class="heart-emoji">
+                                            <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
+                                        </div>
 
-                        <div style="line-height: 70px; display: flex; justify-content: center; align-items: center;">
-                            <div v-if="likes.get(farm.id) == 2" class="heart-emoji">
-                                <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
-                            </div>
-
-                            <v-chip class="like-chip" size="small" variant="outlined"
-                                :class="{ 'selected-like-chip': likes.get(farm.id) == 1 || likes.get(farm.id) == 2 }"
-                                @click="clickLike(farm.id)">
-                                <svg-icon type="mdi"
-                                    :path="likes.get(farm.id) == 1 || likes.get(farm.id) == 2 ? mdiHeart : mdiHeartOutline"
-                                    :class="likes.get(farm.id) == 1 || likes.get(farm.id) == 2 ? 'icon-colored' : 'icon-trans'"></svg-icon>
-                                    <span style="font-weight: bold; font-size: 14px; padding-top: 2px">{{ likeCount.get(farm.id) }}</span>
-                            </v-chip>
-                        </div>
-
-                        
+                                        <v-chip class="like-chip" size="small" variant="outlined"
+                                            :class="{ 'selected-like-chip': likes.get(farm.id) == 1 || likes.get(farm.id) == 2 }"
+                                            @click="clickLike(farm.id)">
+                                            <svg-icon type="mdi"
+                                                :path="likes.get(farm.id) == 1 || likes.get(farm.id) == 2 ? mdiHeart : mdiHeartOutline"
+                                                :class="likes.get(farm.id) == 1 || likes.get(farm.id) == 2 ? 'icon-colored' : 'icon-trans'"></svg-icon>
+                                                <span style="font-weight: bold; font-size: 14px; padding-top: 2px">{{ likeCount.get(farm.id) }}</span>
+                                        </v-chip>
+                                    </div>
+                                </v-row>
+                                <v-row>
+                                    <div class="order-count-box">
+                                        <v-chip class="order-count-chip" size="small">
+                                            판매 {{ farm.orderCount }}개
+                                        </v-chip>
+                                    </div>
+                                </v-row>
+                            </v-col>
+                        </v-row>
                     </div>
 
                     <div class="package-info">
@@ -383,7 +387,8 @@ export default {
 .icon-colored {
     color: red;
     transform: scale(0.8);
-
+    width: 22px;
+    height: 22px;
 }
 
 .icon-trans {
@@ -501,7 +506,6 @@ export default {
 }
 
 .farm-description {
-    margin-left: 20px;
     line-height: 70px;
 }
 
@@ -571,8 +575,10 @@ export default {
 }
 
 .order-count-box {
-    line-height: 70px;
-    width: auto
+    width: auto;
+    margin-left: -1%;
+    margin-top: -2%;
+
 }
 
 .order-count-chip {
@@ -589,6 +595,7 @@ export default {
     border: 1px solid white !important;
     border-radius: 3px;
     color: black !important;
+    padding-bottom: 2px;
 }
 
 

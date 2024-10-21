@@ -7,14 +7,14 @@
                 <!-- 수정 및 삭제 버튼을 수평으로 배치 -->
                 <v-row justify="end" class="mt-3">
                     <v-btn @click="openEditDialog" class="edit-btn">수정</v-btn>
-                    <v-btn @click="deleteNotice" class="delete-btn">삭제</v-btn>
+                    <v-btn @click="confirmDelete" class="delete-btn">삭제</v-btn>
                 </v-row>
                 
                 <!-- 수정 모달 컴포넌트 추가 -->
                 <farm-notice-update :notice-id="noticeId" ref="editModal" @notice-updated="farmNoticeDetail" />
 
                 <v-card class="notice-class elevation-0" outlined>
-                    <v-card-title style="font-size: 17px;"> {{ title }} </v-card-title>
+                    <v-card-title style="font-size: 16px;"> {{ title }} </v-card-title>
 
                     <v-card-text>{{ content }}</v-card-text>
 
@@ -26,27 +26,40 @@
                 </v-card>
 
                 <!-- 댓글 조회 -->
-                <br>
-                <h3 class="comment-title">댓글 {{ commentCnt }}개</h3>
-                <br>
+                <div style="margin-left: 7%; padding: 0; justify-content: center; width: 100%;">
+                    <br>
+                    <h3 class="comment-title">댓글 {{ commentCnt }}개</h3>
+                    <br>
+                    <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
+                        <v-row>
+                            <v-card-text>@{{ comment.name }}&nbsp;&nbsp;
+                                <span style="font-size: 12px; color: grey;">({{ comment.formattedDate }})</span></v-card-text>
+                        </v-row>
+                        <v-card-text class="centered-comment">&nbsp;{{ comment.contents }}</v-card-text>
+                        <hr class="hr-style">
+                    </v-card>
 
-                <v-card v-for="comment in commentList" :key="comment.id" class="comment-class elevation-0" outlined>
-                    <v-row>
-                        <v-card-text>&nbsp;&nbsp;&nbsp;<strong>@{{ comment.name }}</strong>&nbsp;&nbsp;
-                            <span style="font-size: 12px;">({{ comment.formattedDate }})</span></v-card-text>
-                    </v-row>
-                    <v-card-text class="centered-comment">{{ comment.contents }}</v-card-text>
-                    <hr class="hr-style">
-                </v-card>
+                    <!-- 페이징 처리 -->
+                    <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+                </div>
 
-                <!-- 페이징 처리 -->
-                <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
+                <!-- 삭제 확인 모달 -->
+                <v-dialog v-model="confirmDeleteModal" max-width="300">
+                    <v-card class="modal" style="padding: 10px; text-align: center; margin-top: 3px; 
+                    overflow-y: hidden;">
+                        <v-card-text class="modal-title">정말 삭제하시겠습니까?</v-card-text>
+                        <v-row justify="center" style="padding-left: 5%;">
+                            <v-btn @click="deleteNotice" class="edit-btn" style="margin-left: 25%;">삭제</v-btn>
+                            <v-btn @click="cancelDelete" class="delete-btn">취소</v-btn>
+                        </v-row>
+                    </v-card>
+                </v-dialog>
 
                 <!-- 삭제 완료 모달 -->
                 <v-dialog v-model="alertModal" max-width="260px">
-                    <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-                        <v-card-text>완료되었습니다.</v-card-text>
-                        <v-btn @click="closeModal" class="submit-btn">close</v-btn>
+                    <v-card class="modal" style="padding: 15px; text-align: center; height: 120px; overflow-y: hidden;">
+                        <v-card-text style="text-align: center;">완료되었습니다.</v-card-text>
+                        <v-btn @click="closeModal" class="submit-btn" style="margin-top: -10px; margin-right: 10px;">닫기</v-btn>
                     </v-card>
                 </v-dialog>
             </v-col>
@@ -70,7 +83,8 @@ export default {
             content: "",
             images: [],
             noticeId: null,
-            alertModal: false, // 모달 상태 관리 변수
+            alertModal: false,
+            confirmDeleteModal: false, // 삭제 확인 모달 상태 관리 변수
 
             commentCnt: 0,
             commentList: [],
@@ -128,6 +142,13 @@ export default {
         },
         openEditDialog() {
             this.$refs.editModal.openEditDialog();
+            this.alertModal = true;
+        },
+        confirmDelete() {
+            this.confirmDeleteModal = true; // 삭제 확인 모달 열기
+        },
+        cancelDelete() {
+            this.confirmDeleteModal = false; // 삭제 확인 모달 닫기
         },
         async deleteNotice() {
             try {
@@ -136,7 +157,8 @@ export default {
                 await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/${notice_id}/delete`, {
                     headers: { sellerId: sellerId }
                 });
-                this.alertModal = true;
+                this.alertModal = true; // 삭제 완료 모달 열기
+                this.confirmDeleteModal = false; // 삭제 확인 모달 닫기
             } catch (e) {
                 console.error(e);
             }
@@ -150,7 +172,6 @@ export default {
 </script>
 
 <style scoped>
-
 .notice-class {
     margin-top: 20px;
     width: 800px;
@@ -163,40 +184,31 @@ export default {
 }
 
 .edit-btn {
-    margin-right: -65px ;
+    margin-right: 10px;
     background-color: #BCC07B;
     color: black;
     border-radius: 30px;
-    padding: 10px 20px;
-    font-size: 12px;
-    font-weight: bold;
+    padding: 7px 20px;
+    font-size: 14px;
     line-height: 1.5;
     box-shadow: none;
 }
-.delete-btn{
-    margin-right: -65px ;
+
+.delete-btn {
+    margin-right: -12%;
     background-color: #e0e0e0;
     color: black;
     border-radius: 30px;
-    padding: 10px 20px;
-    font-size: 12px;
-    font-weight: bold;
+    padding: 7px 20px;
     line-height: 1.5;
     box-shadow: none;
+    font-size: 14px;
 }
-
-.edit-btn {
-    margin-right: 10px;
-}
-
-.comment-class {
-    padding-left: 12px;
-}
-
 .hr-style {
   border: none;
   border-top: 0.9px solid lightgray;
-  margin-top: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 .modal-btn {
@@ -209,6 +221,7 @@ export default {
     border: none;
     box-shadow: none;
     border-radius: 10px;
+    height: 120px;
 }
 
 .submit-btn {
@@ -219,18 +232,15 @@ export default {
     border-radius: 50px;
 }
 
-.comment-title {
-    padding-left: 10%;
-    text-align: left;
+.comment-title, .centered-comment {     
+  padding-left: 0%;    
+  text-align: left; 
 }
 
-.comment-class {
-    padding-left: 10%;
-    text-align: left;
-}
-
-.centered-comment {
-    padding-left: 5%;
-    text-align: left;
-}
+.modal-title {
+    /* margin-bottom: 40px; */
+    text-align: center;
+    font-size: 16px;
+    /* margin-left: 20px; */
+  }
 </style>
