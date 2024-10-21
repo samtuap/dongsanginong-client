@@ -10,6 +10,7 @@ import { reviewRouter } from "./reviewRouter";
 import { receiptRouter } from "./receiptRouter";
 import { productRouter } from "./productRouter";
 import { orderRouter } from "./orderRouter";
+import { notificationRouter } from "./notificationRouter";
 
 
 const routes = [
@@ -37,6 +38,7 @@ const routes = [
   ...receiptRouter,
   ...productRouter,
   ...orderRouter,
+  ...notificationRouter
 ];
 
 const router = createRouter({

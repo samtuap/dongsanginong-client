@@ -43,8 +43,8 @@
                                     notification.content.substring(0, 30) }}</v-card-subtitle>
 
                             </v-card>
-                            <v-list-item v-if="notifications.length > 0" @click="markAsRead()"
-                                style="text-align: end; font-size: 15px;">✅ 모두 읽음
+                            <v-list-item @click="markAsRead()"
+                                style="text-align: end; font-size: 15px;">✅ 알림 전체 보기
                                 표시
                             </v-list-item>
                         </v-list>
@@ -362,7 +362,7 @@ export default {
             });
         },
         async markAsRead() {
-            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification`)
+            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification/read`);
             this.notifications = [];
             this.clearNotificationsFromIndexedDB();
             this.$router.push(`/notifications`);
