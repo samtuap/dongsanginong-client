@@ -86,9 +86,10 @@
     </v-dialog>
 
     <v-dialog v-model="alertModal" max-width="260px">
-        <v-card class="modal" style="padding: 10px; padding-right: 20px; text-align: center;">
-            <v-card-text>완료되었습니다.</v-card-text>
-            <v-btn @click="closeModalAndRedirect" class="submit-btn">close</v-btn>
+        <v-card class="modal" style="padding: 15px; text-align: center;">
+            <v-card-text style="text-align: center;">완료되었습니다.</v-card-text>
+            <v-btn @click="closeModalAndRedirect" class="submit-btn" style="margin-top: -2px; margin-right: 10px;
+            font-weight: 400;">닫기</v-btn>
         </v-card>
     </v-dialog>
 

@@ -1,77 +1,13 @@
 <template>
     <v-container class="custom-container">
         <!-- Top 10 패키지 시작 -->
-        <v-card style="border-radius: 15px; padding: 20px; padding-bottom: 0px; max-width: 1200px; width: 100%;" rounded="0" flat>
+        <v-card style="border-radius: 15px; padding: 20px; padding-bottom: 0px; max-width: 1200px; width: 100%;"
+            rounded="0" flat>
             <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🏆 BEST 10 </span>
                 <span style="font-size: 15px; color: grey;"> 지금 가장 인기있는 패키지를 만나보세요 ! </span>
             </v-card-title>
             <br />
-            <div style="display: flex; justify-content: center; align-items:center;">
-                <v-btn icon="mdi-chevron-left" variant="plain" @click="prev" style="margin-bottom: 15%;"></v-btn>
-                <v-window v-model="onboarding" style="width: 1080px;">
-                    <!-- v-model="onboarding": 현재 활성화된 슬라이드의 인덱스를 바인딩 -->
-                    <v-window-item v-for="n in windowCount" :key="`window-${n}`" :value="n">
-                        <v-row class="d-flex justify-center">
-                            <v-col v-for="(pkg, index) in paginatedPackages(n)" :key="index" cols="12" md="3"
-                                class="d-flex justify-center">
-                                <v-card variant="text" style="width:260px; height:500px; margin: 10px; margin-bottom: 15px;" :rounded="false">
-                                    <v-img class="package-image" :src="pkg.imageUrl" alt="Package 썸네일" cover
-                                        @click="this.$router.push(`/product/${pkg.id}`)" :rounded="false"/>
-                                    <v-chip class="d-inline-block"
-                                        style="position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 8px; background-color: rgba(128, 128, 128, 0.9); color: white;">
-                                        {{ pkg.deliveryCycle }}일 주기 배송🚚
-                                    </v-chip>
-                                    <v-btn
-                                        style="width: 100%; margin-top:10px; border: 0.5px solid gray; box-shadow: none;"
-                                        @click="addToWishList(pkg)"
-                                        v-if="member"
-                                    >
-                                    <div v-if="wishAnimation.get(pkg.id)" class="heart-emoji">
-                                        <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
-                                    </div>
-                                        <svg-icon
-                                            type="mdi"
-                                            :path="wishlistItems[pkg.id] ? mdiHeart : mdiHeartOutline"
-                                            :style="{ marginRight: '2px', color: wishlistItems[pkg.id] ? 'red' : 'black' }"
-                                            class="heart-icon"
-                                        ></svg-icon>
-                                        <span style="font-size: 14px;">{{ wishlistItems[pkg.id] ? '위시리스트 취소' : '위시리스트 담기' }}</span>
-                                    </v-btn>
-                                    <v-card-text style="padding-left: 0px;">
-                                        <span style="" v-if="pkg.packageName.length > 10"> {{
-                                            pkg.packageName.substring(0, 10)
-                                        }}... </span>
-                                        <span style="font-size:medium; font-weight: 400;" v-else> {{ pkg.packageName
-                                            }}</span>
-                                        <br />
-                                        <span style="color:darkgreen; font-size:medium;"> {{
-                                            formatPrice(pkg.price) }} </span>
-                                        <br />
-                                        <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
-                                            formatPrice(getPerCyclePrice(pkg.price, pkg.deliveryCycle)) }} </span>
-                                        <br />
-                                        <span style="color:#999; font-size: small;">
-                                            🧾 누적 주문 {{ pkg.orderCount }}
-                                        </span>
-                                    </v-card-text>
-                                </v-card>
-                            </v-col>
-                        </v-row>
-                    </v-window-item>
-                </v-window>
-                <v-btn icon="mdi-chevron-right" variant="plain" @click="next" style="margin-bottom: 15%;"></v-btn>
-            </div>
-            <v-card-actions style="justify-content: center;">
-                <v-item-group v-model="onboarding" class="text-center" mandatory>
-                    <v-item-group v-model="onboarding" class="text-center" mandatory>
-                        <v-item v-for="n in windowCount" :key="`btn-${n}`" v-slot="{ isSelected, toggle }" :value="n">
-                            <v-btn :color="isSelected ? 'yellow' : 'deep_green'" icon="mdi-circle-small"
-                                @click="toggle"></v-btn>
-                        </v-item>
-                    </v-item-group>
-                    
-                </v-item-group>
-            </v-card-actions>            
+            <Best10PackageSlide />
         </v-card>
         <!-- Top 10 패키지 끝 -->
 
@@ -103,27 +39,21 @@
             <v-container class="d-flex custom-card-container">
                 <v-row>
                     <v-card v-for="(pkg, index) in packageList" :key="index" class="package-card" md="2" variant="text"
-                    style="width:260px; height:500px; margin: 10px; margin-bottom: 15px;" :rounded="false">
+                        style="width:260px; height:500px; margin: 10px; margin-bottom: 15px;" :rounded="false">
                         <v-img class="package-image" :src="pkg.imageUrl" alt="Package 썸네일" cover
                             @click="this.$router.push(`/product/${pkg.id}`)" />
-                        <v-chip class="d-inline-block"
+                        <v-chip 
                             style="position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 8px; background-color: rgba(128, 128, 128, 0.9); color: white;">
                             {{ pkg.deliveryCycle }}일 주기 배송🚚
                         </v-chip>
-                        <v-btn
-                            style="width: 100%; margin-top:10px; border: 0.5px solid gray; box-shadow: none;"
-                            @click="addToWishList(pkg)"
-                            v-if="member"
-                        >
-                        <div v-if="wishAnimation.get(pkg.id)" class="heart-emoji">
-                            <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
-                        </div>
-                            <svg-icon
-                                type="mdi"
-                                :path="wishlistItems[pkg.id] ? mdiHeart : mdiHeartOutline"
+                        <v-btn style="width: 100%; margin-top:10px; border: 0.5px solid gray; box-shadow: none;"
+                            @click="addToWishList(pkg)" v-if="member">
+                            <div v-if="wishAnimation.get(pkg.id)" class="heart-emoji">
+                                <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
+                            </div>
+                            <svg-icon type="mdi" :path="wishlistItems[pkg.id] ? mdiHeart : mdiHeartOutline"
                                 :style="{ marginRight: '2px', color: wishlistItems[pkg.id] ? 'red' : 'black' }"
-                                class="heart-icon"
-                            ></svg-icon>
+                                class="heart-icon"></svg-icon>
                             <span style="font-size: 14px;">{{ wishlistItems[pkg.id] ? '위시리스트 취소' : '위시리스트 담기' }}</span>
                         </v-btn>
                         <v-card-text style="padding-left: 0px;">
@@ -155,11 +85,13 @@ import axios from 'axios';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiHeartPlusOutline } from '@mdi/js';
 import { mdiHeartOutline, mdiHeart } from '@mdi/js';
+import Best10PackageSlide from '@/components/slide/Best10PackageSlide.vue';
 
 export default {
     name: "my-component",
     components: {
-        SvgIcon
+        SvgIcon,
+        Best10PackageSlide
     },
     data() {
         return {
@@ -168,6 +100,7 @@ export default {
             onboarding: 1,
             packageList: [],
             currentPage: 0,
+            currentSlide: 1,
             pageSize: 10,
             searchQuery: "",
             sortOptions: [
@@ -194,22 +127,27 @@ export default {
     },
     async created() {
         // Top 10 패키지 가져오기
-        const topPackagesResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
-        this.topPackageList = topPackagesResponse.data;
+        try {
+            const topPackagesResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
+            this.topPackageList = topPackagesResponse.data;
 
-        // 전체 패키지 리스트 가져오기
-        let params = {
-            page: this.currentPage,
-            size: this.pageSize,
-            sort: this.sortOptionMap.get(this.sortOption),
-            packageName: this.searchQuery
+            // 전체 패키지 리스트 가져오기
+            let params = {
+                page: this.currentPage,
+                size: this.pageSize,
+                sort: this.sortOptionMap.get(this.sortOption),
+                packageName: this.searchQuery
+            }
+            const packageListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth`, { params });
+            this.packageList = packageListResponse.data.content;
+            console.log(this.packageList)
+            // sortOptionMap 설정
+            this.sortOptionMap.set("최신순", "id,desc");
+            this.sortOptionMap.set("판매량 순", "orderCount,desc");
+        } catch (e) {
+            console.log(e);
         }
-        const packageListResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth`, { params });
-        this.packageList = packageListResponse.data.content;
-        console.log(this.packageList)
-        // sortOptionMap 설정
-        this.sortOptionMap.set("최신순", "id,desc");
-        this.sortOptionMap.set("판매량 순", "orderCount,desc");
+
 
         // 페이지네이션을 위한 이벤트 리스너 추가
         window.addEventListener('scroll', this.scrollPagination); // 스크롤 이벤트
@@ -221,15 +159,24 @@ export default {
     },
     async mounted() {
         await this.fetchWishlistItems();
+        this.startCarousel();
     },
     methods: {
+        startCarousel() {
+            setInterval(() => {
+                this.nextSlide();
+            }, 3000);
+        },
+        nextSlide() {
+            this.currentSlide = this.currentSlide % this.windowCount + 1; // 다음 슬라이드로 이동
+        },
         async fetchWishlistItems() {
             try {
                 const memberId = localStorage.getItem('memberId');
                 if (memberId) {
                     const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/wishlist`);
                     console.log(">>>>>>>>response : ", response.data);
-                    
+
                     const wishlistProductIds = response.data.map(product => product.id);
                     wishlistProductIds.forEach(id => {
                         this.wishlistItems[id] = true;
@@ -326,13 +273,13 @@ export default {
                 });
                 this.wishlistItems[packageProduct.id] = !this.wishlistItems[packageProduct.id];
                 if (this.wishlistItems[packageProduct.id]) {
-                // 애니메이션 시작
-                this.wishAnimation.set(packageProduct.id, true);
-                setTimeout(() => {
-                    this.wishAnimation.set(packageProduct.id, false);
-                }, 1000); // 애니메이션 지속 시간 조절 가능
-            }
-            } catch(e) {
+                    // 애니메이션 시작
+                    this.wishAnimation.set(packageProduct.id, true);
+                    setTimeout(() => {
+                        this.wishAnimation.set(packageProduct.id, false);
+                    }, 1000); // 애니메이션 지속 시간 조절 가능
+                }
+            } catch (e) {
                 console.log(e.message);
             }
         }
@@ -359,7 +306,6 @@ export default {
     margin-right: 2px;
 }
 
-/* Target the appended icon specifically */
 .search-icon {
     transition: color 0.3s ease;
 }
@@ -394,16 +340,18 @@ export default {
 }
 
 .hr-style {
-    border-bottom: 3px solid #efefef; border-radius: 3px;
+    border-bottom: 3px solid #efefef;
+    border-radius: 3px;
 }
 
-.icon-colored{
+.icon-colored {
     color: red;
 }
 
 .heart-emoji {
     position: absolute;
-    top: -20px; /* 필요에 따라 위치 조정 */
+    top: -20px;
+    /* 필요에 따라 위치 조정 */
     left: 50%;
     transform: translateX(-50%);
     font-size: 24px;
@@ -416,10 +364,12 @@ export default {
         opacity: 0;
         transform: translate(-50%, 0) scale(0);
     }
+
     50% {
         opacity: 1;
         transform: translate(-50%, -50px) scale(1.5);
     }
+
     100% {
         opacity: 0;
         transform: translate(-50%, -100px) scale(0);

@@ -245,10 +245,13 @@ export default {
             this.liveList = response.data.content;
 
             this.liveList.forEach(live => {
-              Object.assign(live, { isPreviewing: false });
+              Object.assign(live, { isPreviewing: false, session: null });
             }); // ispreviewing 필드 live에 추가 
 
             this.filteredLiveList = this.liveList;  // 필터링 목록 초기화  
+            setTimeout(() => {
+              this.playPreviewAll();
+            }, 1000);
         } catch(e) {
             console.log(e);
         }
@@ -444,7 +447,9 @@ export default {
         // 목록 뿌려지자마자 1.5초 뒤에 전체 프리뷰 뿌려짐 
         async playPreviewAll() {
           for (const live of this.filteredLiveList) {
-            this.playPreview(live);
+            if (!live.isPreviewing) {
+              this.playPreview(live);
+            }
           }
         },
         // 커서 올리면 영상 미리볼 수 있는 화면 출력  
@@ -459,6 +464,8 @@ export default {
 
             const OV = new OpenVidu();
             const session = OV.initSession();
+            live.session = session; // 세션을 저장해 해제할 수 있도록 함 
+
             session.on('streamCreated', ({ stream }) => {
               const videoRef = this.$refs['videoPlayer-' + live.liveId];
               const videoElement = videoRef ? videoRef[0] : null;
@@ -489,8 +496,25 @@ export default {
         } catch (error) {
           console.error('Error fetching token for preview:', error);
         }
-      }
-    }
+      },
+      stopAllPreviews() {
+        for (const live of this.filteredLiveList) {
+          if (live.isPreviewing) {
+            live.isPreviewing = false;
+            console.log(">>>>>" + live.liveId + "번째 라이브 중지");
+
+            if (live.session) {
+              live.session.disconnect();
+              live.session = null;
+            }
+          }
+        }
+      },
+    },
+    beforeRouteLeave(to, from, next) {
+      this.stopAllPreviews();
+      next();
+    },
   }
 </script>
 <style scoped>
@@ -499,7 +523,6 @@ export default {
     border-radius: 50px;
     float: right;
     margin-right: 30px;
-    font-weight: 700;
 }
 .live-card-fav {
   border-radius: 50%;
