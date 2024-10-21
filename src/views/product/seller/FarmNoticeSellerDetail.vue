@@ -7,7 +7,7 @@
                 <!-- 수정 및 삭제 버튼을 수평으로 배치 -->
                 <v-row justify="end" class="mt-3">
                     <v-btn @click="openEditDialog" class="edit-btn">수정</v-btn>
-                    <v-btn @click="deleteNotice" class="delete-btn">삭제</v-btn>
+                    <v-btn @click="confirmDelete" class="delete-btn">삭제</v-btn>
                 </v-row>
                 
                 <!-- 수정 모달 컴포넌트 추가 -->
@@ -43,6 +43,17 @@
                     <v-pagination v-model="currentPage" :length="pageCount"></v-pagination>
                 </div>
 
+                <!-- 삭제 확인 모달 -->
+                <v-dialog v-model="confirmDeleteModal" max-width="300">
+                    <v-card class="modal" style="padding: 20px; text-align: center; margin-top: 3px;">
+                        <v-card-text class="modal-title">정말 삭제하시겠습니까?</v-card-text>
+                        <v-row justify="center">
+                            <v-btn @click="deleteNotice" class="edit-btn" style="margin-left: -50px;">삭제</v-btn>
+                            <v-btn @click="cancelDelete" class="delete-btn">취소</v-btn>
+                        </v-row>
+                    </v-card>
+                </v-dialog>
+
                 <!-- 삭제 완료 모달 -->
                 <v-dialog v-model="alertModal" max-width="260px">
                     <v-card class="modal" style="padding: 15px; text-align: center;">
@@ -71,7 +82,8 @@ export default {
             content: "",
             images: [],
             noticeId: null,
-            alertModal: false, // 모달 상태 관리 변수
+            alertModal: false,
+            confirmDeleteModal: false, // 삭제 확인 모달 상태 관리 변수
 
             commentCnt: 0,
             commentList: [],
@@ -130,6 +142,12 @@ export default {
         openEditDialog() {
             this.$refs.editModal.openEditDialog();
         },
+        confirmDelete() {
+            this.confirmDeleteModal = true; // 삭제 확인 모달 열기
+        },
+        cancelDelete() {
+            this.confirmDeleteModal = false; // 삭제 확인 모달 닫기
+        },
         async deleteNotice() {
             try {
                 const notice_id = this.noticeId;
@@ -137,7 +155,8 @@ export default {
                 await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/product-service/farm/notice/${notice_id}/delete`, {
                     headers: { sellerId: sellerId }
                 });
-                this.alertModal = true;
+                this.alertModal = true; // 삭제 완료 모달 열기
+                this.confirmDeleteModal = false; // 삭제 확인 모달 닫기
             } catch (e) {
                 console.error(e);
             }
@@ -163,6 +182,7 @@ export default {
 }
 
 .edit-btn {
+    margin-right: -65px;
     background-color: #BCC07B;
     color: black;
     border-radius: 30px;
@@ -170,10 +190,10 @@ export default {
     font-size: 14px;
     line-height: 1.5;
     box-shadow: none;
-    margin-right: 10px;
 }
-.delete-btn{
-    margin-right: -80px ;
+
+.delete-btn {
+    margin-right: -65px;
     background-color: #e0e0e0;
     color: black;
     border-radius: 30px;
@@ -213,4 +233,12 @@ export default {
   padding-left: 0%;    
   text-align: left; 
 }
+
+.modal-title {
+    margin-top: -10px;
+    margin-bottom: 40px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
 </style>
