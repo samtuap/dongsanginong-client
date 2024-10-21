@@ -18,20 +18,34 @@
             <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🏡 농장 둘러보기 </span>
             </v-card-title>
 
-            <v-row style="margin-top: 20px;">
+            <v-row style="margin-top: 20px; padding-right: 1.8%;">
                 <v-col cols="6"></v-col>
                 <v-col cols="2">
-                    <v-select v-model="sortOption" :items="sortOptions" solo density="compact" variant="solo"
-                        label="정렬 기준" class="sort-select">
-                    </v-select>
+                    <div class="select-wrapper">
+                        <select v-model="sortOption" class="sort-select" @change="onSearch">
+                            <option value="" disabled selected>정렬 기준</option>
+                            <option v-for="option in sortOptions" :key="option" :value="option">{{ option }}</option>
+                        </select>
+                        <svg-icon type="mdi" :path="mdiMenuDown" class="dropdown-icon"></svg-icon>
+                    </div>
                 </v-col>
                 <v-col cols="4">
-                    <v-text-field :loading="loading" v-model="searchQuery" label="검색어를 입력하세요." class="search-bar"
-                        append-inner-icon="mdi-magnify" append-inner-icon-class="search-icon" density="compact"
-                        variant="solo" single-line @click:append-inner="onSearch">
-                    </v-text-field>
+                    <form class="searchbar" @submit.prevent="onSearch">
+                        <input 
+                            style="width: 100%; margin-left: 15px;" 
+                            placeholder="검색어를 입력하세요."
+                            v-model="searchQuery" 
+                            @input="onSearch"
+                        />
+                        <button type="submit">
+                            <img style="margin-right: 15px; margin-top: 8px"
+                                src="https://d3cpiew7rze14b.cloudfront.net/assets/svg/Search-icon-24x-24_qnmx4o57C.svg"
+                                alt="검색">
+                        </button>
+                    </form>
                 </v-col>
             </v-row>
+            
             <v-row>
                 <div v-for="(farm, index) in farmList" :key="index" class="farm-card-outer">
                     <div class="farm-info">
@@ -131,6 +145,8 @@ import axios from 'axios';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiHeartOutline } from '@mdi/js';
 import { mdiHeart } from '@mdi/js';
+import { mdiMenuDown } from '@mdi/js';
+
 export default {
     name: "my-component",
     components: {
@@ -158,7 +174,8 @@ export default {
             loginModal: false,
             sellerModal: false,
             mdiHeart: mdiHeart,
-            mdiHeartOutline: mdiHeartOutline
+            mdiHeartOutline: mdiHeartOutline,
+            mdiMenuDown: mdiMenuDown,
         }
 
     },
@@ -633,5 +650,40 @@ export default {
         transform: translate(-50%, -100px) scale(0);
         /* 더 위로 이동하면서 크기 축소 */
     }
+}
+
+.select-wrapper {
+    width: 100%;
+    position: relative;
+    display: inline-block
+}
+
+.dropdown-icon {
+    position: absolute;
+    top: 37%;
+    right: -10px;
+    transform: translateY(-50%);
+    pointer-events: none; /* 클릭 방지 */
+}
+
+.searchbar {
+    display: flex;
+    background-color: rgb(245 245 247);
+    border-radius: 4px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.sort-select {
+    background-color: rgb(245 245 247);
+    width: 100%;
+    margin: 0 2px 10px 15px;
+    padding: 8px;
+    padding-left: 12px;
+    border-radius: 4px;
+}
+
+.search-icon {
+    transition: color 0.3s ease;
 }
 </style>
