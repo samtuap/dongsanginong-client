@@ -31,7 +31,7 @@
             </div>
           </div>
 
-          <button class="slider-btn next-btn" @click="nextImage" :disabled="currentIndex > imageUrls.length">
+          <button class="slider-btn next-btn" @click="nextImage" :disabled="currentIndex >= imageUrls.length">
             <v-icon>mdi-chevron-right</v-icon>
           </button>
         </div>
@@ -52,6 +52,31 @@
         <div class="input-group">
           <label for="price">가격</label>
           <input type="number" id="price" v-model="price" placeholder="가격을 입력해주세요." />
+        </div>
+
+        <!-- 할인 설정 -->
+        <div class="input-group">
+          <label>할인</label>
+          <v-radio-group v-model="discountSetting" row>
+            <v-radio label="설정함" value="yes"></v-radio>
+            <v-radio label="설정안함" value="no"></v-radio>
+          </v-radio-group>
+        </div>
+
+        <!-- 할인 정보 입력 -->
+        <div v-if="discountSetting === 'yes'">
+          <div class="input-group">
+            <label for="discountPercentage">할인액</label>
+            <input type="number" id="discountPercentage" v-model="discountPercentage" placeholder="할인 금액을 입력해주세요." />
+          </div>
+          <div class="input-group">
+            <label for="startDate">할인 시작일</label>
+            <input type="date" id="startDate" v-model="startDate" />
+          </div>
+          <div class="input-group">
+            <label for="endDate">할인 종료일</label>
+            <input type="date" id="endDate" v-model="endDate" />
+          </div>
         </div>
 
         <div class="input-group">
@@ -113,11 +138,15 @@ export default {
       price: '',
       deliveryPeriod: 1,
       origin: '',
-      imageUrls: [], // 업로드된 이미지 리스트
-      currentIndex: 0, // 현재 슬라이더에서 표시되는 이미지 인덱스
-      successModal: false, // 성공 모달 상태
-      validationModal: false, // 검증 실패 모달 상태
-      validationMessage: '' // 검증 실패 메시지
+      imageUrls: [],
+      currentIndex: 0,
+      successModal: false,
+      validationModal: false,
+      validationMessage: '',
+      discountSetting: 'no', // 할인 설정 여부
+      discountPercentage: '',
+      startDate: '',
+      endDate: '',
     };
   },
   methods: {
@@ -128,9 +157,9 @@ export default {
       const files = Array.from(event.target.files);
       for (let file of files) {
         const imageUrl = await this.uploadImage(file);
-        this.imageUrls.push(imageUrl); // 업로드된 이미지 URL을 리스트에 추가
+        this.imageUrls.push(imageUrl);
       }
-      this.currentIndex = this.imageUrls.length - 1; // 방금 추가한 이미지를 표시
+      this.currentIndex = this.imageUrls.length - 1;
     },
     async uploadImage(blob) {
       const accessToken = localStorage.getItem('accessToken');
@@ -165,18 +194,18 @@ export default {
       };
       await fetch(awsUrl.data + awsUrl.auth, options);
 
-      return awsUrl.data; // 업로드된 이미지 URL 반환
+      return awsUrl.data;
     },
     removeImage(index) {
-      this.imageUrls.splice(index, 1); // 이미지 리스트에서 해당 이미지를 제거
+      this.imageUrls.splice(index, 1);
       if (this.imageUrls.length === 0) {
-        this.currentIndex = 0; // 이미지가 없을 때 이미지 추가 화면을 보여줌
+        this.currentIndex = 0;
       } else if (this.currentIndex >= this.imageUrls.length) {
-        this.currentIndex = this.imageUrls.length - 1; // 삭제 후 인덱스 조정
+        this.currentIndex = this.imageUrls.length - 1;
       }
     },
     nextImage() {
-      if (this.currentIndex <= this.imageUrls.length) {
+      if (this.currentIndex < this.imageUrls.length) {
         this.currentIndex++;
       }
     },
@@ -186,12 +215,27 @@ export default {
       }
     },
     async submitProduct() {
-      // 입력 값 검증 로직 추가
       if (!this.productName || !this.productDescription || !this.price || !this.deliveryPeriod || !this.origin) {
         this.validationMessage = '모든 필수 입력 항목을 입력해주세요.';
         this.validationModal = true;
         return;
       }
+
+      if (this.discountSetting === 'yes') {
+        if (!this.discountPercentage || !this.startDate || !this.endDate) {
+          this.validationMessage = '할인 정보를 모두 입력해주세요.';
+          this.validationModal = true;
+          return;
+        }
+      }
+
+      // 할인 종료일이 할인 시작일보다 이른 경우
+      if (new Date(this.endDate) < new Date(this.startDate)) {
+        this.validationMessage = '할인 종료일은 할인 시작일보다 늦어야 합니다.';
+        this.validationModal = true;
+        return;
+      }
+    
 
       try {
         const accessToken = localStorage.getItem('accessToken');
@@ -203,7 +247,7 @@ export default {
           price: this.price,
           deliveryCycle: this.deliveryPeriod,
           origin: this.origin,
-          imageUrls: this.imageUrls // 업로드된 모든 이미지 URL을 배열로 전송
+          imageUrls: this.imageUrls
         };
 
         const headers = {
@@ -214,16 +258,35 @@ export default {
         const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/create`, productData, {
           headers: headers
         });
+
         console.log('상품 등록 성공:', response.data);
+
+        const packageProductId = response.data.id; // 상품 ID 추출
+
+        if (this.discountSetting === 'yes') {
+          const discountData = {
+            discount: this.discountPercentage,
+            startAt: this.startDate,
+            endAt: this.endDate
+          };
+
+          const discountResponse = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/discounts/${packageProductId}/create`, discountData, {
+            headers: headers
+          });
+
+          console.log('할인 등록 성공:', discountResponse.data);
+        }
+
         this.successModal = true;
       } catch (error) {
         console.error('상품 등록 실패:', error);
+        this.validationMessage = '상품 등록에 실패했습니다.';
+        this.validationModal = true;
       }
     },
     closeSuccessModal() {
       this.successModal = false;
       this.$nextTick(() => {
-        // 모달이 닫힌 후 페이지 이동
         this.$router.push({ name: 'ProductList' });
       })
     },
