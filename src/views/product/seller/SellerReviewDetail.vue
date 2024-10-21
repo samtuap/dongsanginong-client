@@ -62,7 +62,7 @@
       <v-dialog v-model="deleteModal" max-width="300">
         <v-card class="modal">
           <v-card-text class="modal-title">정말 삭제하시겠습니까?</v-card-text>
-          <v-card-actions class="modal-actions">
+          <v-card-actions class="modal-actions" style="margin-top: -10px;">
             <v-btn @click="confirmDelete" class="delete-confirm-btn">삭제</v-btn>
             <v-btn @click="closeDeleteModal" class="cancel-btn">닫기</v-btn>
           </v-card-actions>

@@ -49,7 +49,7 @@
                     overflow-y: hidden;">
                         <v-card-text class="modal-title">정말 삭제하시겠습니까?</v-card-text>
                         <v-row justify="center" style="padding-left: 5%;">
-                            <v-btn @click="deleteNotice" class="edit-btn" style="margin-left: -50px;">삭제</v-btn>
+                            <v-btn @click="deleteNotice" class="edit-btn" style="margin-left: 25%;">삭제</v-btn>
                             <v-btn @click="cancelDelete" class="delete-btn">취소</v-btn>
                         </v-row>
                     </v-card>

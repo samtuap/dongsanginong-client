@@ -30,13 +30,21 @@
               width="300px"
               cover
             ></v-img>
-            <v-card-text style="padding: 0; margin: 0; padding-top: 5px;">
-              <div class="package-name" style="text-align: left; padding-top: 0; margin-top: 0;">
-                {{ packageProduct.packageName }}
-              </div>
-              <div class="package-price" style="text-align: left; color: #8e8e8e; padding-top: 0; margin-top: 0;">
-                {{ packageProduct.price.toLocaleString() }} 원
-              </div>
+            <v-card-text style="padding-left: 0px;">
+                <span style="font-size:medium; font-weight: 400;" v-if="packageProduct.packageName.length > 10"> {{
+                    packageProduct.packageName.substring(0, 10)
+                }}... </span>
+                <span style="font-size:medium; font-weight: 400;" v-else> {{ packageProduct.packageName }}</span>
+                <br />
+                <span style="color:darkgreen; font-size:medium;"> {{
+                    formatPrice(packageProduct.price) }} </span>
+                <br />
+                <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
+                    formatPrice(getPerCyclePrice(packageProduct.price, packageProduct.deliveryCycle)) }} </span>
+                <br />
+                <span style="color:#999; font-size: small;">
+                    🧾 누적 주문 {{ packageProduct.orderCount }}
+                </span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -106,7 +114,21 @@ export default {
     // 패키지 디테일 페이지로 이동하는 메서드
     goToPackageDetail(packageId) {
       this.$router.push({ name: 'FarmPackageDetail', params: { packageId } });
-    }
+    },
+    formatPrice(value) {
+        if (value == null) {
+            return "0원";
+        }
+        return parseInt(value).toLocaleString('ko-KR') + ' 원'; // 한국어 화폐 양식으로 변환
+    },
+    getPerCyclePrice(price, deliveryCycle) {
+        if (price == null || deliveryCycle == null || deliveryCycle == 0) {
+            return 0; // 값이 없거나 deliveryCycle이 0일 경우 0 반환
+        }
+        // 10단위 반올림 처리
+        const perCyclePrice = Math.round(price / (28 / deliveryCycle) / 10) * 10;
+        return perCyclePrice;
+    },
   }
 };
 
