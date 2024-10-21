@@ -31,12 +31,12 @@
                                 <span v-if="notifications.length > 0" class="notification-mark"></span>
                             </v-btn>
                         </template>
-                        <v-list style="background-color: #EAEAEA; padding: 4px;">
+                        <v-list style="background-color: #EAEAEA; padding: 5px; width: 400px;">
                             <v-list-item v-if="notifications.length === 0">
                                 <v-list-item-title>새로운 알림이 없네요!</v-list-item-title>
                             </v-list-item>
                             <v-card v-for="(notification, index) in notifications" :key="index"
-                                style="margin: 5px; padding-bottom: 5px;"
+                                style="margin: 5px; margin-bottom: 7px; padding-bottom: 5px;"
                                 @click="this.$router.push(notification.url)"
                                 >
                                 <v-card-text style="font-weight: bold;">
