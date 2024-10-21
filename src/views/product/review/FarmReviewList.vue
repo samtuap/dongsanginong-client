@@ -2,7 +2,7 @@
   <FarmMenuComponent :currentMenu="3" />
     <br><br>
     <div class="review-container">
-      <h4 class="review-header" style="margin-left: 30px;">전체 리뷰({{ reviews.length }})</h4>
+      <h4 class="review-header" style="margin-left: 11%;">전체 리뷰({{ reviews.length }})</h4>
   
       <!-- 리뷰 목록 -->
       <v-row v-if="paginatedReviews.length > 0" class="review-row" justify="center">
@@ -159,10 +159,10 @@
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9;
   margin-bottom: 20px;
-  width: 93%;
+  width: 85%;
   /* max-width: 800px; */
   cursor: pointer;
-  margin-left: 4%;
+  margin-left: 7%;
 }
 
 .card-header {
