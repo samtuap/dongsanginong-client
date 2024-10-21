@@ -30,7 +30,12 @@
             </div>
   
             <!-- 상품 이름 표시 (회색) -->
-            <div class="package-name">
+            <div class="package-name" v-if="review.memberId == this.memberId">
+              상품명: {{ review.packageName }}&nbsp;&nbsp;
+              <span lclass="my-review" style="background-color: #eee; padding: 3px 5px; border-radius: 10px; font-size: 13px;
+            margin-bottom: 5px; color: blue;">내 리뷰</span>
+            </div>
+            <div class="package-name" v-else>
               상품명: {{ review.packageName }}
             </div>
             <br>
@@ -75,6 +80,7 @@
         currentPage: 1,
         reviewsPerPage: 5,
         paginatedReviews: [],
+        memberId: localStorage.getItem('memberId'),
       };
     },
     computed: {

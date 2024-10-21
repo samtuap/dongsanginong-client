@@ -45,9 +45,10 @@
 
                 <!-- 삭제 확인 모달 -->
                 <v-dialog v-model="confirmDeleteModal" max-width="300">
-                    <v-card class="modal" style="padding: 20px; text-align: center; margin-top: 3px;">
+                    <v-card class="modal" style="padding: 10px; text-align: center; margin-top: 3px; 
+                    overflow-y: hidden;">
                         <v-card-text class="modal-title">정말 삭제하시겠습니까?</v-card-text>
-                        <v-row justify="center">
+                        <v-row justify="center" style="padding-left: 5%;">
                             <v-btn @click="deleteNotice" class="edit-btn" style="margin-left: -50px;">삭제</v-btn>
                             <v-btn @click="cancelDelete" class="delete-btn">취소</v-btn>
                         </v-row>
@@ -56,9 +57,9 @@
 
                 <!-- 삭제 완료 모달 -->
                 <v-dialog v-model="alertModal" max-width="260px">
-                    <v-card class="modal" style="padding: 15px; text-align: center;">
+                    <v-card class="modal" style="padding: 15px; text-align: center; height: 120px; overflow-y: hidden;">
                         <v-card-text style="text-align: center;">완료되었습니다.</v-card-text>
-                        <v-btn @click="closeModal" class="submit-btn" style="margin-top: -2px; margin-right: 10px;">닫기</v-btn>
+                        <v-btn @click="closeModal" class="submit-btn" style="margin-top: -10px; margin-right: 10px;">닫기</v-btn>
                     </v-card>
                 </v-dialog>
             </v-col>
@@ -141,6 +142,7 @@ export default {
         },
         openEditDialog() {
             this.$refs.editModal.openEditDialog();
+            this.alertModal = true;
         },
         confirmDelete() {
             this.confirmDeleteModal = true; // 삭제 확인 모달 열기
@@ -182,7 +184,7 @@ export default {
 }
 
 .edit-btn {
-    margin-right: -65px;
+    margin-right: 10px;
     background-color: #BCC07B;
     color: black;
     border-radius: 30px;
@@ -193,7 +195,7 @@ export default {
 }
 
 .delete-btn {
-    margin-right: -65px;
+    margin-right: -12%;
     background-color: #e0e0e0;
     color: black;
     border-radius: 30px;
@@ -219,6 +221,7 @@ export default {
     border: none;
     box-shadow: none;
     border-radius: 10px;
+    height: 120px;
 }
 
 .submit-btn {
@@ -235,10 +238,9 @@ export default {
 }
 
 .modal-title {
-    margin-top: -10px;
-    margin-bottom: 40px;
+    /* margin-bottom: 40px; */
     text-align: center;
-    font-weight: bold;
     font-size: 16px;
+    /* margin-left: 20px; */
   }
 </style>
