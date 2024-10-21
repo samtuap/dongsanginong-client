@@ -1,6 +1,6 @@
 <template>
-    <v-dialog v-model="dialog" max-width="600" class="custom-dialog">
-        <v-card class="custom-card">
+    <v-dialog v-model="dialog" max-width="550" class="custom-dialog">
+        <v-card class="custom-card" style="font-size: 15px;">
             <v-card-title class="custom-title" style="margin-top: 20px;">
                 리뷰 수정
             </v-card-title>
@@ -13,7 +13,7 @@
                     </div>
 
                     <!-- 별점 -->
-                    <div class="rating-section">
+                    <div class="rating-section" style="margin-top: -10px; margin-left: -10px;">
                         <v-rating v-model="review.rating" background-color="grey lighten-2" color="#FFCC80"
                             length="5" rounded />
                     </div>
@@ -21,7 +21,6 @@
                     <!-- 후기에 대한 요약 -->
                     <div class="input-section">
                         <label for="summary">어떤 점이 좋았나요?</label>
-                        <br><br>
                         <input type="text" v-model="review.title" id="summary" placeholder="후기 요약" required
                             class="custom-input" />
                     </div>
@@ -335,28 +334,32 @@ textarea.custom-input {
 
 .custom-title {
     background-color: #BCC07B;
-    border-radius: 30px;
+    border-radius: 10px;
     text-align: center;
     width: calc(97% - 30px);
     margin: 0 auto;
     padding: 10px;
+    font-size: 18px;
 }
 
+.input-section {
+    
+}
 .custom-button {
     background-color: #BCC07B;
     color: black;
-    border-radius: 30px;
-    padding: 10px 40px;
-    font-size: 13px;
+    border-radius: 50px;
+    padding: 7px 20px;
+    font-size: 14px;
     line-height: 1.5;
 }
 
 .custom-cancel-button {
     background-color: #e0e0e0;
     color: black;
-    border-radius: 30px;
-    padding: 10px 40px;
-    font-size: 13px;
+    border-radius: 50px;
+    padding: 7px 20px;
+    font-size: 14px;
     line-height: 1.5;
 }
 
