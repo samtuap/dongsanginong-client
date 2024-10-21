@@ -43,7 +43,7 @@
                                     {{ notification.title}}
                                 </v-card-text>
                                 <v-card-subtitle style="font-size:small; margin-bottom: 10px;">{{
-                                    notification.content.substring(0, 30) }}</v-card-subtitle>
+                                    notification.content }}</v-card-subtitle>
 
                             </v-card>
                             <v-list-item @click="markAsRead()"
