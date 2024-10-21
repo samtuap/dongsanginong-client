@@ -186,6 +186,7 @@ export default {
             try {
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/subscription/cancel?id=${subId}`);
                 console.log(">>>>>response: ", response.data);
+                this.cancelSub = false;
                 this.alertModal = true;
             } catch(e) {
                 console.log(e.message);
