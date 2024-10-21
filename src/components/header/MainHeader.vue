@@ -36,12 +36,11 @@
                                 <v-list-item-title>새로운 알림이 없네요!</v-list-item-title>
                             </v-list-item>
                             <v-card v-for="(notification, index) in notifications" :key="index"
-                                style="margin: 5px; padding-bottom: 5px;" @click="this.$router.push(`/notifications`)">
-                                <v-card-text style="font-weight: bold;">{{ notification.notification.title
+                                style="margin: 5px; padding-bottom: 5px;">
+                                <v-card-text style="font-weight: bold;">{{ notification.title.substring(0, 15)
                                     }}</v-card-text>
                                 <v-card-subtitle style="font-size:small; margin-bottom: 10px;">{{
-                                    notification.notification.body.substring(0,
-                                        10) }}</v-card-subtitle>
+                                    notification.content.substring(0, 30) }}</v-card-subtitle>
 
                             </v-card>
                             <v-list-item v-if="notifications.length > 0" @click="markAsRead()"
@@ -247,10 +246,13 @@ export default {
         setInterval(() => {
             this.getNotificationsFromIndexedDB()
                 .then(async (notifications) => {
+                    console.log("line 249");
                     if(notifications.length > 0) {
+                        console.log("line 251");
                         const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification?unread=true`);
                         console.log(res);
                         this.notifications = res.data.content; 
+                        console.log(this.notifications);
                         this.clearObjectStore();
                     }                    
                 })
@@ -359,9 +361,11 @@ export default {
 
             });
         },
-        markAsRead() {
+        async markAsRead() {
+            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification`)
             this.notifications = [];
             this.clearNotificationsFromIndexedDB();
+            this.$router.push(`/notifications`);
         },
         saveNotificationToIndexedDB(notification) {
             const request = indexedDB.open("notificationDB", 1);
@@ -387,6 +391,7 @@ export default {
                         db.createObjectStore("notifications", { keyPath: "id", autoIncrement: true });
                     }
                 };
+
 
                 request.onsuccess = (event) => {
                     const db = event.target.result;
