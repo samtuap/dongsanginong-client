@@ -86,7 +86,7 @@
           <!-- 내 리뷰면 -->
           <div class="review-title" v-if="review.memberId == this.memberId">
             <strong>{{ review.title }}</strong>&nbsp;&nbsp;
-            <span lclass="my-review" style="background-color: #eee; padding: 3px; border-radius: 10px; font-size: 13px;
+            <span lclass="my-review" style="background-color: #eee; padding: 3px 5px; border-radius: 10px; font-size: 13px;
             margin-bottom: 5px; color: blue;">내 리뷰</span>
           </div>
           <div class="review-title" v-else>

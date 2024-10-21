@@ -342,9 +342,6 @@ textarea.custom-input {
     font-size: 18px;
 }
 
-.input-section {
-    
-}
 .custom-button {
     background-color: #BCC07B;
     color: black;
