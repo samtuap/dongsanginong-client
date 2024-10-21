@@ -88,7 +88,7 @@
     <!-- 시청자 => 방송 종료됨을 알려주는 모달창 -->
     <v-dialog v-model="streamEndedModalVisible" max-width="320px">
       <v-card class="end-modal">
-        <v-card-text style="text-align: center; font-weight: bold;">방송이 종료되었습니다.</v-card-text>
+        <v-card-text style="text-align: center;">방송이 종료되었습니다.</v-card-text>
         <v-card-actions class="justify-center" style="margin-top: -10px;">
           <v-btn @click="confirmStreamEnd" style="background-color: #BCC07B; width: 280px; border-radius: 50px;">확인</v-btn>
         </v-card-actions>
