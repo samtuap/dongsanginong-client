@@ -17,7 +17,8 @@
                 <v-col class="d-flex justify-end" style="margin-top: 6px;">
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
                         v-if="!isSeller && isLogin">마이페이지</v-btn>
-                    <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">내 농장 바로가기</v-btn>
+                    <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">내 농장
+                        바로가기</v-btn>
                     <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing"
                         :to="{ path: '/member/sign-in' }">로그인</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"
@@ -34,16 +35,18 @@
                             <v-list-item v-if="notifications.length === 0">
                                 <v-list-item-title>새로운 알림이 없네요!</v-list-item-title>
                             </v-list-item>
-                            <v-card v-for="(notification, index) in notifications" :key="index" style="margin: 5px; padding-bottom: 5px;"
-                                @click="this.$router.push(`/notifications`)">
+                            <v-card v-for="(notification, index) in notifications" :key="index"
+                                style="margin: 5px; padding-bottom: 5px;" @click="this.$router.push(`/notifications`)">
                                 <v-card-text style="font-weight: bold;">{{ notification.notification.title
                                     }}</v-card-text>
                                 <v-card-subtitle style="font-size:small; margin-bottom: 10px;">{{
                                     notification.notification.body.substring(0,
-                                    10) }}</v-card-subtitle>
+                                        10) }}</v-card-subtitle>
 
                             </v-card>
-                            <v-list-item v-if="notifications.length > 0" @click="markAsRead()" style="text-align: end; font-size: 15px;">✅ 모두 읽음 표시
+                            <v-list-item v-if="notifications.length > 0" @click="markAsRead()"
+                                style="text-align: end; font-size: 15px;">✅ 모두 읽음
+                                표시
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -78,14 +81,8 @@
     <v-dialog v-model="searchDialog" max-width="600px" class="search-modal" @close="closeModal">
         <v-card class="search-card" style="height: 500px;">
             <v-row style="height: 5%;">
-                <v-text-field
-                    v-model="keyword"
-                    label="검색어를 입력하세요."
-                    prepend-inner-icon="mdi-magnify"
-                    outlined
-                    style="margin-bottom: -15px;"
-                    @input="debouncedSearch"
-                ></v-text-field>
+                <v-text-field v-model="keyword" label="검색어를 입력하세요." prepend-inner-icon="mdi-magnify" outlined
+                    style="margin-bottom: -15px;" @input="debouncedSearch"></v-text-field>
                 <!-- <v-btn @click="performSearch" class="search-btn" style="margin-top: 17px;">검색</v-btn> -->
             </v-row>
             <v-row style="justify-content: center;">
@@ -125,7 +122,8 @@
                     </v-card>
                 </v-list>
                 <v-list v-else-if="products.length > 0 && selectedCategory === 'package'">
-                    <v-card v-for="product in products" :key="product.id" class="list-card" @click="goToPackageDetail(product.id)">
+                    <v-card v-for="product in products" :key="product.id" class="list-card"
+                        @click="goToPackageDetail(product.id)">
                         <v-card-title style="font-size: 15px;">
                             <span v-html="highlightKeyword(product.packageName)"></span>
                         </v-card-title>
@@ -144,34 +142,39 @@
     </v-dialog>
 
 
-        <!-- 비로그인 회원이 좋아요를 누를 때 뜨는 모달 -->
-        <v-dialog v-model="this.loginModal" max-width="300px">
-            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
-                <v-card-text>
-                    로그인이 필요한 서비스입니다.<br>
-                    로그인 하시겠습니까?
-                </v-card-text>
-                <v-row>
-                    <v-btn @click="this.$router.push('/member/sign-in')" class="submit-btn" style="background-color: #BCC07B;">로그인하기</v-btn>
-                    <v-btn @click="this.loginModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
-                </v-row>
-    
-            </v-card>
-        </v-dialog>
-    
-    
-        <!-- 판매자 회원이 좋아요를 누를 때 뜨는 모달 -->
-        <v-dialog v-model="this.sellerModal" max-width="300px">
-            <v-card class="modal" style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
-                <v-card-text>
-                    판매자 회원은 다른 농장을 즐겨찾기할 수 없습니다.
-                </v-card-text>
-                <v-row>
-                    <v-btn @click="this.loginModal = false" class="submit-btn" style="background-color: #e0e0e0;">close</v-btn>
-                </v-row>
-    
-            </v-card>
-        </v-dialog>
+    <!-- 비로그인 회원이 좋아요를 누를 때 뜨는 모달 -->
+    <v-dialog v-model="this.loginModal" max-width="300px">
+        <v-card class="modal"
+            style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+            <v-card-text>
+                로그인이 필요한 서비스입니다.<br>
+                로그인 하시겠습니까?
+            </v-card-text>
+            <v-row>
+                <v-btn @click="this.$router.push('/member/sign-in')" class="submit-btn"
+                    style="background-color: #BCC07B;">로그인하기</v-btn>
+                <v-btn @click="this.loginModal = false" class="submit-btn"
+                    style="background-color: #e0e0e0;">close</v-btn>
+            </v-row>
+
+        </v-card>
+    </v-dialog>
+
+
+    <!-- 판매자 회원이 좋아요를 누를 때 뜨는 모달 -->
+    <v-dialog v-model="this.sellerModal" max-width="300px">
+        <v-card class="modal"
+            style="align-items: center; text-align: center; height: 160px; padding-bottom: 20px; overflow-y: hidden;">
+            <v-card-text>
+                판매자 회원은 다른 농장을 즐겨찾기할 수 없습니다.
+            </v-card-text>
+            <v-row>
+                <v-btn @click="this.loginModal = false" class="submit-btn"
+                    style="background-color: #e0e0e0;">close</v-btn>
+            </v-row>
+
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
@@ -207,7 +210,7 @@ export default {
     computed: {
         ...mapGetters(['getNotiCount']),
     },
-    created() {
+    async created() {
         const token = localStorage.getItem('accessToken');
         this.isLogin = !!token;
 
@@ -225,26 +228,31 @@ export default {
             this.isSeller = false;
         }
 
+        try {
+            const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification?unread=true`);
+            console.log(res);
+            this.notifications = res.data.content; 
+        } catch(e) {
+            console.log(e);
+        }
 
-        this.initializeFCM()
+        
 
-        // IndexedDB에서 알림 데이터 가져오기
-        this.getNotificationsFromIndexedDB()
-            .then((notifications) => {
-                this.notifications = notifications;
-            })
-            .catch((error) => {
-                console.error("Failed to retrieve notifications from IndexedDB:", error);
-            });
+        this.clearObjectStore(); // Object store 리셋
+        this.initializeFCM();
 
-        console.log("notifications:");
-        console.log(this.notifications);
+        
 
         // 주기적으로 IndexedDB 상태 확인 (예: 5초마다)
         setInterval(() => {
             this.getNotificationsFromIndexedDB()
-                .then((notifications) => {
-                    this.notifications = notifications;
+                .then(async (notifications) => {
+                    if(notifications.length > 0) {
+                        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification?unread=true`);
+                        console.log(res);
+                        this.notifications = res.data.content; 
+                        this.clearObjectStore();
+                    }                    
                 })
                 .catch((error) => {
                     console.error("Failed to retrieve notifications from IndexedDB:", error);
@@ -318,13 +326,13 @@ export default {
             // DB에 fcm 토큰을 저장
             try {
                 const role = localStorage.getItem("role");
-                if(role === 'MEMBER') {
+                if (role === 'MEMBER') {
                     console.log("!!!!!!!!!!!!");
                     await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
-                } else if(role === 'SELLER') {
+                } else if (role === 'SELLER') {
                     await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/fcm/token`, body);
                 }
-            } catch(e) {
+            } catch (e) {
                 console.log(e);
             }
 
@@ -446,7 +454,7 @@ export default {
             if (this.selectedCategory === 'farm') {
                 await this.searchFarms();
                 this.total = [...this.farms];
-                
+
             } else if (this.selectedCategory === 'package') {
                 await this.searchPackageProduct();
                 this.total = [...this.products];
@@ -459,9 +467,9 @@ export default {
                 this.total = [...this.farms, ...this.products];
             }
         },
-        debouncedSearch: debounce(function() {
+        debouncedSearch: debounce(function () {
             this.performSearch();
-        }, 300), 
+        }, 300),
 
         highlightKeyword(text) {
             if (!this.keyword) {
@@ -470,7 +478,7 @@ export default {
             const regex = new RegExp(`(${this.keyword})`, 'gi');
             return text.replace(regex, '<strong>$1</strong>');
         },
-            
+
         //  농장 카테고리로 검색
         async searchFarms() {
             try {
@@ -509,11 +517,11 @@ export default {
         // 농장 detail로 라우팅
         goToFarmDetail(farmId) {
             this.searchDialog = false;
-            window.location.href=`${process.env.VUE_APP_MY_URL}/farm/${farmId}/packages`;
+            window.location.href = `${process.env.VUE_APP_MY_URL}/farm/${farmId}/packages`;
         },
         goToPackageDetail(productId) {
             this.searchPackageProduct = false;
-            window.location.href=`${process.env.VUE_APP_MY_URL}/product/${productId}`;
+            window.location.href = `${process.env.VUE_APP_MY_URL}/product/${productId}`;
         },
         goToDetail(item) {
             if (item.farmName) {
@@ -521,6 +529,34 @@ export default {
             } else if (item.packageName) {
                 this.goToPackageDetail(item.id);
             }
+        },
+        clearObjectStore() {
+            let request = indexedDB.open("notificationDB", 1);
+
+            request.onsuccess = function (event) {
+                let db = event.target.result;
+
+                // 트랜잭션 생성 (읽기/쓰기 모드)
+                let transaction = db.transaction(['notifications'], 'readwrite');
+
+                // Object Store 가져오기
+                let objectStore = transaction.objectStore('notifications');
+
+                // Object Store 클리어 (모든 데이터 삭제)
+                let clearRequest = objectStore.clear();
+
+                clearRequest.onsuccess = function () {
+                    console.log('Object Store cleared successfully.');
+                };
+
+                clearRequest.onerror = function (event) {
+                    console.error('Error clearing Object Store:', event.target.error);
+                };
+            };
+
+            request.onerror = function (event) {
+                console.error('Error opening database:', event.target.error);
+            };
         }
     },
 };
