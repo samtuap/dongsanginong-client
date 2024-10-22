@@ -339,17 +339,17 @@ export default {
                 }
             }
 
+            const fcmToken = localStorage.getItem("fcmToken");
             const body = {
-                "fcmToken": localStorage.getItem("fcmToken")
+                "fcmToken": fcmToken
             };
 
             // DB에 fcm 토큰을 저장
             try {
                 const role = localStorage.getItem("role");
-                if (role === 'MEMBER') {
-                    console.log("!!!!!!!!!!!!");
+                if (role === 'MEMBER' && fcmToken !== undefined && fcmToken !== "") {
                     await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/token`, body);
-                } else if (role === 'SELLER') {
+                } else if (role === 'SELLER' && fcmToken !== undefined && fcmToken !== "") {
                     await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/fcm/token`, body);
                 }
             } catch (e) {
