@@ -291,7 +291,19 @@ export default {
             this.$router.push('/farm/farm-create'); // 농장 생성 페이지로 이동
         },
 
-        handleLogout() {
+        async handleLogout() {
+            try {
+                const role = localStorage.getItem("role");
+                if(role == 'MEMBER') {
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-out`);
+                }
+
+                const fcmToken = localStorage.getItem("fcmToken");
+                console.log(fcmToken);
+                await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/${fcmToken}`);
+            } catch(e) {
+                console.log(e);
+            }
             localStorage.clear();
             this.isLogin = false;
             this.alertModal = false; // Close the modal
