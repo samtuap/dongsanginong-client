@@ -66,8 +66,8 @@
               <v-btn class="cat-btn" :class="{'active-cat-btn': category === '과일'}" @click="setCategory('과일')">
                 <i class="mdi mdi-food-apple" style="font-size: 15px;"></i>과일
               </v-btn>
-              <v-btn class="cat-btn" :class="{'active-cat-btn': category === '야채'}" @click="setCategory('야채')">
-                <i class="mdi mdi-mushroom" style="font-size: 15px;"></i>야채
+              <v-btn class="cat-btn" :class="{'active-cat-btn': category === '채소'}" @click="setCategory('채소')">
+                <i class="mdi mdi-mushroom" style="font-size: 15px;"></i>채소
               </v-btn>
               <v-btn class="cat-btn" :class="{'active-cat-btn': category === '견과/쌀'}" @click="setCategory('견과/쌀')">
                 <i class="mdi mdi-food-croissant" style="font-size: 15px;"></i>견과/쌀
@@ -145,7 +145,7 @@
             ></v-text-field>
             <v-select
               v-model="category"
-              :items="['과일', '야채', '견과/쌀', '육류', '계란', '유제품']"
+              :items="['과일', '채소', '견과/쌀', '육류', '계란', '유제품']"
               label="카테고리를 선택하세요"
               hide-details
               solo-inverted
