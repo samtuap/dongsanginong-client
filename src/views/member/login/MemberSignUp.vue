@@ -10,7 +10,7 @@
     <v-dialog v-model="errorModal" max-width="300px">
         <v-card class="modal" style="align-items: center; text-align: center;">
             <v-card-text>회원가입 중 오류가 발생했습니다. <br /> 다시 시도해주세요.</v-card-text>
-            <v-btn @click="handleCloseModal(false)" class="submit-btn" width="100px">닫기</v-btn>
+            <v-btn @click="handleCloseModal(false)" class="submit-btn" width="100px" style="border-radius: 50px; margin-bottom: 20px;">닫기</v-btn>
         </v-card>
     </v-dialog>
 
@@ -65,7 +65,7 @@ export default {
             addressDetail: '',
             email: localStorage.getItem("email"),
             socialType: localStorage.getItem("socialType"),
-            errorModal: false,
+            errorModal: true,
             alertModal: false
         };
     },
