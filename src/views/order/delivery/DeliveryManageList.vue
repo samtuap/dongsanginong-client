@@ -51,8 +51,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn class="modal-btn" text @click="cancelDialog">취소</v-btn>
-                    <v-btn class="modal-btn" text @click="submitBillingNumber">등록</v-btn>
+                    <v-btn class="modal-btn" text @click="submitBillingNumber" style="background-color: #BCC07B;">등록</v-btn>
+                    <v-btn class="modal-btn" text @click="cancelDialog" style="background-color: #e0e0e0;">취소</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -245,10 +245,11 @@ export default {
   color: black !important;
   transition: background-color 0.3s ease;
   border-radius: 50px;
+  font-size: 14px;
 }
-.modal-btn:hover {
+/* .modal-btn:hover {
   background-color: #BCC07B; 
-}
+} */
 .billingModal {
     padding :15px;
     padding-top: 20px;
