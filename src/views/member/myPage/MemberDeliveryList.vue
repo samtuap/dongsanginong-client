@@ -5,7 +5,7 @@
         <div style="margin-left: 20%; border: 1px solid #bbb; width: 905px;">
             <div class="steps">
                 <div class="step" v-for="(step, index) in steps" :key="index"
-                    :class="{ completed: index >= completedStep }">
+                    :class="{ completed: true }">
                     <img :src="step.icon" :alt="step.label" class="icon" style="margin: 0px 70px;"/>
                     <p>{{ step.label }}</p>
                 </div>
@@ -31,7 +31,7 @@
                             <td>{{ delivery.packageName }}</td>
                             <td>{{ delivery.farmName }}</td>
                             <td>{{ formatDate(delivery.deliveryAt) }}</td>
-                            <td @click="openDeliveryStatus(delivery.deliveryStatus, delivery.trackingData)"
+                            <td @click="openDeliveryStatus(delivery.deliveryStatus, delivery)"
                                 class="delivery-status">
                                 <span style="cursor: pointer; background-color: #FFE2A6; padding: 3px; border-radius: 10px;">
                                     {{ formatDeliveryStatus(delivery.deliveryStatus) }}
@@ -163,26 +163,27 @@ export default {
                     return '상태 미정';
             }
         },
-        openDeliveryStatus(status) {
+        openDeliveryStatus(status, trackingData) {
+            const selectedDelivery = trackingData ;
             if (status === 'AFTER_DELIVERY') {
                 this.trackingData = [
-                    { date: '2023.09.23', time: '17:01', location: '동천안우체국', status: '집하완료' },
-                    { date: '2023.09.23', time: '17:12', location: '동천안우체국', status: '접수' },
-                    { date: '2023.09.23', time: '18:08', location: '동천안우체국', status: '발송' },
-                    { date: '2023.09.23', time: '19:38', location: '광역우편물류센터', status: '도착' },
-                    { date: '2023.09.23', time: '23:47', location: '광역우편물류센터', status: '발송' },
-                    { date: '2023.09.25', time: '01:57', location: '안양우편물류센터', status: '도착' },
-                    { date: '2023.09.25', time: '05:52', location: '안양우편물류센터', status: '배송 완료' }
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '07:01', location: '동천안우체국', status: '집하완료' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '08:12', location: '동천안우체국', status: '접수' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '09:08', location: '동천안우체국', status: '발송' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '10:38', location: '광역우편물류센터', status: '도착' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '11:47', location: '광역우편물류센터', status: '발송' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '13:57', location: '안양우편물류센터', status: '도착' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '15:52', location: '안양우편물류센터', status: '배송 완료' }
                 ];
                 this.completedStep = 3;
             } else if (status === 'IN_DELIVERY') {
                 this.trackingData = [
-                    { date: '2023.09.23', time: '17:01', location: '동서울우체국', status: '집하완료' },
-                    { date: '2023.09.23', time: '17:12', location: '동서울우체국', status: '접수' },
-                    { date: '2023.09.23', time: '18:08', location: '동서울우체국', status: '발송' },
-                    { date: '2023.09.23', time: '19:38', location: '광역우편물류센터', status: '도착' },
-                    { date: '2023.09.23', time: '23:47', location: '광역우편물류센터', status: '발송' },
-                    { date: '2023.09.25', time: '01:57', location: '동서울물류센터', status: '도착' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '06:01', location: '동서울우체국', status: '집하완료' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '08:12', location: '동서울우체국', status: '접수' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '09:08', location: '동서울우체국', status: '발송' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '11:38', location: '광역우편물류센터', status: '도착' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '12:47', location: '광역우편물류센터', status: '발송' },
+                    { date: this.formatDate(selectedDelivery.deliveryAt), time: '14:57', location: '동서울물류센터', status: '도착' },
                 ];
                 this.completedStep = 2;
             }
