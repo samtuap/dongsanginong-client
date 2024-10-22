@@ -94,11 +94,11 @@
                     <div class="package-info">
                         <div style="margin-top: 10px; display: flex; border-radius: 10px;" class="package-images-box">
                             <div v-for="(product, index) in farm.packages" :key="index" class="product-image-frame">
-                                <img :src="product.imageUrl" class="package-img"
-                                    @click="this.$router.push(`/product/${product.packageId}`)" />
+                                <img v-if="product.imageUrl" :src="product.imageUrl" class="package-img" @click="this.$router.push(`/product/${product.packageId}`)" />
                             </div>
                         </div>
                     </div>
+                    
                 </div>
             </v-row>
         </v-container>
@@ -146,6 +146,7 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiHeartOutline } from '@mdi/js';
 import { mdiHeart } from '@mdi/js';
 import { mdiMenuDown } from '@mdi/js';
+import { debounce } from 'lodash';
 
 export default {
     name: "my-component",
@@ -261,7 +262,7 @@ export default {
             const end = start + farmsPerPage;
             return this.topFarmList.slice(start, end);
         },
-        async onSearch() {
+        onSearch: debounce(async function() {
             this.currentPage = 0;
 
             const params = {
@@ -296,7 +297,7 @@ export default {
 
                 this.farmList[i] = { ...this.farmList[i], "packages": packages };
             }
-        },
+        }, 300),
         async loadFarm() {
             try {
 
