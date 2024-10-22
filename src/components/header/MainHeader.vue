@@ -18,7 +18,7 @@
                     <v-btn :to="{ path: '/member/my-page' }" style="text-transform: none;"
                         v-if="!isSeller && isLogin">마이페이지</v-btn>
                     <v-btn style="text-transform: none;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">내 농장
-                        바로가기</v-btn>
+                        관리</v-btn>
                     <v-btn style="text-transform: none;" v-if="!isLogin" class="reduce-spacing"
                         :to="{ path: '/member/sign-in' }">로그인</v-btn>
                     <v-btn style="text-transform: none;" v-if="isLogin" class="reduce-spacing"

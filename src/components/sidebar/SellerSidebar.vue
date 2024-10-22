@@ -18,7 +18,8 @@
                         <v-btn class="cat_btn" :to="{ path: `/seller/review/list`}">리뷰 관리</v-btn><br>
                         <v-btn class="cat_btn" :to="{ path: `/coupons/list`}">쿠폰 관리</v-btn><br>
                         <v-btn class="cat_btn" :to="{ path: `/seller/notice/list`}">커뮤니티 관리</v-btn><br>
-                        <v-btn class="cat_btn" :to="{path: '/my-farm/update'}">내 농장 수정</v-btn><br>
+                        <v-btn class="cat_btn" :to="{ path: '/my-farm/update'}">내 농장 수정</v-btn><br>
+                        <v-btn class="cat_btn" :to="{ path: `/farm/${this.farmId}/packages`}">내 농장 바로가기</v-btn>
                     </div>
                     <br>
                     <div>
@@ -33,7 +34,11 @@
 </template>
 <script>
 export default {
-   
+    data() {
+        return {
+            farmId: localStorage.getItem('farmId'),
+        }
+    }
 }
 </script>
 <style scoped>
