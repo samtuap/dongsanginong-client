@@ -65,7 +65,7 @@ export default {
             addressDetail: '',
             email: localStorage.getItem("email"),
             socialType: localStorage.getItem("socialType"),
-            errorModal: true,
+            errorModal: false,
             alertModal: false
         };
     },
