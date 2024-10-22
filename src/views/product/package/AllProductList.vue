@@ -18,22 +18,36 @@
         <!-- 패키지 리스트 -->
         <v-container style="width: 100%; text-align: start;">
 
-            <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;">🥦 패키지 살펴보기 </span>
+            <v-card-title style="font-size: 20px;"> <span style="font-weight: bold;"> 🥦 패키지 살펴보기 </span>
             </v-card-title>
 
-            <v-row style="margin-top: 20px;">
+            <v-row style="margin-top: 20px; padding-right:1.8%">
                 <v-col cols="6"></v-col>
                 <v-col cols="2">
-                    <v-select v-model="sortOption" :items="sortOptions" solo density="compact" variant="solo"
-                        label="정렬 기준" class="sort-select">
-                    </v-select>
+                    <div class="select-wrapper">
+                        <select v-model="sortOption" class="sort-select" @change="onSearch"> <!-- 변경 이벤트 추가 -->
+                            <option v-for="option in sortOptions" :key="option" :value="option">{{ option }}</option>
+                        </select>
+                        <svg-icon type="mdi" :path="mdiMenuDown" class="dropdown-icon"></svg-icon>
+                    </div>
                 </v-col>
                 <v-col cols="4">
-                    <v-text-field :loading="isLoading" v-model="searchQuery" label="검색어를 입력하세요." class="search-bar"
-                        append-inner-icon="mdi-magnify" append-inner-icon-class="search-icon" density="compact"
-                        variant="solo" single-line @click:append-inner="onSearch">
-                    </v-text-field>
+                    <form class="searchbar">
+                        <input 
+                            style="width:100%; margin-left: 15px;" 
+                            placeholder="구독 패키지를 검색해보세요!"
+                            v-model="searchQuery" 
+                            @input="onSearch"
+                        />
+                        <button type="submit" @click.prevent="onSearch">
+                            <img style="margin-right:15px; margin-top: 8px"
+                                src="https://d3cpiew7rze14b.cloudfront.net/assets/svg/Search-icon-24x-24_qnmx4o57C.svg"
+                                alt="검색">
+                        </button>
+                    </form>
                 </v-col>
+                
+                
             </v-row>
 
             <v-container class="d-flex custom-card-container">
@@ -42,7 +56,7 @@
                         style="width:260px; height:500px; margin: 10px; margin-bottom: 15px;" :rounded="false">
                         <v-img class="package-image" :src="pkg.imageUrl" alt="Package 썸네일" cover
                             @click="this.$router.push(`/product/${pkg.id}`)" />
-                        <v-chip 
+                        <v-chip
                             style="position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 8px; background-color: rgba(128, 128, 128, 0.9); color: white;">
                             {{ pkg.deliveryCycle }}일 주기 배송🚚
                         </v-chip>
@@ -85,6 +99,7 @@ import axios from 'axios';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiHeartPlusOutline } from '@mdi/js';
 import { mdiHeartOutline, mdiHeart } from '@mdi/js';
+import { mdiMenuDown } from '@mdi/js';
 import Best10PackageSlide from '@/components/slide/Best10PackageSlide.vue';
 
 export default {
@@ -114,6 +129,7 @@ export default {
             wishlistItems: [],
             mdiHeartOutline: mdiHeartOutline,
             mdiHeart: mdiHeart,
+            mdiMenuDown: mdiMenuDown,
 
             member: localStorage.getItem("memberId"),
 
@@ -297,13 +313,35 @@ export default {
     /* 컨테이너의 폭을 100%로 설정 */
 }
 
-.search-bar {
+.select-wrapper {
+    width: 100%;
+    position: relative;
+    display: inline-block
+}
+
+.dropdown-icon {
+    position: absolute;
+    top: 37%;
+    right: -10px;
+    transform: translateY(-50%);
+    pointer-events: none; /* 클릭 방지 */
+}
+
+.searchbar {
+    display: flex;
+    background-color: rgb(245 245 247);
+    border-radius: 4px;
+    justify-content: space-between;
     width: 100%;
 }
 
 .sort-select {
+    background-color: rgb(245 245 247);
     width: 100%;
-    margin-right: 2px;
+    margin: 0 2px 10px 15px;
+    padding: 8px;
+    padding-left: 12px;
+    border-radius: 4px;
 }
 
 .search-icon {
