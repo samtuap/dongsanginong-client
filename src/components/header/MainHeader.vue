@@ -37,17 +37,15 @@
                             </v-list-item>
                             <v-card v-for="(notification, index) in notifications" :key="index"
                                 style="margin: 5px; margin-bottom: 7px; padding-bottom: 5px;"
-                                @click="this.$router.push(notification.url)"
-                                >
+                                @click="this.$router.push(notification.url)">
                                 <v-card-text style="font-weight: bold;">
-                                    {{ notification.title}}
+                                    {{ notification.title }}
                                 </v-card-text>
                                 <v-card-subtitle style="font-size:small; margin-bottom: 10px;">{{
                                     notification.content }}</v-card-subtitle>
 
                             </v-card>
-                            <v-list-item @click="markAsRead()"
-                                style="text-align: end; font-size: 15px;">✅ 전체 읽음 처리
+                            <v-list-item @click="markAsRead()" style="text-align: end; font-size: 15px;">✅ 전체 읽음 처리
                                 표시
                             </v-list-item>
                         </v-list>
@@ -233,41 +231,41 @@ export default {
         try {
             const role = localStorage.getItem("role");
 
-            if(role === 'MEMBER') {
+            if (role === 'MEMBER') {
                 const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification?unread=true`);
                 console.log(res);
-                this.notifications = res.data.content; 
+                this.notifications = res.data.content;
             }
 
-        } catch(e) {
+        } catch (e) {
             console.log(e);
         }
 
-        
+
 
         this.clearObjectStore(); // Object store 리셋
         this.initializeFCM();
 
-        
+
 
         // 주기적으로 IndexedDB 상태 확인 (예: 5초마다)
         setInterval(() => {
             this.getNotificationsFromIndexedDB()
                 .then(async (notifications) => {
-                    console.log("line 249");
-                    if(notifications.length > 0) {
-                        console.log("line 251");
+                    if (notifications.length > 0) {
                         const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification?unread=true`);
                         console.log(res);
-                        this.notifications = res.data.content; 
+                        this.notifications = res.data.content;
                         console.log(this.notifications);
                         this.clearObjectStore();
-                    }                    
+                    }
                 })
                 .catch((error) => {
-                    console.error("Failed to retrieve notifications from IndexedDB:", error);
+                    this.closeConnectionsAndDeleteDB("notificationDB");
+                    console.log(error);
                 });
         }, 5000); // 5초마다 확인
+
     },
 
     methods: {
@@ -380,9 +378,27 @@ export default {
 
             request.onsuccess = (event) => {
                 const db = event.target.result;
-                const transaction = db.transaction("notifications", "readwrite");
-                const store = transaction.objectStore("notifications");
-                store.add(notification);
+                try {
+                    const transaction = db.transaction("notifications", "readwrite");
+                    const store = transaction.objectStore("notifications");
+                    store.add(notification);
+                } catch (e) {
+                    // IndexedDB에서 "notificationDB" 데이터베이스 삭제
+                    const request = indexedDB.deleteDatabase("notificationDB");
+
+                    request.onsuccess = function () {
+                        console.log("notificationDB has been deleted successfully.");
+                    };
+
+                    request.onerror = function (event) {
+                        console.error("Failed to delete notificationDB:", event);
+                    };
+
+                    request.onblocked = function () {
+                        console.warn("notificationDB deletion blocked. Please close other connections to this database.");
+                    };
+                }
+
             };
 
             request.onerror = (event) => {
@@ -403,17 +419,38 @@ export default {
 
                 request.onsuccess = (event) => {
                     const db = event.target.result;
-                    const transaction = db.transaction("notifications", "readonly");
-                    const store = transaction.objectStore("notifications");
-                    const getAllRequest = store.getAll();
+                    try {
+                        const transaction = db.transaction("notifications", "readonly");
+                        const store = transaction.objectStore("notifications");
+                        const getAllRequest = store.getAll();
 
-                    getAllRequest.onsuccess = () => {
-                        resolve(getAllRequest.result);
-                    };
+                        getAllRequest.onsuccess = () => {
+                            resolve(getAllRequest.result);
+                        };
 
-                    getAllRequest.onerror = (error) => {
-                        reject(error);
-                    };
+                        getAllRequest.onerror = (error) => {
+                            // IndexedDB에서 "notificationDB" 데이터베이스 삭제
+                            this.closeConnectionsAndDeleteDB("notificationDB");
+                            reject(error);
+                        };
+                    } catch (e) {
+                        // IndexedDB에서 "notificationDB" 데이터베이스 삭제
+                        const request = indexedDB.deleteDatabase("notificationDB");
+
+                        request.onsuccess = function () {
+                            console.log("notificationDB has been deleted successfully.");
+                        };
+
+                        request.onerror = function (event) {
+                            console.error("Failed to delete notificationDB:", event);
+                        };
+
+                        request.onblocked = function () {
+                            console.warn("notificationDB deletion blocked. Please close other connections to this database.");
+                        };
+                    }
+
+
                 };
 
                 request.onerror = (event) => {
@@ -543,34 +580,84 @@ export default {
                 this.goToPackageDetail(item.id);
             }
         },
+        closeConnectionsAndDeleteDB(dbName) {
+            const openRequest = indexedDB.open(dbName);
+
+            openRequest.onupgradeneeded = function (event) {
+                const db = event.target.result;
+
+                // DB 버전 업그레이드 시 이전 연결이 있으면 강제로 닫음
+                db.onversionchange = function () {
+                    db.close();
+                    console.log("All connections to IndexedDB have been closed due to version change.");
+                };
+            };
+
+            openRequest.onsuccess = function (event) {
+                const db = event.target.result;
+
+                // 현재 열린 연결이 있으면 닫음
+                if (db) {
+                    db.close();
+                    console.log("Closed all active connections to IndexedDB.");
+                }
+
+                // 데이터베이스 삭제 시도
+                const deleteRequest = indexedDB.deleteDatabase(dbName);
+
+                deleteRequest.onsuccess = function () {
+                    console.log(`${dbName} has been deleted successfully.`);
+                };
+
+                deleteRequest.onerror = function (event) {
+                    console.error(`Failed to delete ${dbName}:`, event);
+                };
+
+                deleteRequest.onblocked = function () {
+                    console.warn(`Deletion of ${dbName} is blocked. Please close other connections manually.`);
+                };
+            };
+
+            openRequest.onerror = function (event) {
+                console.error(`Failed to open ${dbName} for connection closure:`, event);
+            };
+        },
         clearObjectStore() {
             let request = indexedDB.open("notificationDB", 1);
 
             request.onsuccess = function (event) {
                 let db = event.target.result;
 
-                // 트랜잭션 생성 (읽기/쓰기 모드)
-                let transaction = db.transaction(['notifications'], 'readwrite');
+                try{
+                    // 트랜잭션 생성 (읽기/쓰기 모드)
+                    let transaction = db.transaction(['notifications'], 'readwrite');
 
-                // Object Store 가져오기
-                let objectStore = transaction.objectStore('notifications');
+                    // Object Store 가져오기
+                    let objectStore = transaction.objectStore('notifications');
 
-                // Object Store 클리어 (모든 데이터 삭제)
-                let clearRequest = objectStore.clear();
+                    // Object Store 클리어 (모든 데이터 삭제)
+                    let clearRequest = objectStore.clear();
 
-                clearRequest.onsuccess = function () {
-                    console.log('Object Store cleared successfully.');
-                };
+                    clearRequest.onsuccess = function () {
+                        console.log('Object Store cleared successfully.');
+                    };
 
-                clearRequest.onerror = function (event) {
-                    console.error('Error clearing Object Store:', event.target.error);
-                };
+                    clearRequest.onerror = function (event) {
+                        console.error('Error clearing Object Store:', event.target.error);
+                        this.closeConnectionsAndDeleteDB("notificationDB");
+                    };
+                } catch(e) {
+                    // this.closeConnectionsAndDeleteDB("notificationDB");
+                    console.log(e);
+                }
+
+
             };
 
             request.onerror = function (event) {
                 console.error('Error opening database:', event.target.error);
             };
-        }
+        },
     },
 };
 </script>
