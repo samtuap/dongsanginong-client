@@ -2,6 +2,7 @@ import FarmCreate from "@/views/product/farm/FarmCreate.vue"
 import FarmList from "@/views/product/farm/FarmList.vue";
 import FarmPackageList from "@/views/product/farm/FarmPackageList.vue";
 import FarmInfoUpdate from "@/views/product/farm/FarmInfoUpdate.vue";
+import farmListSample from "@/views/product/farm/farmListSample.vue";
 
 
 export const farmRouter = [
@@ -11,7 +12,7 @@ export const farmRouter = [
         component: FarmCreate
     },
     {
-        path: '/farm',
+        path: '/farm/list',
         name: 'farmList',
         component: FarmList
     },
@@ -24,6 +25,11 @@ export const farmRouter = [
         path: '/my-farm/update',
         name: 'FarmInfoUpdate',
         component: FarmInfoUpdate
+    },
+    {
+        path: '/farm',
+        name: 'farmListSample',
+        component: farmListSample
     },
 ]
 

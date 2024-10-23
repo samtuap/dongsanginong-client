@@ -4,25 +4,26 @@
             <v-row no-gutters class="flex-nowrap justify-space-between">
                 <!-- Left-aligned buttons -->
                 <v-col class="d-flex justify-start" style="margin-top: 12px; font-size: 15px; cursor:pointer;">
-                    <span style="text-transform: none; margin-left: 5%;" @click="this.$router.push(`/farm`)">농장</span>
-                    <span @click="this.$router.push(`/live/list`)" style="text-transform: none; margin-left: 5%;">라이브</span>
-                    <span @click="this.$router.push(`/product`)" style="text-transform: none; margin-left: 5%;">정기구독 패키지</span>
+                    <span style="text-transform: none; margin-left: 5%;" @click="goTo('/farm')">농장</span>
+                    <span @click="goTo(`/live/list`)" style="text-transform: none; margin-left: 5%;">라이브</span>
+                    <span @click="goTo(`/product`)" style="text-transform: none; margin-left: 5%;">정기구독 패키지</span>
                 </v-col>
                 <v-col class="text-center">
-                    <v-btn :to="{ path: '/' }" color="white" style="margin-top: 12px;">
+                    <v-btn @click="goTo(`/`)" color="white" style="margin-top: 12px;">
                         <img src="/123.png" width=110 alt="Logo" class="main-logo-image" />
                     </v-btn>
                 </v-col>
                 <!-- Right-aligned buttons -->
                 <v-col class="d-flex justify-end" style="margin-top: 12px; font-size: 15px; cursor:pointer;">
-                    <span @click="this.$router.push(`/member/my-page`)" style="text-transform: none; margin-right: 5%;"
+                    <span @click="goTo(`/member/my-page`)" style="text-transform: none; margin-right: 5%;"
                         v-if="!isSeller && isLogin">마이페이지</span>
-                    <span style="text-transform: none; margin-right: 5%;" v-if="isSeller && isLogin" @click="checkFarmAndRedirect">내 농장
+                    <span style="text-transform: none; margin-right: 5%;" v-if="isSeller && isLogin" 
+                    @click="checkFarmAndRedirect">내 농장
                         관리</span>
                     <span style="text-transform: none; margin-right: 1%;" v-if="!isLogin" class="reduce-spacing"
-                    @click="this.$router.push(`/member/sign-in`)">로그인</span>
+                    @click="goTo(`/member/sign-in`)">로그인</span>
                     <span style="text-transform: none; margin-right: 1%;" v-if="isLogin" class="reduce-spacing"
-                        @click="alertModal = true">로그아웃</span> <!-- Open modal instead of logging out directly -->
+                        @click="alertModal = true">로그아웃</span> 
 
                     <v-menu>
                         <template v-slot:activator="{ props }">
@@ -658,7 +659,12 @@ export default {
                 console.error('Error opening database:', event.target.error);
             };
         },
-    },
+        goTo(route) {
+            this.$router.push(route).then(() => {
+                location.reload();
+            });
+        },
+    }
 };
 </script>
 
