@@ -78,7 +78,7 @@
                 @click="setCategory('육류')"
                 >
                 <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/13376/13376678.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
+                    <img src=" https://cdn-icons-png.flaticon.com/512/1826/1826260.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
                     <span style="font-size: 14px;">육류</span>
                 </div>
                 </v-btn>

@@ -79,14 +79,14 @@
     </v-dialog>
 
     <!-- 검색 모달 -->
-    <v-dialog v-model="searchDialog" max-width="600px" class="search-modal" @close="closeModal">
-        <v-card class="search-card" style="height: 500px;">
+    <v-dialog v-model="searchDialog" max-width="550px" class="search-modal" @close="closeModal">
+        <v-card class="search-card" style="height: 430px;">
             <v-row style="height: 5%;">
                 <v-text-field v-model="keyword" label="검색어를 입력하세요." prepend-inner-icon="mdi-magnify" outlined
                     style="margin-bottom: -15px;" @input="debouncedSearch"></v-text-field>
                 <!-- <v-btn @click="performSearch" class="search-btn" style="margin-top: 17px;">검색</v-btn> -->
             </v-row>
-            <v-row style="justify-content: center;">
+            <v-row style="justify-content: center; padding-top: 20px;">
                 <v-btn class="cat-btn" outlined style="border-color: #525252; border-width: 1px;"
                     :class="{ active: selectedCategory === 'all' }" @click="selectedCategory = 'all'">
                     전체
@@ -101,13 +101,15 @@
                 </v-btn>
             </v-row>
 
-            <v-card class="result-card" style="height: 320px; overflow-y: auto;">
+            <v-card class="result-card" style="height: 280px; overflow-y: auto;">
                 <v-list v-if="total.length > 0 && selectedCategory === 'all'">
                     <v-card v-for="item in total" :key="item.id" class="list-card" @click="goToDetail(item)">
                         <v-card-title style="font-size: 15px;">
+                            <span class="mdi mdi-magnify" style="margin-right: 10px;"></span>
                             <span v-html="highlightKeyword(item.farmName || item.packageName)"></span>
                         </v-card-title>
                         <v-card-text style="font-size: 14px;">
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                             <span v-html="highlightKeyword(item.farmIntro || item.productDescription)"></span>
                         </v-card-text>
                     </v-card>
@@ -115,9 +117,11 @@
                 <v-list v-else-if="farms.length > 0 && selectedCategory === 'farm'">
                     <v-card v-for="farm in farms" :key="farm.id" class="list-card" @click="goToFarmDetail(farm.id)">
                         <v-card-title style="font-size: 15px;">
+                            <span class="mdi mdi-magnify" style="margin-right: 10px;"></span>
                             <span v-html="highlightKeyword(farm.farmName)"></span>
                         </v-card-title>
                         <v-card-text style="font-size: 14px;">
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                             <span v-html="highlightKeyword(farm.farmIntro)"></span>
                         </v-card-text>
                     </v-card>
@@ -126,16 +130,18 @@
                     <v-card v-for="product in products" :key="product.id" class="list-card"
                         @click="goToPackageDetail(product.id)">
                         <v-card-title style="font-size: 15px;">
+                            <span class="mdi mdi-magnify" style="margin-right: 10px;"></span>
                             <span v-html="highlightKeyword(product.packageName)"></span>
                         </v-card-title>
                         <v-card-text style="font-size: 14px;">
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                             <span v-html="highlightKeyword(product.productDescription)"></span>
                         </v-card-text>
                     </v-card>
                 </v-list>
                 <v-list v-else>
                     <v-list-item>
-                        <v-list-item-title style="text-align: center;">검색 결과가 없습니다.</v-list-item-title>
+                        <v-list-item-title style="text-align: center; margin-top: 20%;">검색 결과가 없습니다.</v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-card>
@@ -750,10 +756,11 @@ export default {
 
 .cat-btn {
     box-shadow: none;
-    /* background-color: #ffffff; */
     border-radius: 50px;
     margin-right: 3px;
     margin-left: 3px;
+    background-color: #e0e0e0;
+    border:none;
 }
 
 .result-card {
@@ -768,10 +775,7 @@ export default {
 }
 
 .cat-btn.active {
-    background-color: #e0e0e0 !important;
+    background-color: #FFE2A6 !important;
     color: #000 !important;
-    /* Change the text color if needed */
-    border-color: #525252 !important;
-    /* Keep the border consistent */
 }
 </style>
