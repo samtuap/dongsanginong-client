@@ -1,4 +1,10 @@
 <template>
+    <v-carousel cycle :show-arrows="false" delimiter-icon="mdi-square" delimiter-color="light_green" height="350"
+        interval="5000" hide-delimiter-background>
+        <v-carousel-item v-for="(image, index) in images" :key="index" style="overflow: hidden;">
+            <img :src="image.src" :alt="image.alt" class="banner-img" />
+        </v-carousel-item>
+    </v-carousel>
     <v-container class="custom-container">
         <!-- Top 10 패키지 시작 -->
         <v-card style="border-radius: 15px; padding: 20px; padding-bottom: 0px; max-width: 1200px; width: 100%;"
@@ -134,6 +140,7 @@ export default {
             member: localStorage.getItem("memberId"),
 
             wishAnimation: new Map(),
+            images: [],
         }
     },
     computed: {
@@ -142,6 +149,11 @@ export default {
         }
     },
     async created() {
+        this.images = [
+            { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/Farm/1ec43aec-e12b-41aa-8a7d-9c831914c6ae%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-10-22%20221354.png", "alt": "배너사진3", "link": "/event2" },
+            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/Farm/f94275a5-35bc-4c2a-9ac4-4d6c69f2aa90%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-10-22%20233639.png", "alt": "배너사진3", "link": "/event2" },
+            // { "src": "https://dongsanginong-bucket.s3.ap-northeast-2.amazonaws.com/Farm/ca7a17bc-0a34-477e-bca5-9f80c539293a%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-10-22%20233941.png", "alt": "배너사진4", "link": "/event2" },
+        ];
         // Top 10 패키지 가져오기
         try {
             const topPackagesResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
@@ -412,5 +424,12 @@ export default {
         opacity: 0;
         transform: translate(-50%, -100px) scale(0);
     }
+}
+.banner-img {
+    object-fit: cover;
+    width: 100%;
+    /* 부모의 너비에 맞추기 */
+    height: 100%;
+    /* 부모의 높이에 맞추기 */
 }
 </style>
