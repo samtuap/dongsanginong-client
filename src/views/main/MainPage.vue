@@ -31,7 +31,7 @@
                 </div>
                 <div>
                     <p style="text-align: center;"><span
-                            style="font-size: 24px; border-radius:3px; background-color:#ffeecc">
+                            style="font-size: 22px; border-radius:3px; background-color:#ffeecc">
                             높은 가치의 농산물을
                         </span></p>
                     <br />
@@ -49,7 +49,7 @@
                 </div>
                 <div>
                     <p style="text-align: center;"><span
-                            style="font-size: 24px; border-radius:3px; background-color:#ffeecc">
+                            style="font-size: 22px; border-radius:3px; background-color:#ffeecc">
                             가장 신선할 때</span></p>
                     <br />
                     <div class="text-center content-text">
@@ -66,7 +66,7 @@
                 </div>
                 <div>
                     <p style="text-align: center;"><span
-                            style="font-size: 24px;border-radius:3px; background-color:#ffeecc">
+                            style="font-size: 22px;border-radius:3px; background-color:#ffeecc">
                             우리집 식탁으로
                         </span></p>
                     <br />
@@ -79,7 +79,8 @@
         </div>
         <br />
         <br />
-        <div class="hr-style"></div>
+        <br />
+        <!-- <div class="hr-style"></div> -->
         <br />
         <br />
         <!-- 제목 -->
@@ -115,11 +116,13 @@
         </div>
 
         <br />
+        <br />
         <v-row cols="12">
             <v-col cols="6" style="text-align: center;">
                 <img src="/grain.jpg" width="100%">
-                <h5 style="text-align: center;"><span style="font-size: 20px; color: rgb(51, 51, 51);">
-                        &nbsp;✔️ 당일 신선 배송 서비스</span></h5>
+                <br>
+                <h5 style="text-align: center; margin-top: 10px;"><span style="font-size: 19px; color: rgb(51, 51, 51);">
+                        ✔️ 당일 신선 배송 서비스</span></h5>
                 <br />
                 <span style="font-size: 16px; color: rgb(102, 102, 102);">
                     오늘 농부가 발송하면 오늘 우리집 식탁에 ! <br />
@@ -129,8 +132,9 @@
             </v-col>
             <v-col cols="6" style="text-align: center;">
                 <img src="/farm-pic.jpg" width="100%">
-                <h5 style="text-align: center;"><span style="font-size: 20px; color: rgb(51, 51, 51);">
-                        &nbsp;✔️ 도시에서 만나는 농장</span></h5>
+                <br>
+                <h5 style="text-align: center; margin-top: 10px;"><span style="font-size: 19px; color: rgb(51, 51, 51);">
+                        ✔️ 도시에서 만나는 농장</span></h5>
                 <br />
                 <span style="font-size: 16px; color: rgb(102, 102, 102);">
                     다양한 농산물을 손쉽게 선택하고 주문하세요! <br />
@@ -142,7 +146,7 @@
         <br />
         <br />
         <br />
-        <div class="hr-style"></div>
+        <!-- <div class="hr-style"></div> -->
         <br />
         <br />
         <div style="margin-bottom: 40px; padding-top: 20px; display: flex; justify-content: center;">
@@ -156,9 +160,6 @@
         </div>
         <BestPackageSlide />
 
-        <br><br>
-        <div class="hr-style"></div>
-        <br>
     </v-container>
     <!-- 인기 패키지 끝 -->
 
@@ -478,16 +479,16 @@ export default {
 }
 
 .info-title {
-    font-size: 28px;
+    font-size: 27px;
     font-weight: bold;
 }
 
 .info-content {
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .hr-style {
-    border-bottom: 3px solid #efefef;
+    border-bottom: 1px solid #efefef;
     border-radius: 3px;
 }
 
