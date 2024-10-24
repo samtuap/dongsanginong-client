@@ -345,7 +345,7 @@ export default {
   background-color: rgb(255, 255, 255);
   border: none;
   box-shadow: none;
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
