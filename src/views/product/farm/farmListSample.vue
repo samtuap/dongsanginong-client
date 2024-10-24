@@ -8,7 +8,7 @@
     <v-container class="custom-container">
         <!-- 농장 리스트 -->
         <v-container style="width: 100%;">
-            <v-card-title style="font-size: 20px; margin-left: -20px;"> 
+            <v-card-title style="font-size: 20px; margin-left: -20px;">
                 <span style="font-weight: bold;">🏡 농장 둘러보기 </span>
             </v-card-title>
 
@@ -25,12 +25,8 @@
                 </v-col>
                 <v-col cols="4">
                     <form class="searchbar" @submit.prevent="onSearch">
-                        <input 
-                            style="width: 100%; margin-left: 15px;" 
-                            placeholder="검색어를 입력하세요."
-                            v-model="searchQuery" 
-                            @input="onSearch"
-                        />
+                        <input style="width: 100%; margin-left: 15px;" placeholder="검색어를 입력하세요." v-model="searchQuery"
+                            @input="onSearch" />
                         <button type="submit">
                             <img style="margin-right: 15px; margin-top: 8px"
                                 src="https://d3cpiew7rze14b.cloudfront.net/assets/svg/Search-icon-24x-24_qnmx4o57C.svg"
@@ -42,72 +38,71 @@
 
             <!-- 카테고리 -->
             <v-row class="category-buttons" justify="center">
-                <v-btn
-                class="cat-btn"
-                :class="{ 'active-cat-btn': category === '과일' }"
-                @click="setCategory('과일')"
-                >
+                <v-btn class="cat-btn" :class="{ 'active-cat-btn': category === '과일' }" @click="setCategory('과일')">
                     <div class="icon-text-wrapper">
-                        <img src="https://cdn-icons-png.flaticon.com/512/8907/8907568.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
+                        <img src="https://simg.ssgcdn.com/trans.ssg?src=/cmpt/banner/202403/2024031818080361517067449706_661.png&amp;w=84&amp;h=84&amp;edit=c&amp;t=bd90620ede2db29ee3ac2b9a4faee217e215ee4b"
+                            width="50" height="50" style="margin-bottom: -18px;"><br />
                         <span style="font-size: 14px;">과일</span>
                     </div>
                 </v-btn>
-                <v-btn
-                class="cat-btn"
-                :class="{ 'active-cat-btn': category === '채소' }"
-                @click="setCategory('채소')"
-                >
-                <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5771/5771605.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
-                    <span style="font-size: 14px;">채소</span>
-                </div>
+                <v-btn class="cat-btn" :class="{ 'active-cat-btn': category === '채소' }" @click="setCategory('채소')">
+                    <div class="icon-text-wrapper">
+                        <img src="vegetable.png" width="50" height="50" style="margin-bottom: -18px;"><br />
+                        <span style="font-size: 14px;">채소</span>
+                    </div>
                 </v-btn>
-                <v-btn
-                class="cat-btn"
-                :class="{ 'active-cat-btn': category === '견과/쌀' }"
-                @click="setCategory('견과/쌀')"
-                >
-                <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3798/3798482.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
-                    <span style="font-size: 14px;">견과/쌀</span>
-                </div>
+                <v-btn class="cat-btn" :class="{ 'active-cat-btn': category === '견과/쌀' }" @click="setCategory('견과/쌀')">
+                    <div class="icon-text-wrapper">
+                        <img src="/rice.png" width="50" height="50"
+                            style="margin-top: -8px; margin-bottom: -12px;"><br />
+                        <span style="font-size: 14px;">견과/쌀</span>
+                    </div>
                 </v-btn>
-                <v-btn
-                class="cat-btn"
-                :class="{ 'active-cat-btn': category === '육류' }"
-                @click="setCategory('육류')"
-                >
-                <div class="icon-text-wrapper">
-                    <img src=" https://cdn-icons-png.flaticon.com/512/1826/1826260.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
-                    <span style="font-size: 14px;">육류</span>
-                </div>
+                <v-btn class="cat-btn" :class="{ 'active-cat-btn': category === '육류' }" @click="setCategory('육류')">
+                    <div class="icon-text-wrapper">
+                        <img src="meat.png" width="50" height="50" style="margin-bottom: -18px;"><br />
+                        <span style="font-size: 14px;">육류</span>
+                    </div>
                 </v-btn>
-                <v-btn
-                class="cat-btn"
-                :class="{ 'active-cat-btn': category === '계란' }"
-                @click="setCategory('계란')"
-                >
-                <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1892/1892596.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
-                    <span style="font-size: 14px;">계란</span>
-                </div>
+                <v-btn class="cat-btn" :class="{ 'active-cat-btn': category === '계란' }" @click="setCategory('계란')">
+                    <div class="icon-text-wrapper">
+                        <img src="egg.png" width="50" height="50" style="margin-bottom: -18px;"><br />
+                        <span style="font-size: 14px;">계란</span>
+                    </div>
                 </v-btn>
-                <v-btn
-                class="cat-btn"
-                :class="{ 'active-cat-btn': category === '유제품' }"
-                @click="setCategory('유제품')"
-                >
-                <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2049/2049109.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
-                    <span style="font-size: 14px;">유제품</span>
-                </div>
+                <v-btn class="cat-btn" :class="{ 'active-cat-btn': category === '유제품' }" @click="setCategory('유제품')">
+                    <div class="icon-text-wrapper">
+                        <img src="milk.png" width="50" height="43" style="margin-bottom: -11px;"><br />
+                        <span style="font-size: 14px;">유제품</span>
+                    </div>
                 </v-btn>
             </v-row>
 
             <v-row>
                 <v-col cols="4" v-for="(farm, index) in farmList" :key="index">
-                    <v-card class="farm-card" outlined rounded="lg" @click="this.$router.push(`/farm/${farm.id}/packages`)">
-                        <v-img :src="farm.bannerImgUrl" class="farm-banner" height="200px" cover></v-img>
+                    <v-card class="farm-card" outlined rounded="lg"
+                        @click="this.$router.push(`/farm/${farm.id}/packages`)">
+                        <v-img @click="this.$router.push(`/farm/${farm.id}/packages`)" :src="farm.bannerImgUrl"
+                            class="farm-banner" height="200px" cover>
+                            <!-- 배너 콘텐츠 -->
+                            <div style="position: relative; height: 100%;">
+                                <div v-if="likes.get(farm.id) == 2" class="heart-emoji">
+                                    <svg-icon type="mdi" :path="mdiHeart" class="icon-colored"></svg-icon>
+                                </div>
+                                <v-chip class="like-chip" size="small" variant="outlined"
+                                    :class="{ 'selected-like-chip': likes.get(farm.id) == 1 || likes.get(farm.id) == 2 }"
+                                    @click.stop="clickLike(farm.id)"
+                                    style="position: absolute; right: 16px; top: 16px; cursor: pointer;">
+                                    <svg-icon type="mdi"
+                                        :path="likes.get(farm.id) == 1 || likes.get(farm.id) == 2 ? mdiHeart : mdiHeartOutline"
+                                        :class="likes.get(farm.id) == 1 || likes.get(farm.id) == 2 ? 'icon-colored' : 'icon-trans'"></svg-icon>
+                                    <span style="font-weight: bold; font-size: 14px; padding-top: 2px">{{
+                                        likeCount.get(farm.id) }}</span>
+                                </v-chip>
+                            </div>
+                        </v-img>
+
+
 
                         <v-card-text>
                             <div class="farm-details">
@@ -121,7 +116,7 @@
                                 </div>
 
                                 <div class="farm-stats">
-                                    <p small outlined class="fav-style">스크랩 {{ farm.favoriteCount }}개</p>
+                                    <p small outlined class="fav-style">스크랩 {{ likeCount.get(farm.id) }}개</p>
                                     <v-chip small outlined>판매 {{ farm.orderCount }}개</v-chip>
                                 </div>
                             </div>
@@ -303,9 +298,11 @@ export default {
             this.farmList = [];
             this.onSearch();
         },
-
+        goToPackage(farmId) {
+            console.log(`Navigating to package for farm ID: ${farmId}`);
+        },
         // Modified onSearch method to include category filtering
-        onSearch: debounce(async function() {
+        onSearch: debounce(async function () {
             this.currentPage = 0;
             this.isLastPage = false;
             this.isLoading = false;
@@ -477,6 +474,7 @@ export default {
     height: 100%;
     /* 부모의 높이에 맞추기 */
 }
+
 .icon-colored {
     color: red;
     transform: scale(0.8);
@@ -487,6 +485,7 @@ export default {
 .icon-trans {
     transform: scale(0.8);
 }
+
 .custom-container {
     /* width: %; */
     min-height: 100vh;
@@ -604,8 +603,9 @@ export default {
 }
 
 .like-chip {
-    border: 1px solid white !important;
-    border-radius: 3px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
     color: black !important;
     padding-bottom: 2px;
 }
@@ -619,7 +619,6 @@ export default {
     /* 애니메이션 전에는 보이지 않도록 설정 */
     animation: popUp 1s ease-in-out forwards;
     /* 애니메이션 정의 */
-    margin-left: 35px;
 }
 
 @keyframes popUp {
@@ -653,7 +652,8 @@ export default {
     top: 37%;
     right: -10px;
     transform: translateY(-50%);
-    pointer-events: none; /* 클릭 방지 */
+    pointer-events: none;
+    /* 클릭 방지 */
 }
 
 .searchbar {
@@ -676,6 +676,7 @@ export default {
 .search-icon {
     transition: color 0.3s ease;
 }
+
 .farm-card {
     transition: box-shadow 0.3s ease-in-out;
     height: 430px;
@@ -719,7 +720,7 @@ export default {
     color: #666;
     margin-bottom: 20px;
     line-height: 1.5;
-    min-height: 40px; 
+    min-height: 40px;
 }
 
 .farm-stats {
@@ -738,33 +739,33 @@ export default {
 }
 
 .cat-btn {
-  border-radius: 20px;
-  box-shadow: none;
-  border: none;
-  padding: 10px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  width: 80px;
-  height: 80px;
-  margin: 0px 15px;
+    border-radius: 150px;
+    box-shadow: none;
+    border: none;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    width: 80px;
+    height: 80px;
+    margin: 0px 15px;
+    background-color: #f7f7f7;
 }
 
 .cat-btn:hover {
-  background-color: #f7f7f7;
+    background-color: #f7f7f7;
 }
 
 .icon-text-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .category-buttons {
     margin-top: 30px;
     margin-bottom: 30px;
 }
-
 </style>
