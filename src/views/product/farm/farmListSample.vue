@@ -48,7 +48,8 @@
                 @click="setCategory('과일')"
                 >
                     <div class="icon-text-wrapper">
-                        <img src="https://cdn-icons-png.flaticon.com/512/8907/8907568.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
+                        <img src="https://simg.ssgcdn.com/trans.ssg?src=/cmpt/banner/202403/2024031818080361517067449706_661.png&amp;w=84&amp;h=84&amp;edit=c&amp;t=bd90620ede2db29ee3ac2b9a4faee217e215ee4b"
+                        width="50" height="50" style="margin-bottom: -18px;"><br/>
                         <span style="font-size: 14px;">과일</span>
                     </div>
                 </v-btn>
@@ -58,7 +59,7 @@
                 @click="setCategory('채소')"
                 >
                 <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5771/5771605.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
+                    <img src="vegetable.png" width="50" height="50" style="margin-bottom: -18px;"><br/>
                     <span style="font-size: 14px;">채소</span>
                 </div>
                 </v-btn>
@@ -68,7 +69,7 @@
                 @click="setCategory('견과/쌀')"
                 >
                 <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3798/3798482.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
+                    <img src="/rice.png" width="50" height="50" style="margin-top: -8px; margin-bottom: -12px;"><br/>
                     <span style="font-size: 14px;">견과/쌀</span>
                 </div>
                 </v-btn>
@@ -78,7 +79,7 @@
                 @click="setCategory('육류')"
                 >
                 <div class="icon-text-wrapper">
-                    <img src=" https://cdn-icons-png.flaticon.com/512/1826/1826260.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
+                    <img src="meat.png" width="50" height="50" style="margin-bottom: -18px;"><br/>
                     <span style="font-size: 14px;">육류</span>
                 </div>
                 </v-btn>
@@ -88,7 +89,7 @@
                 @click="setCategory('계란')"
                 >
                 <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1892/1892596.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
+                    <img src="egg.png" width="50" height="50" style="margin-bottom: -18px;"><br/>
                     <span style="font-size: 14px;">계란</span>
                 </div>
                 </v-btn>
@@ -98,7 +99,7 @@
                 @click="setCategory('유제품')"
                 >
                 <div class="icon-text-wrapper">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2049/2049109.png" width="35" height="35" style="margin-bottom: -5px;"><br/>
+                    <img src="milk.png" width="50" height="43" style="margin-bottom: -11px;"><br/>
                     <span style="font-size: 14px;">유제품</span>
                 </div>
                 </v-btn>
@@ -738,7 +739,7 @@ export default {
 }
 
 .cat-btn {
-  border-radius: 20px;
+  border-radius: 150px;
   box-shadow: none;
   border: none;
   padding: 10px 8px;
@@ -750,6 +751,7 @@ export default {
   width: 80px;
   height: 80px;
   margin: 0px 15px;
+  background-color: #f7f7f7;
 }
 
 .cat-btn:hover {
