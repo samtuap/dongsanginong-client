@@ -19,7 +19,20 @@
                             class="heart-icon"></svg-icon>
                         <span style="font-size: 14px;">{{ wishlistItems[item.id] ? '위시리스트 취소' : '위시리스트 담기' }}</span>
                     </v-btn>
-                    <div class="item-info">
+                    <div class="item-info" v-if="item.discountId != null && item.discountActive == true">
+                        <p style="font-size: medium; color: black;">{{ item.packageName }}</p>
+                        <p style="text-decoration: line-through; color: #999; font-size: 14px;">{{ getAmountWithFormat(item.price) }}원</p>
+                        <div style="margin-bottom: 2px;">
+                            <span style="color: green;">{{ getAmountWithFormat(item.price - item.discount) }}원&nbsp;&nbsp;</span>
+                            <span class="sale-style">SALE</span>
+                        </div>
+                        <p style="color:#999; font-size: small;"> 1회 제공 금액 {{
+                            getAmountWithFormat(getPerCyclePrice(item.price - item.discount, item.deliveryCycle)) }} </p>
+                        <p style="color:#999; font-size: small;">
+                            🧾 누적 주문 {{ item.orderCount }}
+                        </p>
+                    </div>
+                    <div class="item-info" v-else>
                         <p style="font-size: medium; color: black;">{{ item.packageName }}</p>
                         <p>{{ getAmountWithFormat(item.price) }}원</p>
                         <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
@@ -64,6 +77,8 @@ export default {
         try {
             const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
             this.items = response.data;
+
+            console.log(">>>>>discountId: " + this.items[0].discountId + " >>>>>discount: " + this.items[0].discount + " >>>>>discountActive: " + this.items[0].discountActive)
         } catch (e) {
             console.log(e);
         }
@@ -207,6 +222,17 @@ export default {
 .heart-icon {
     width: 17px;
     height: 17px;
+}
+
+.sale-style {
+    background-color: rgb(245, 77, 77); 
+    color: white; 
+    padding-right: 7px;
+    padding-left: 7px;
+    padding-bottom: 3px;
+    padding-top: 5px;
+    font-size: 10px;
+    margin-bottom: 10px;
 }
 
 @keyframes popUp {

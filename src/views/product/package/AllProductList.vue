@@ -80,17 +80,29 @@
                             <span style="font-size:medium; font-weight: 400;" v-if="pkg.packageName.length > 10"> {{
                                 pkg.packageName.substring(0, 10)
                             }}... </span>
-                            <span style="font-size:medium; font-weight: 400;" v-else> {{ pkg.packageName }}</span>
-                            <br />
-                            <span style="color:darkgreen; font-size:medium;"> {{
-                                formatPrice(pkg.price) }} </span>
-                            <br />
-                            <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
-                                formatPrice(getPerCyclePrice(pkg.price, pkg.deliveryCycle)) }} </span>
-                            <br />
-                            <span style="color:#999; font-size: small;">
-                                🧾 누적 주문 {{ pkg.orderCount }}
-                            </span>
+                            <div class="item-info" v-if="pkg.discountId != null && pkg.discountActive == true">
+                                <p style="font-size: medium; color: black;">{{ pkg.packageName }}</p>
+                                <p style="text-decoration: line-through; color: #999; font-size: 14px;">{{ formatPrice(pkg.price) }}</p>
+                                <div style="margin-bottom: 2px;">
+                                    <span style="color:darkgreen; font-size:medium;">{{ formatPrice(pkg.price - pkg.discount) }}&nbsp;&nbsp;</span>
+                                    <span class="sale-style">SALE</span>
+                                </div>
+                                <p style="color:#999; font-size: small;"> 1회 제공 금액 {{
+                                    formatPrice(getPerCyclePrice(pkg.price - pkg.discount, pkg.deliveryCycle)) }} </p>
+                                <p style="color:#999; font-size: small;">
+                                    🧾 누적 주문 {{ pkg.orderCount }}
+                                </p>
+                            </div>
+                            <div class="item-info" v-else>
+                                <p style="font-size: medium; color: black;">{{ pkg.packageName }}</p>
+                                <p style="color:darkgreen; font-size:medium;">{{ formatPrice(pkg.price) }}</p>
+                                <span style="color:#999; font-size: small;"> 1회 제공 금액 {{
+                                    formatPrice(getPerCyclePrice(pkg.price, pkg.deliveryCycle)) }} </span>
+                                <br />
+                                <span style="color:#999; font-size: small;">
+                                    🧾 누적 주문 {{ pkg.orderCount }}
+                                </span>
+                            </div>
                         </v-card-text>
                     </v-card>
                 </v-row>
@@ -158,6 +170,7 @@ export default {
         try {
             const topPackagesResponse = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/top10`);
             this.topPackageList = topPackagesResponse.data;
+            console.log(">>>>> topPackageList : ", this.topPackageList[0].discountId);
 
             // 전체 패키지 리스트 가져오기
             let params = {
@@ -431,5 +444,15 @@ export default {
     /* 부모의 너비에 맞추기 */
     height: 100%;
     /* 부모의 높이에 맞추기 */
+}
+.sale-style {
+    background-color: rgb(245, 77, 77); 
+    color: white; 
+    padding-right: 7px;
+    padding-left: 7px;
+    padding-bottom: 3px;
+    padding-top: 5px;
+    font-size: 10px;
+    margin-bottom: 10px;
 }
 </style>
