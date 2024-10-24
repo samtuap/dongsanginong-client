@@ -10,11 +10,83 @@
     <!-- 인기 농장 -->
     <br>
     <v-container class="farm-container">
+        <div class="text-center info-title" style="border-radius:12px;">
+            동상이농 (同床利農), 같은 상상 서로 다른 이익
+        </div>
+        <br />
+        <div class="text-center info-content">
+            소비자는 신선한 농산물을 저렴하고 편리하게 구매하고 싶고, <br />
+            농가는 직거래를 통해 신선한 농산물을 손쉽게 전달하고 싶습니다. <br />
+            <br />
+            '동상이농'은 이 둘의 같은 상상을 연결해, <br />
+            서로의 꿈을 같은 방향으로 실현할 수 있는 직거래 플랫폼을 제공합니다.
+        </div>
+        <br />
+        <br />
+        <!-- 1번 카드 섹션 -->
+        <div class="content-wrap">
+            <div>
+                <div class="info-image">
+                    <img src="/vege.png" alt="1" style="width: 70%;">
+                </div>
+                <div>
+                    <p style="text-align: center;"><span
+                            style="font-size: 24px; border-radius:3px; background-color:#ffeecc">
+                            높은 가치의 농산물을
+                        </span></p>
+                    <br />
+                    <div class="text-center content-text">
+                        실시간으로 직접 확인한 싱싱한 농산물을 <br />
+                        가장 좋은 품질로만 철저하게 선정해 제공합니다.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2번 카드 섹션 -->
+            <div>
+                <div class="info-image">
+                    <img src="/farmer.png" alt="2" style="width: 70%;">
+                </div>
+                <div>
+                    <p style="text-align: center;"><span
+                            style="font-size: 24px; border-radius:3px; background-color:#ffeecc">
+                            가장 신선할 때</span></p>
+                    <br />
+                    <div class="text-center content-text">
+                        최적의 수확 시점에 수확한 농산물을 <br />
+                        싱싱한 상태 그대로 농부가 직접 보내드립니다.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3번 카드 섹션 -->
+            <div>
+                <div class="info-image">
+                    <img src="/eating.png" alt="3" style="width: 70%;">
+                </div>
+                <div>
+                    <p style="text-align: center;"><span
+                            style="font-size: 24px;border-radius:3px; background-color:#ffeecc">
+                            우리집 식탁으로
+                        </span></p>
+                    <br />
+                    <div class="text-center content-text">
+                        라이브 방송으로 보았던 신선한 농산물이 <br />
+                        우리집 식탁에 오르는 행복을 경험해보세요 !
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="hr-style"></div>
+        <br />
+        <br />
         <!-- 제목 -->
         <v-col cols="12">
             <div class="text-center slide-title" @click="this.$router.push('/farm')">
                 🏠 Farm Best 9 🏠
-                <v-icon icon="mdi-chevron-right" style="font-size: 46px;"/>
+                <v-icon icon="mdi-chevron-right" style="font-size: 46px;" />
             </div>
             <p class="text-center" style="color: grey; font-size: 16px;">즐겨찾기 수가 많은 농장들입니다.</p>
         </v-col>
@@ -28,18 +100,56 @@
     </v-container>
     <!-- 인기 농장 끝 -->
 
-
-
     <!-- 인기 패키지 -->
     <v-container>
+        <div class="text-center info-title" style="border-radius:12px;">
+            신선한 농산물을 당일 배송으로 받아보세요!
+        </div>
+        <br />
+        <div class="text-center info-content">
+            당일에 신선한 농산물을 받아볼 수 있는 편리함! <br />
+            농장에서 바로 배송된 식품을 신선하게 즐길 수 있는 기회를 제공합니다. <br />
+            <br />
+            '동상이농'은 신선함을 최우선으로 생각하며, <br />
+            언제 어디서나 손쉽게 주문하고 즉시 받아볼 수 있는 서비스를 제공합니다.
+        </div>
 
+        <br />
+        <v-row cols="12">
+            <v-col cols="6" style="text-align: center;">
+                <img src="/grain.jpg" width="100%">
+                <h5 style="text-align: center;"><span style="font-size: 20px; color: rgb(51, 51, 51);">
+                        &nbsp;✔️ 당일 신선 배송 서비스</span></h5>
+                <br />
+                <span style="font-size: 16px; color: rgb(102, 102, 102);">
+                    오늘 농부가 발송하면 오늘 우리집 식탁에 ! <br />
+                    빠르고 간편하게 농장에서 바로 여러분의 집으로, 신선함을 그대로 전달합니다. <br />
+                    믿을 수 있는 품질로 여러분의 식탁을 더욱 풍성하게 만들어 드립니다.
+                </span>
+            </v-col>
+            <v-col cols="6" style="text-align: center;">
+                <img src="/farm-pic.jpg" width="100%">
+                <h5 style="text-align: center;"><span style="font-size: 20px; color: rgb(51, 51, 51);">
+                        &nbsp;✔️ 도시에서 만나는 농장</span></h5>
+                <br />
+                <span style="font-size: 16px; color: rgb(102, 102, 102);">
+                    다양한 농산물을 손쉽게 선택하고 주문하세요! <br />
+                    언제 어디서나 간편하게 접근할 수 있는 동상이농으로, <br />
+                    원하는 신선한 농산물을 빠르게 받아보는 즐거움을 누리실 수 있습니다.
+                </span>
+            </v-col>
+        </v-row>
+        <br />
+        <br />
+        <br />
+        <div class="hr-style"></div>
+        <br />
+        <br />
         <div style="margin-bottom: 40px; padding-top: 20px; display: flex; justify-content: center;">
             <div>
-                <div class="text-center slide-title"
-                @click="this.$router.push('/product')"
-                >
-                    🥦 Best Packages 🥦 
-                    <v-icon icon="mdi-chevron-right" style="font-size: 46px;"/>
+                <div class="text-center slide-title" @click="this.$router.push('/product')">
+                    🥦 Best Packages 🥦
+                    <v-icon icon="mdi-chevron-right" style="font-size: 46px;" />
                 </div>
                 <p class="text-center" style="color: grey; font-size: 16px;">가장 많이 팔린 패키지를 주문해보세요.</p>
             </div>
@@ -51,20 +161,6 @@
         <br>
     </v-container>
     <!-- 인기 패키지 끝 -->
-
-    <!-- 시청자 순 라이브 목록 -->
-    <v-container>
-        <v-col cols="12">
-            <div class="text-center slide-title" @click="this.$router.push('/live/list')">
-                📺 Live 📺
-                <v-icon icon="mdi-chevron-right" style="font-size: 46px;"/>
-            </div>
-            <p class="text-center" style="color: grey; font-size: 16px;">시청자가 가장 많은 라이브 목록입니다.</p>
-        </v-col>
-        <br>
-        <LiveListBest ref="liveListBest" :autoStart="false" />
-    </v-container>
-    <!-- 라이브 목록 끝  -->
 
     <v-dialog v-model="this.loginModal" max-width="300px">
         <v-card class="modal"
@@ -102,7 +198,6 @@
 <script>
 import BestFarmSlide from '@/components/slide/BestFarmSlide.vue';
 import BestPackageSlide from '@/components/slide/BestPackageSlide.vue';
-import LiveListBest from '../live/live/LiveListBest.vue';
 import axios from 'axios';
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
@@ -110,7 +205,6 @@ export default {
     components: {
         BestPackageSlide,
         BestFarmSlide,
-        LiveListBest,
     },
     icons: {
         defaultSet: 'mdi',
@@ -366,9 +460,36 @@ export default {
 
 }
 
+.info-image {
+    display: flex;
+    justify-content: center;
+}
+
+.content-wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.content-text {
+    font-size: 14px;
+    color: rgb(153, 153, 153);
+    border-radius: 12px;
+}
+
+.info-title {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.info-content {
+    font-size: 18px;
+}
+
 .hr-style {
-    border-bottom: 3px solid #efefef; border-radius: 3px;
-  }
+    border-bottom: 3px solid #efefef;
+    border-radius: 3px;
+}
 
 @keyframes popUp {
     0% {
