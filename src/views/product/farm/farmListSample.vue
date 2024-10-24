@@ -116,7 +116,7 @@
                                 </div>
 
                                 <div class="farm-stats">
-                                    <p small outlined class="fav-style">스크랩 {{ farm.favoriteCount }}개</p>
+                                    <p small outlined class="fav-style">스크랩 {{ likeCount.get(farm.id) }}개</p>
                                     <v-chip small outlined>판매 {{ farm.orderCount }}개</v-chip>
                                 </div>
                             </div>
@@ -609,7 +609,6 @@ export default {
     color: black !important;
     padding-bottom: 2px;
 }
-
 
 .heart-emoji {
     position: absolute;
