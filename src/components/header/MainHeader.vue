@@ -38,7 +38,7 @@
                             </v-list-item>
                             <v-card v-for="(notification, index) in notifications" :key="index"
                                 style="margin: 5px; margin-bottom: 7px; padding-bottom: 5px;"
-                                @click="this.$router.push(notification.url)">
+                                @click="readNotificationAndRoute(notification)">
                                 <v-card-text style="font-weight: bold;">
                                     {{ notification.title }}
                                 </v-card-text>
@@ -242,6 +242,13 @@ export default {
                 const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification?unread=true`);
                 console.log(res);
                 this.notifications = res.data.content;
+            } else if(role === 'SELLER') {
+                const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/product-service/notification?unread=true`);
+                console.log(res);
+                this.notifications = res.data.content;
+
+                console.log("line 244 >>>>>>>> ");
+                console.log(res);
             }
 
         } catch (e) {
@@ -303,11 +310,15 @@ export default {
                 const role = localStorage.getItem("role");
                 if(role == 'MEMBER') {
                     await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/member/sign-out`);
+                    const fcmToken = localStorage.getItem("fcmToken");
+                    console.log(fcmToken);
+                    await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/${fcmToken}`);
+                } else if(role == 'SELLER') {
+                    const fcmToken = localStorage.getItem("fcmToken");
+                    console.log(fcmToken);
+                    await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/product-service/fcm/${fcmToken}`);
                 }
 
-                const fcmToken = localStorage.getItem("fcmToken");
-                console.log(fcmToken);
-                await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/member-service/fcm/${fcmToken}`);
             } catch(e) {
                 console.log(e);
             }
@@ -387,10 +398,21 @@ export default {
             });
         },
         async markAsRead() {
-            await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification/read`);
+            const role = localStorage.getItem("role");
+
+            try {
+                if(role == 'MEMBER') {
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification/read`);
+
+                } else if(role == 'SELLER') {
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/notification/read`);
+                }
+            } catch(e) {
+                console.log(e);
+            }
+
             this.notifications = [];
             this.clearNotificationsFromIndexedDB();
-            // this.$router.push(`/notifications`);
         },
         saveNotificationToIndexedDB(notification) {
             const request = indexedDB.open("notificationDB", 1);
@@ -682,6 +704,27 @@ export default {
                 location.reload();
             });
         },
+        async readNotificationAndRoute(notification) {
+            try {
+                const role = localStorage.getItem("role");
+                
+                if(role == 'MEMBER') {
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member-service/notification/${notification.notificationId}/read`);
+                } else if(role == 'SELLER') {
+                    await axios.post(`${process.env.VUE_APP_API_BASE_URL}/product-service/notification/${notification.notificationId}/read`);
+                }
+                
+                for(let i=0; i<this.notifications.length; i++) {
+                    if(this.notifications[i].notificationId === notification.notificationId) {
+                        this.notifications.splice(i, 1);
+                        break;
+                    }
+                }
+            } catch(e) {
+                console.log(e);
+            }
+            this.$router.push(notification.url);
+        }
     }
 };
 </script>
