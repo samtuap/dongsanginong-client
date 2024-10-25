@@ -1,9 +1,8 @@
 <template>
+    <v-row justify="center">
+      <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" style="margin-top: 10px; height:400px; width:100%;" cover></v-img>
+    </v-row>
     <v-container style="max-width: 95%;">
-        <!-- Image Banner -->
-        <v-row justify="center">
-          <v-img :src="this.bannerImage" alt="Farm Image" class="banner-image" style="margin-top: 10px; height:400px; width:100%;" cover></v-img>
-        </v-row>
         <!-- 프로필 이미지 및 농장명 -->
          <v-row>
             <div id="session-header" style="position: relative;">
@@ -11,7 +10,7 @@
               <div class="farm-image-frame">
                 <v-img :src="profileImageUrl" class="farm-image-circle" cover />
               </div>
-              <div class="farm-text" style="margin-top: -40px; margin-left: 170px; text-align: start;">
+              <div class="farm-text" style="margin-top: -10px; margin-left: 170px; text-align: start;">
                 <span class="farm-name" style="margin-left: 10px;">{{ this.farmName }}</span><br>
                 <span style="font-size: 14px; color: grey; margin-left: 10px;"> {{ this.farmIntro }}</span>
               </div>
@@ -147,7 +146,7 @@ export default {
     background-position: center;
     background-size: cover;
     transition: background-size 0.5s ease;
-    bottom: 50px;
+    bottom: 30px;
     left: 120px; 
 }
 .farm-info {

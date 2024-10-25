@@ -17,16 +17,33 @@
       <!-- 오른쪽: 상품 정보 -->
       <v-col cols="12" md="6" class="right-content" style="padding-left: 3%;">
         <v-card flat>
-          <v-card-title class="product-title">
-            {{ packageProduct.packageName }} - [배송주기] {{ packageProduct.deliveryCycle }}일
-          </v-card-title>
-          <v-card-subtitle>
-            <div class="price">
-              <span class="original-price">
-                <strong>{{ packageProduct.price ? packageProduct.price.toLocaleString() : '' }} 원</strong>
-              </span>
-            </div>
-          </v-card-subtitle>
+          <div v-if="packageProduct.discountId != null && packageProduct.discountActive == true">
+            <v-card-title class="product-title">
+              {{ packageProduct.packageName }} - [배송주기] {{ packageProduct.deliveryCycle }}일
+              <span class="sale-style">SALE</span>
+            </v-card-title>
+            <v-card-subtitle>
+              <div class="price">
+                <span class="original-price">
+                  <span style="font-weight: 700;">{{ formatPrice(packageProduct.price, packageProduct.discount) }}원&nbsp;&nbsp;</span>
+                  <span style="text-decoration: line-through; color: #999; font-size: 15px;">{{ formatPrice(packageProduct.price, 0) }}원 </span>
+                </span>
+              </div>
+            </v-card-subtitle>
+          </div>
+
+          <div v-else>
+            <v-card-title class="product-title">
+              {{ packageProduct.packageName }} - [배송주기] {{ packageProduct.deliveryCycle }}일
+            </v-card-title>
+            <v-card-subtitle>
+              <div class="price">
+                <span class="original-price">
+                  <strong>{{ packageProduct.price ? packageProduct.price.toLocaleString() : '' }} 원</strong>
+                </span>
+              </div>
+            </v-card-subtitle>
+          </div>
           <v-card-text class="subscription-info">
             <hr class="custom-hr" />
             <strong class="green-text">정기구독</strong>
@@ -240,6 +257,7 @@ export default {
         `${process.env.VUE_APP_API_BASE_URL}/product-service/product/no-auth/detail/${packageId}`
       );
       const productData = productResponse.data;
+      console.log(">>>>id: " + productData.discountId + "  >>>>discount: " + productData.discount);
 
       // delivery_cycle -> deliveryCycle로 변환
       this.packageProduct = {
@@ -338,6 +356,13 @@ export default {
       this.successModal = false;
       this.reviewModal = false;
       window.location.reload();
+    },
+    formatPrice(price, discount) {
+      if (price == null) {
+        return "0";
+      }
+      const finalPrice = discount ? price - discount : price;
+      return parseInt(finalPrice).toLocaleString('ko-KR');
     }
   },
 };
@@ -624,5 +649,14 @@ export default {
     background-color: #BCC07B;
     color: black;
     border-radius: 50px;
+}
+.sale-style {
+    background-color: rgb(245, 77, 77); 
+    color: white; 
+    padding-right: 7px;
+    padding-left: 7px;
+    padding-bottom: 3px;
+    padding-top: 5px;
+    font-size: 12px;
 }
 </style>
