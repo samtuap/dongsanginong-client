@@ -53,7 +53,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET }}
           aws-region: "ap-northeast-2"
-            - name: update cluster information
+      
+      - name: update cluster information
         run: aws eks update-kubeconfig --name inong-cluster --region ap-northeast-2
 
       - name: login registry
