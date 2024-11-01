@@ -32,9 +32,9 @@ jobs:
           VUE_APP_PORTONE_CHANNEL_KEY: ${{ secrets.PORTONE_CHANNEL_KEY }}
           VUE_APP_FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
           VUE_APP_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          REGISTRY: "docker.io"
-          NAMESPACE: "clean01"
-          IMAGE_NAME: "vue-app"
+
+        working-directory: .
+        run: npm run build
 
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
@@ -53,7 +53,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:latest
+            docker.io/clean01vue-app:latest
 
       - name: setup aws cli
         uses: aws-actions/configure-aws-credentials@v2
@@ -64,7 +64,6 @@ jobs:
       
       - name: update cluster information
         run: aws eks update-kubeconfig --name inong-cluster --region ap-northeast-2
-
 
       - name: eks kubectl apply
         run: |
