@@ -50,7 +50,7 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            docker.io/clean01vue-app:latest
+            docker.io/clean01/vue-app:latest
 
       - name: setup aws cli
         uses: aws-actions/configure-aws-credentials@v2
