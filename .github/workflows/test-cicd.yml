@@ -1,0 +1,76 @@
+name: deploy to aws s3
+on:
+  push:
+    branches:
+      - chore/deploy
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: source code checkout
+        uses: actions/checkout@v2
+
+      - name: setup node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: npm install
+        working-directory: .
+        run: npm install
+
+      - name: npm build
+        env:
+          VUE_APP_API_BASE_URL: ${{ secrets.BASE_URL }}
+          VUE_APP_MY_URL: ${{ secrets.MY_URL }}
+          VUE_APP_KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
+          VUE_APP_KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          VUE_APP_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          VUE_APP_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          VUE_APP_GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
+          VUE_APP_PORTONE_STORE_ID: ${{ secrets.PORTONE_STORE_ID }}
+          VUE_APP_PORTONE_CHANNEL_KEY: ${{ secrets.PORTONE_CHANNEL_KEY }}
+          VUE_APP_FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
+          VUE_APP_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+        working-directory: .
+        run: npm run build
+
+      - name: setup docker buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: build vue-app image
+        run: docker build -t vue-app .
+
+      - name: setup aws cli
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+          aws-region: "ap-northeast-2"
+            - name: update cluster information
+        run: aws eks update-kubeconfig --name inong-cluster --region ap-northeast-2
+
+      - name: login ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      
+
+      - name: build and push docker product images to ecr
+        env:
+          REGISTRY: 676206947506.dkr.ecr.ap-northeast-2.amazonaws.com
+          REPOSITORY: inong/front
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:latest \
+          -f ./Dockerfile .
+          docker push $REGISTRY/$REPOSITORY:latest
+
+      - name: eks kubectl apply
+        run: |
+          kubectl apply -f ./k8s/vue-depl.yml
+          kubectl rollout restart deployment vue-app
