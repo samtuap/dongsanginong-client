@@ -56,7 +56,7 @@ jobs:
             - name: update cluster information
         run: aws eks update-kubeconfig --name inong-cluster --region ap-northeast-2
 
-      - name: login ECR
+      - name: login registry
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       
